@@ -40,7 +40,7 @@ func TestPingEndpoint(t *testing.T) {
 	}
 	c, err := NewClient(WithHttpClient(mockClient))
 	assert.NoError(t, err)
-	res := c.Ping()
-
+	res, err := c.Ping()
+	assert.NoError(t, err)
 	assert.Equal(t, pong, res)
 }

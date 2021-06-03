@@ -16,17 +16,38 @@ type HTTPClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-type Client struct {
+// type httpClient struct {
+// 	client    http.Client
+// 	apiKey    string
+// 	apiSecret string
+// }
+
+// func (c *httpClient) setApiKey(v string) {
+// 	c.apiKey = v
+// }
+
+// func (c *httpClient) setApiSecret(v string) {
+// 	c.apiSecret = v
+// }
+
+// func (c *httpClient) Do(req *http.Request) (*http.Response, error) {
+// 	req.Header.Set("Content-Type", "application/json")
+// 	req.Header.Add("X-API-Key", c.apiKey)
+// 	req.Header.Add("X-API-Secret", c.apiSecret)
+// 	return c.client.Do(req)
+// }
+
+type SDK struct {
 	BaseURL    string
 	apiKey     string
 	apiSecret  string
 	HTTPClient HTTPClient
 }
 
-type ClientOpt func(c *Client)
+type SDKOpt func(c *SDK)
 
-func NewClient(opts ...ClientOpt) (*Client, error) {
-	c := &Client{
+func NewClient(opts ...SDKOpt) (*SDK, error) {
+	c := &SDK{
 		BaseURL:    BASEURLV1,
 		HTTPClient: &http.Client{},
 	}
@@ -59,15 +80,22 @@ func getAuthEnv(key string) (string, error) {
 	return v, nil
 }
 
-func WithAuth(apiKey, apiSecret string) ClientOpt {
-	return func(c *Client) {
+func WithAuth(apiKey, apiSecret string) SDKOpt {
+	return func(c *SDK) {
 		c.apiKey = apiKey
 		c.apiSecret = apiSecret
 	}
 }
 
-func WithHttpClient(h HTTPClient) ClientOpt {
-	return func(c *Client) {
+func WithHttpClient(h HTTPClient) SDKOpt {
+	return func(c *SDK) {
 		c.HTTPClient = h
 	}
+}
+
+func (s *SDK) SetXummHeaders(req *http.Request) *http.Request {
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Add("X-API-Key", s.apiKey)
+	req.Header.Add("X-API-Secret", s.apiSecret)
+	return req
 }

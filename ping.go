@@ -13,16 +13,18 @@ const (
 	PINGENDPOINT = "/platform/ping"
 )
 
-func (c *Client) Ping() *models.Pong {
+func (c *SDK) Ping() (*models.Pong, error) {
 	req, err := http.NewRequest(http.MethodGet, c.BaseURL+PINGENDPOINT, nil)
+	c.SetXummHeaders(req)
 	if err != nil {
 		log.Println(err)
-		return &models.Pong{}
+		return nil, err
 	}
 	res, err := c.HTTPClient.Do(req)
 
 	if err != nil {
 		log.Println(err)
+		return nil, err
 	}
 	var p models.Pong
 
@@ -30,13 +32,13 @@ func (c *Client) Ping() *models.Pong {
 
 	if err != nil {
 		log.Println(err)
-		return &models.Pong{}
+		return nil, err
 	}
 
 	if err = json.Unmarshal(b, &p); err != nil {
 		log.Println(err)
-		return &models.Pong{}
+		return nil, err
 	}
 
-	return &p
+	return &p, nil
 }

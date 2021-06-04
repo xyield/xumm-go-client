@@ -5,6 +5,7 @@ unit_tests:
   stage: test
   image: golang:1.16.5-alpine3.13
   script:
+    - export PATH="$PATH:$GOPATH/bin"
     - go get -u github.com/jstemmer/go-junit-report
     - go test -v 2>&1 | go-junit-report -set-exit-code > report.xml
   artifacts:

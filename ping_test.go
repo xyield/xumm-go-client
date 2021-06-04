@@ -44,3 +44,25 @@ func TestPingEndpoint(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, pong, res)
 }
+
+func TestPingEndpointErrorResponse(t *testing.T) {
+	os.Setenv("XUMM_API_KEY", "testApiKey")
+	os.Setenv("XUMM_API_SECRET", "testApiSecret")
+	json := `{
+		"error": {
+			"reference": "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c",
+			"code": 812
+		}
+	}`
+	mockClient := &MockClient{
+		DoFunc: func(req *http.Request) (*http.Response, error) {
+			b := ioutil.NopCloser(bytes.NewReader([]byte(json)))
+			return &http.Response{StatusCode: 403, Body: b}, nil
+		},
+	}
+	c, _ := NewClient(WithHttpClient(mockClient))
+	p, err := c.Ping()
+	assert.Nil(t, p)
+	assert.Error(t, err)
+	assert.EqualError(t, err, "Error returned with reference 3a04c7d3-94aa-4d8d-9559-62bb5e8a653c and code 812")
+}

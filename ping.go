@@ -26,6 +26,11 @@ func (c *SDK) Ping() (*models.Pong, error) {
 		log.Println(err)
 		return nil, err
 	}
+	err = checkForErrorResponse(res)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
 	var p models.Pong
 
 	b, err := ioutil.ReadAll(res.Body)

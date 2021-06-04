@@ -3,6 +3,7 @@ stages:
 
 unit_tests:
   stage: test
+  image: go:1.16
   script:
     - go get -u github.com/jstemmer/go-junit-report
     - go test -v 2>&1 | go-junit-report -set-exit-code > report.xml

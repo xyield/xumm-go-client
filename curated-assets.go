@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	CURATEDASSETSENDPOINT = "/curated-assets"
+	CURATEDASSETSENDPOINT = "/platform/curated-assets"
 )
 
 func (c *SDK) CurratedAssets() (*models.CurratedAssetsResponse, error) {

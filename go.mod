@@ -1,4 +1,4 @@
-module gitlab.com/xYield/xumm-go-client
+module github.com/xyield/xumm-go-client
 
 go 1.16
 

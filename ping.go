@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"gitlab.com/xYield/xumm-go-client/models"
+	"github.com/xyield/xumm-go-client/models"
 )
 
 const (

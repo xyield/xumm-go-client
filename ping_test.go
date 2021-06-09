@@ -10,7 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"gitlab.com/xYield/xumm-go-client/models"
+	"github.com/xyield/xumm-go-client/models"
 )
 
 func TestPingEndpoint(t *testing.T) {

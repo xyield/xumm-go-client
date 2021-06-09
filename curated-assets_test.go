@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"gitlab.com/xYield/xumm-go-client/models"
+	"github.com/xyield/xumm-go-client/models"
 )
 
 func TestCuratedAssets(t *testing.T) {

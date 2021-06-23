@@ -10,11 +10,11 @@ import (
 )
 
 const (
-	PINGENDPOINT = "/platform/ping"
+	CURATEDASSETSENDPOINT = "/platform/curated-assets"
 )
 
-func (c *SDK) Ping() (*models.Pong, error) {
-	req, err := http.NewRequest(http.MethodGet, c.BaseURL+PINGENDPOINT, nil)
+func (c *SDK) CurratedAssets() (*models.CurratedAssetsResponse, error) {
+	req, err := http.NewRequest(http.MethodGet, c.BaseURL+CURATEDASSETSENDPOINT, nil)
 	c.SetXummHeaders(req)
 	if err != nil {
 		log.Println(err)
@@ -31,7 +31,7 @@ func (c *SDK) Ping() (*models.Pong, error) {
 		log.Println(err)
 		return nil, err
 	}
-	var p models.Pong
+	var ca models.CurratedAssetsResponse
 
 	b, err := ioutil.ReadAll(res.Body)
 
@@ -40,10 +40,10 @@ func (c *SDK) Ping() (*models.Pong, error) {
 		return nil, err
 	}
 
-	if err = jsoniter.Unmarshal(b, &p); err != nil {
+	if err = jsoniter.Unmarshal(b, &ca); err != nil {
 		log.Println(err)
 		return nil, err
 	}
 
-	return &p, nil
+	return &ca, nil
 }

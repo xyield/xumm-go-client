@@ -2,13 +2,13 @@ package xumm
 
 import (
 	"bytes"
-	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"testing"
 
 	"github.com/google/uuid"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/xyield/xumm-go-client/models"
 )
@@ -33,7 +33,7 @@ func TestPingEndpoint(t *testing.T) {
 	}
 	mockClient := &MockClient{
 		DoFunc: func(req *http.Request) (*http.Response, error) {
-			b, _ := json.Marshal(pong)
+			b, _ := jsoniter.Marshal(pong)
 			r := ioutil.NopCloser(bytes.NewReader(b))
 			return &http.Response{StatusCode: 200, Body: r}, nil
 		},

@@ -1,20 +1,20 @@
 package xumm
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"log"
 	"net/http"
 
+	jsoniter "github.com/json-iterator/go"
 	"github.com/xyield/xumm-go-client/models"
 )
 
 const (
-	CURATEDASSETSENDPOINT = "/platform/curated-assets"
+	XRPLTRANSACTIONENDPOINT = "platform/xrpl-tx/"
 )
 
-func (c *SDK) CurratedAssets() (*models.CurratedAssetsResponse, error) {
-	req, err := http.NewRequest(http.MethodGet, c.BaseURL+CURATEDASSETSENDPOINT, nil)
+func (c *SDK) XrplTransaction(txid string) (*models.XrpTxResponse, error) {
+	req, err := http.NewRequest(http.MethodGet, c.BaseURL+XRPLTRANSACTIONENDPOINT+txid, nil)
 	c.SetXummHeaders(req)
 	if err != nil {
 		log.Println(err)
@@ -31,7 +31,6 @@ func (c *SDK) CurratedAssets() (*models.CurratedAssetsResponse, error) {
 		log.Println(err)
 		return nil, err
 	}
-	var ca models.CurratedAssetsResponse
 
 	b, err := ioutil.ReadAll(res.Body)
 
@@ -40,10 +39,12 @@ func (c *SDK) CurratedAssets() (*models.CurratedAssetsResponse, error) {
 		return nil, err
 	}
 
-	if err = json.Unmarshal(b, &ca); err != nil {
+	var tx models.XrpTxResponse
+
+	if err = jsoniter.Unmarshal(b, &tx); err != nil {
 		log.Println(err)
 		return nil, err
 	}
 
-	return &ca, nil
+	return &tx, nil
 }

@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	XRPLTRANSACTIONENDPOINT = "platform/xrpl-tx/"
+	XRPLTRANSACTIONENDPOINT = "/platform/xrpl-tx/"
 )
 
 func (c *SDK) XrplTransaction(txid string) (*models.XrpTxResponse, error) {

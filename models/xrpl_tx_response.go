@@ -1,8 +1,6 @@
 package models
 
 import (
-	"fmt"
-
 	jsoniter "github.com/json-iterator/go"
 )
 
@@ -32,17 +30,18 @@ func (t *Transaction) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	for k, v := range values {
-		fmt.Printf("%v: %v, %T\n", k, v, v)
 		if i, ok := v.(float64); ok {
 			values[k] = int64(i)
 		}
-		// if k == "meta" {
-		// 	for mk, mv := range values["meta"] {
-		// 		if j, ok := mv.(float64); ok {
-		// 			values["meta"][mk] = int64(j)
-		// 		}
-		// 	}
-		// }
+
+		if k == "meta" {
+			meta := values["meta"].(map[string]interface{})
+			for mk, mv := range meta {
+				if j, ok := mv.(float64); ok {
+					meta[mk] = int64(j)
+				}
+			}
+		}
 		(*t)[k] = values[k]
 	}
 

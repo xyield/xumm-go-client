@@ -10,11 +10,11 @@ import (
 )
 
 const (
-	PINGENDPOINT = "/platform/ping"
+	XRPLTRANSACTIONENDPOINT = "/platform/xrpl-tx/"
 )
 
-func (c *SDK) Ping() (*models.Pong, error) {
-	req, err := http.NewRequest(http.MethodGet, c.BaseURL+PINGENDPOINT, nil)
+func (c *SDK) XrplTransaction(txid string) (*models.XrpTxResponse, error) {
+	req, err := http.NewRequest(http.MethodGet, c.BaseURL+XRPLTRANSACTIONENDPOINT+txid, nil)
 	c.SetXummHeaders(req)
 	if err != nil {
 		log.Println(err)
@@ -31,7 +31,6 @@ func (c *SDK) Ping() (*models.Pong, error) {
 		log.Println(err)
 		return nil, err
 	}
-	var p models.Pong
 
 	b, err := ioutil.ReadAll(res.Body)
 
@@ -40,10 +39,12 @@ func (c *SDK) Ping() (*models.Pong, error) {
 		return nil, err
 	}
 
-	if err = jsoniter.Unmarshal(b, &p); err != nil {
+	var tx models.XrpTxResponse
+
+	if err = jsoniter.Unmarshal(b, &tx); err != nil {
 		log.Println(err)
 		return nil, err
 	}
 
-	return &p, nil
+	return &tx, nil
 }

@@ -1,11 +1,11 @@
 package xumm
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"log"
 	"net/http"
 
+	jsoniter "github.com/json-iterator/go"
 	"github.com/xyield/xumm-go-client/models"
 )
 
@@ -40,7 +40,7 @@ func (c *SDK) CurratedAssets() (*models.CurratedAssetsResponse, error) {
 		return nil, err
 	}
 
-	if err = json.Unmarshal(b, &ca); err != nil {
+	if err = jsoniter.Unmarshal(b, &ca); err != nil {
 		log.Println(err)
 		return nil, err
 	}

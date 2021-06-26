@@ -1,11 +1,12 @@
 package xumm
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	jsoniter "github.com/json-iterator/go"
 )
 
 type ErrorResponse struct {
@@ -33,7 +34,7 @@ func checkForErrorResponse(res *http.Response) error {
 		log.Println(err)
 	}
 
-	err = json.Unmarshal(b, &e)
+	err = jsoniter.Unmarshal(b, &e)
 	if err != nil {
 		log.Println(err)
 	}

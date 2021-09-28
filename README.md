@@ -1,5 +1,7 @@
 # xumm-go-client
 
+![example workflow](https://github.com/xyield/xumm-go-client/actions/workflows/main.yml/badge.svg)
+
 ## Installation:
 The latest version can be installed using `go get` :
 

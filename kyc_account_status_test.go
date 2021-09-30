@@ -52,3 +52,57 @@ func TestKycAccountStatusTest(t *testing.T) {
 		})
 	}
 }
+
+func TestKycStatusState(t *testing.T) {
+	os.Setenv("XUMM_API_KEY", "testApiKey")
+	os.Setenv("XUMM_API_SECRET", "testApiSecret")
+	tt := []struct {
+		description    string
+		input          models.KycStatusStateRequest
+		json           string
+		expectedOutput *models.KycStatusStateResponse
+	}{
+		{
+			description: "Valid account with kyc status none",
+			input: models.KycStatusStateRequest{
+				UserToken: "test-token",
+			},
+			json: `{
+				"kycStatus": "NONE",
+				"possibleStatuses": {
+				  "NONE": "No KYC attempt has been made",
+				  "IN_PROGRESS": "KYC flow has been started, but did not finish (yet)",
+				  "REJECTED": "KYC flow has been started and rejected (NO SUCCESSFUL KYC)",
+				  "SUCCESSFUL": "KYC flow has been started and was SUCCESSFUL :)"
+				}
+			  }`,
+			expectedOutput: &models.KycStatusStateResponse{
+				KycStatus: "NONE",
+				PossibleStatuses: models.PossibleStatuses{
+					None:       "No KYC attempt has been made",
+					InProgress: "KYC flow has been started, but did not finish (yet)",
+					Rejected:   "KYC flow has been started and rejected (NO SUCCESSFUL KYC)",
+					Successful: "KYC flow has been started and was SUCCESSFUL :)",
+				},
+			},
+		},
+	}
+
+	for _, test := range tt {
+		t.Run(test.description, func(t *testing.T) {
+			m := &MockClient{
+				DoFunc: func(req *http.Request) (*http.Response, error) {
+					b := ioutil.NopCloser(bytes.NewBuffer([]byte(test.json)))
+					return &http.Response{
+						StatusCode: 200,
+						Body:       b,
+					}, nil
+				},
+			}
+			c, _ := NewClient(WithHttpClient(m))
+
+			customer, _ := c.KycStatusState(test.input)
+			assert.Equal(t, test.expectedOutput, customer)
+		})
+	}
+}

@@ -1,5 +1,6 @@
 package models
 
+// by user token
 type KycStatusStateResponse struct {
 	KycStatus        string           `json:"kycStatus"`
 	PossibleStatuses PossibleStatuses `json:"possibleStatuses"`

@@ -1,9 +1,11 @@
 package xumm
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"regexp"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/xyield/xumm-go-client/models"
@@ -13,12 +15,21 @@ const (
 	RATESCURRENCYENDPOINT = "/platform/rates/"
 )
 
+type CurrencyCodeError struct {
+	Code string
+}
+
+func (e *CurrencyCodeError) Error() string {
+	return fmt.Sprintf("Currency code %v is not valid", e.Code)
+}
+
 func (c *SDK) RatesCurrency(cur string) (*models.RatesCurrencyResponse, error) {
 
-	// check only 3 char cur - regex
-	// return error if it is not exactly 3
+	ok, _ := regexp.MatchString(`^[a-zA-Z]{3}$`, cur)
 
-	// check it is all capitalized
+	if !ok {
+		return nil, &CurrencyCodeError{Code: cur}
+	}
 
 	req, err := http.NewRequest(http.MethodGet, c.BaseURL+RATESCURRENCYENDPOINT+cur, nil)
 

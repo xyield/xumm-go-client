@@ -56,9 +56,10 @@ func TestRatesCurrency(t *testing.T) {
 		httpStatusCode int
 	}{
 
-		{testName: "correctData", testValue: "USD", inputValue: json1, expectedOutput: c, expectedError: nil, httpStatusCode: 200},
-		// {testName: "correctData", testValue: "USD123", inputValue: json1, expectedOutput: c, expectedError: nil, httpStatusCode: 200},
-		{testName: "errorResponse", testValue: "USD", inputValue: json2, expectedOutput: nil, expectedError: &ErrorResponse{ErrorResponseInternal{Reference: "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c", Code: 812}}, httpStatusCode: 403},
+		{testName: "correct data", testValue: "USD", inputValue: json1, expectedOutput: c, expectedError: nil, httpStatusCode: 200},
+		{testName: "Incorrect length currency code", testValue: "USDaas", inputValue: json2, expectedOutput: nil, expectedError: &CurrencyCodeError{Code: "USDaas"}, httpStatusCode: -1},
+		{testName: "Incorrect characters in currency code", testValue: "US$", inputValue: json2, expectedOutput: nil, expectedError: &CurrencyCodeError{Code: "US$"}, httpStatusCode: -1},
+		{testName: "error response", testValue: "USD", inputValue: json2, expectedOutput: nil, expectedError: &ErrorResponse{ErrorResponseInternal{Reference: "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c", Code: 812}}, httpStatusCode: 403},
 	}
 
 	for _, tt := range tests {

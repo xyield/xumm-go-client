@@ -11,13 +11,6 @@ type ApplicationDetails struct {
 	Call        Call                   `json:"call"`
 }
 
-type Application struct {
-	UUIDV4     string `json:"uuidv4"`
-	Name       string `json:"name"`
-	WebhookUrl string `json:"webhookurl"`
-	Disabled   int
-}
-
 type Call struct {
 	UUIDV4 string `json:"uuidv4"`
 }

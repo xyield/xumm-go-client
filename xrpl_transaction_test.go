@@ -9,6 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/xyield/xumm-go-client/models"
+	"github.com/xyield/xumm-go-client/pkg/json"
 )
 
 func TestXrplTx(t *testing.T) {
@@ -21,7 +22,7 @@ func TestXrplTx(t *testing.T) {
 		CounterParty: "",
 	}
 
-	txJson := &models.Transaction{
+	txJson := &json.AnyJson{
 		"Account":         "r4bA4uZgXadPMzURqGLCvCmD48FmXJWHCG",
 		"Amount":          "1000000",
 		"Destination":     "rPdvC6ccq8hCdPKSPJkPmyZ4Mi1oG2FFkT",

@@ -10,8 +10,6 @@ import (
 	"github.com/xyield/xumm-go-client/models"
 )
 
-// TO DO: Test with integers in data object
-
 func TestGetAppStorage(t *testing.T) {
 	tests := []struct {
 		description    string
@@ -93,7 +91,8 @@ func TestGetAppStorage(t *testing.T) {
 				"stored": true,
 				"data": {
 					"someKey": "someValue",
-					"float": 10.500
+					"float": 10.500,
+					"int": 1337
 				}
 			  }`,
 			expectedOutput: &models.AppStorageResponse{
@@ -104,8 +103,8 @@ func TestGetAppStorage(t *testing.T) {
 				Stored: true,
 				Data: map[string]interface{}{
 					"someKey": "someValue",
-					// "integer": 1337,
-					"float": 10.500,
+					"int":     int64(1337),
+					"float":   10.500,
 				},
 			},
 			expectedError: nil,
@@ -123,7 +122,8 @@ func TestGetAppStorage(t *testing.T) {
 					"float": 10.500,
 					"nested": {
 						"someKey": "someValue",
-						"float": 12.0
+						"float": 12.0,
+						"int": 9182
 					}
 				}
 			  }`,
@@ -139,6 +139,7 @@ func TestGetAppStorage(t *testing.T) {
 					"nested": map[string]interface{}{
 						"someKey": "someValue",
 						"float":   12.0,
+						"int":     int64(9182),
 					},
 				},
 			},
@@ -211,7 +212,7 @@ func TestSetAppStorage(t *testing.T) {
 			description: "Set multiple key value pair with various data type",
 			input: map[string]interface{}{
 				"someKey":   "someValue",
-				"someInt":   1337,
+				"someInt":   int64(1337),
 				"someFloat": 13.07,
 			},
 			response: `{
@@ -222,7 +223,8 @@ func TestSetAppStorage(t *testing.T) {
 				"stored": true,
 				"data": {
 					"someKey": "someValue",
-					"someFloat": 13.07
+					"someFloat": 13.07,
+					"someInt": 1337
 				}
 			}`,
 			expectedOutput: &models.AppStorageResponse{
@@ -234,6 +236,7 @@ func TestSetAppStorage(t *testing.T) {
 				Data: map[string]interface{}{
 					"someKey":   "someValue",
 					"someFloat": 13.07,
+					"someInt":   int64(1337),
 				},
 			},
 			expectedError: nil,

@@ -48,6 +48,25 @@ func TestAnyJsonDeserialisation(t *testing.T) {
 				"float": 3.999,
 			},
 		},
+		{
+			description: "Nested values",
+			input: `{
+				"float": 3.999,
+				"meta": {
+					"int": 76,
+					"float": 5.2,
+					"string": "world"
+				}
+			}`,
+			expectedOutput: AnyJson{
+				"float": 3.999,
+				"meta": map[string]interface{}{
+					"int":    int64(76),
+					"float":  5.2,
+					"string": "world",
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {

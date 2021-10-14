@@ -11,6 +11,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/xyield/xumm-go-client/models"
+	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
 )
 
 func TestPingEndpoint(t *testing.T) {
@@ -31,14 +32,14 @@ func TestPingEndpoint(t *testing.T) {
 			},
 		},
 	}
-	mockClient := &MockClient{
+	m := &testutils.MockClient{
 		DoFunc: func(req *http.Request) (*http.Response, error) {
 			b, _ := jsoniter.Marshal(pong)
 			r := ioutil.NopCloser(bytes.NewReader(b))
 			return &http.Response{StatusCode: 200, Body: r}, nil
 		},
 	}
-	c, err := NewClient(WithHttpClient(mockClient))
+	c, err := NewClient(WithHttpClient(m))
 	assert.NoError(t, err)
 	res, err := c.Ping()
 	assert.NoError(t, err)
@@ -54,7 +55,7 @@ func TestPingEndpointErrorResponse(t *testing.T) {
 			"code": 812
 		}
 	}`
-	mockClient := &MockClient{
+	mockClient := &testutils.MockClient{
 		DoFunc: func(req *http.Request) (*http.Response, error) {
 			b := ioutil.NopCloser(bytes.NewReader([]byte(json)))
 			return &http.Response{StatusCode: 403, Body: b}, nil

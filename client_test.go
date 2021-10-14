@@ -6,19 +6,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
 )
-
-type MockClient struct {
-	DoFunc func(req *http.Request) (*http.Response, error)
-}
-
-func (m *MockClient) Do(req *http.Request) (*http.Response, error) {
-	if m.DoFunc != nil {
-		return m.DoFunc(req)
-	}
-	// just in case you want default correct return value
-	return &http.Response{}, nil
-}
 
 func TestXummClientCreation(t *testing.T) {
 	t.Run("Default client creation with no env", func(t *testing.T) {
@@ -47,8 +36,8 @@ func TestXummClientCreation(t *testing.T) {
 	t.Run("Client Creation with http client option", func(t *testing.T) {
 		os.Setenv("XUMM_API_KEY", "testApiKey")
 		os.Setenv("XUMM_API_SECRET", "testApiSecret")
-		c, err := NewClient(WithHttpClient(&MockClient{}))
+		c, err := NewClient(WithHttpClient(&testutils.MockClient{}))
 		assert.NoError(t, err)
-		assert.Equal(t, &SDK{BaseURL: BASEURLV1, HTTPClient: &MockClient{}, apiKey: "testApiKey", apiSecret: "testApiSecret"}, c)
+		assert.Equal(t, &SDK{BaseURL: BASEURLV1, HTTPClient: &testutils.MockClient{}, apiKey: "testApiKey", apiSecret: "testApiSecret"}, c)
 	})
 }

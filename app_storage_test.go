@@ -1,13 +1,11 @@
 package xumm
 
 import (
-	"bytes"
-	"io/ioutil"
-	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/xyield/xumm-go-client/models"
+	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
 )
 
 func TestGetAppStorage(t *testing.T) {
@@ -149,16 +147,10 @@ func TestGetAppStorage(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.description, func(t *testing.T) {
-			mockClient := &MockClient{
-				DoFunc: func(req *http.Request) (*http.Response, error) {
-					b := ioutil.NopCloser(bytes.NewReader([]byte(tt.response)))
-					return &http.Response{
-						StatusCode: 200,
-						Body:       b,
-					}, nil
-				},
-			}
-			c, _ := NewClient(WithHttpClient(mockClient), WithAuth("testApiKey", "testApiSecret"))
+			m := &testutils.MockClient{}
+			m.DoFunc = testutils.MockResponse(tt.response, 200, m)
+
+			c, _ := NewClient(WithHttpClient(m), WithAuth("testApiKey", "testApiSecret"))
 			as, err := c.GetAppStorage()
 
 			if tt.expectedError != nil {
@@ -245,16 +237,9 @@ func TestSetAppStorage(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.description, func(t *testing.T) {
-			mockClient := &MockClient{
-				DoFunc: func(req *http.Request) (*http.Response, error) {
-					b := ioutil.NopCloser(bytes.NewReader([]byte(tt.response)))
-					return &http.Response{
-						StatusCode: 200,
-						Body:       b,
-					}, nil
-				},
-			}
-			c, _ := NewClient(WithHttpClient(mockClient), WithAuth("testApiKey", "testApiSecret"))
+			m := &testutils.MockClient{}
+			m.DoFunc = testutils.MockResponse(tt.response, 200, m)
+			c, _ := NewClient(WithHttpClient(m), WithAuth("testApiKey", "testApiSecret"))
 			as, err := c.SetAppStorage(tt.input)
 
 			if tt.expectedError != nil {
@@ -300,16 +285,9 @@ func TestDeleteAppStorage(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.description, func(t *testing.T) {
-			mockClient := &MockClient{
-				DoFunc: func(req *http.Request) (*http.Response, error) {
-					b := ioutil.NopCloser(bytes.NewReader([]byte(tt.response)))
-					return &http.Response{
-						StatusCode: 200,
-						Body:       b,
-					}, nil
-				},
-			}
-			c, _ := NewClient(WithHttpClient(mockClient), WithAuth("testApiKey", "testApiSecret"))
+			m := &testutils.MockClient{}
+			m.DoFunc = testutils.MockResponse(tt.response, 200, m)
+			c, _ := NewClient(WithHttpClient(m), WithAuth("testApiKey", "testApiSecret"))
 			as, err := c.DeleteAppStorage()
 
 			if tt.expectedError != nil {

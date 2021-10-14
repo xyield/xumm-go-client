@@ -1,14 +1,12 @@
 package xumm
 
 import (
-	"bytes"
-	"io/ioutil"
-	"net/http"
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/xyield/xumm-go-client/models"
+	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
 )
 
 func TestCuratedAssets(t *testing.T) {
@@ -60,7 +58,7 @@ func TestCuratedAssets(t *testing.T) {
 			"USD": *ci3,
 		},
 	}
-	car := &models.CurratedAssetsResponse{
+	car := &models.CuratedAssetsResponse{
 		Issuers:    []string{"Bitstamp", "GateHub"},
 		Currencies: []string{"USD", "EUR", "BTC", "ETH"},
 		Details: map[string]models.Issuer{
@@ -69,60 +67,7 @@ func TestCuratedAssets(t *testing.T) {
 		},
 	}
 
-	json1 := `{
-		"issuers": [
-		  "Bitstamp",
-		  "GateHub"
-		],
-		"currencies": [
-		  "USD",
-		  "EUR",
-		  "BTC",
-		  "ETH"
-		],
-		"details": {
-		  "Bitstamp": {
-			"id": 185,
-			"name": "Bitstamp",
-			"domain": "bitstamp.net",
-			"avatar": "https://nd4d3do.dlvr.cloud/ex-bitstamp.png",
-			"currencies": {
-			  "USD": {
-				"id": 178,
-				"issuer_id": 185,
-				"issuer": "rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B",
-				"currency": "USD",
-				"name": "US Dollar",
-				"avatar": "https://nd4d3do.dlvr.cloud/fiat-dollar.png"
-			  }
-			}
-		  },
-		  "GateHub": {
-			"id": 182,
-			"name": "GateHub",
-			"domain": "gatehub.net",
-			"avatar": "https://nd4d3do.dlvr.cloud/ex-gatehub.png",
-			"currencies": {
-			  "EUR": {
-				"id": 169,
-				"issuer_id": 182,
-				"issuer": "rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq",
-				"currency": "EUR",
-				"name": "Euro",
-				"avatar": "https://nd4d3do.dlvr.cloud/fiat-euro.png"
-			  },
-			  "USD": {
-				"id": 170,
-				"issuer_id": 182,
-				"issuer": "rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq",
-				"currency": "USD",
-				"name": "US Dollar",
-				"avatar": "https://nd4d3do.dlvr.cloud/fiat-dollar.png"
-			  }
-			}
-		  }
-		}
-	  }`
+	json1 := testutils.ConvertJsonFileToString("static-test-data/curated_assets_test.json")
 	json3 := `{
 		"error": {
 		  "reference": "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c",
@@ -133,7 +78,7 @@ func TestCuratedAssets(t *testing.T) {
 	var tests = []struct {
 		testName       string
 		inputValue     string
-		expectedOutput *models.CurratedAssetsResponse
+		expectedOutput *models.CuratedAssetsResponse
 		expectedError  error
 		httpStatusCode int
 	}{
@@ -144,15 +89,11 @@ func TestCuratedAssets(t *testing.T) {
 	for _, tt := range tests {
 
 		t.Run(tt.testName, func(t *testing.T) {
-			mockClient := &MockClient{
-				DoFunc: func(req *http.Request) (*http.Response, error) {
-					b := ioutil.NopCloser(bytes.NewReader([]byte(tt.inputValue)))
-					return &http.Response{StatusCode: tt.httpStatusCode, Body: b}, nil
-				},
-			}
-			c, _ := NewClient(WithHttpClient(mockClient))
+			m := &testutils.MockClient{}
+			m.DoFunc = testutils.MockResponse(tt.inputValue, tt.httpStatusCode, m)
+			c, _ := NewClient(WithHttpClient(m))
 
-			ca, err := c.CurratedAssets()
+			ca, err := c.CuratedAssets()
 
 			if tt.expectedError != nil {
 				assert.Nil(t, ca)

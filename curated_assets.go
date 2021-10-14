@@ -13,7 +13,7 @@ const (
 	CURATEDASSETSENDPOINT = "/platform/curated-assets"
 )
 
-func (c *SDK) CurratedAssets() (*models.CurratedAssetsResponse, error) {
+func (c *SDK) CuratedAssets() (*models.CuratedAssetsResponse, error) {
 	req, err := http.NewRequest(http.MethodGet, c.BaseURL+CURATEDASSETSENDPOINT, nil)
 	c.SetXummHeaders(req)
 	if err != nil {
@@ -31,7 +31,7 @@ func (c *SDK) CurratedAssets() (*models.CurratedAssetsResponse, error) {
 		log.Println(err)
 		return nil, err
 	}
-	var ca models.CurratedAssetsResponse
+	var ca models.CuratedAssetsResponse
 
 	b, err := ioutil.ReadAll(res.Body)
 

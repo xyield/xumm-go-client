@@ -1,14 +1,12 @@
 package xumm
 
 import (
-	"bytes"
-	"io/ioutil"
-	"net/http"
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/xyield/xumm-go-client/models"
+	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
 )
 
 func TestKycAccountStatusTest(t *testing.T) {
@@ -36,15 +34,9 @@ func TestKycAccountStatusTest(t *testing.T) {
 
 	for _, test := range tt {
 		t.Run(test.description, func(t *testing.T) {
-			m := &MockClient{
-				DoFunc: func(req *http.Request) (*http.Response, error) {
-					b := ioutil.NopCloser(bytes.NewBuffer([]byte(test.json)))
-					return &http.Response{
-						StatusCode: 200,
-						Body:       b,
-					}, nil
-				},
-			}
+			m := &testutils.MockClient{}
+			m.DoFunc = testutils.MockResponse(test.json, 200, m)
+
 			c, _ := NewClient(WithHttpClient(m))
 
 			customer, _ := c.KycAccountStatus(test.input)
@@ -90,15 +82,8 @@ func TestKycStatusState(t *testing.T) {
 
 	for _, test := range tt {
 		t.Run(test.description, func(t *testing.T) {
-			m := &MockClient{
-				DoFunc: func(req *http.Request) (*http.Response, error) {
-					b := ioutil.NopCloser(bytes.NewBuffer([]byte(test.json)))
-					return &http.Response{
-						StatusCode: 200,
-						Body:       b,
-					}, nil
-				},
-			}
+			m := &testutils.MockClient{}
+			m.DoFunc = testutils.MockResponse(test.json, 200, m)
 			c, _ := NewClient(WithHttpClient(m))
 
 			customer, _ := c.KycStatusState(test.input)

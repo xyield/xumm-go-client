@@ -1,14 +1,12 @@
 package xumm
 
 import (
-	"bytes"
-	"io/ioutil"
-	"net/http"
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/xyield/xumm-go-client/models"
+	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
 )
 
 func TestRatesCurrency(t *testing.T) {
@@ -65,14 +63,9 @@ func TestRatesCurrency(t *testing.T) {
 	for _, tt := range tests {
 
 		t.Run(tt.testName, func(t *testing.T) {
-			mockClient := &MockClient{
-				DoFunc: func(req *http.Request) (*http.Response, error) {
-					b := ioutil.NopCloser(bytes.NewReader([]byte(tt.inputValue)))
-					return &http.Response{StatusCode: tt.httpStatusCode, Body: b}, nil
-				},
-			}
-
-			c, _ := NewClient(WithHttpClient(mockClient))
+			m := &testutils.MockClient{}
+			m.DoFunc = testutils.MockResponse(tt.inputValue, tt.httpStatusCode, m)
+			c, _ := NewClient(WithHttpClient(m))
 
 			ca, err := c.RatesCurrency(tt.testValue)
 

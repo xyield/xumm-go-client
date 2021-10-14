@@ -1,6 +1,6 @@
 package models
 
-type CurratedAssetsResponse struct {
+type CuratedAssetsResponse struct {
 	Issuers    []string          `json:"issuers"`
 	Currencies []string          `json:"currencies"`
 	Details    map[string]Issuer `json:"details"`

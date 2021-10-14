@@ -1,15 +1,13 @@
 package xumm
 
 import (
-	"bytes"
-	"io/ioutil"
-	"net/http"
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/xyield/xumm-go-client/models"
 	"github.com/xyield/xumm-go-client/pkg/json"
+	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
 )
 
 func TestXrplTx(t *testing.T) {
@@ -93,15 +91,8 @@ func TestXrplTx(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.testName, func(t *testing.T) {
-			m := &MockClient{
-				DoFunc: func(req *http.Request) (*http.Response, error) {
-					b := ioutil.NopCloser(bytes.NewBuffer([]byte(tt.json)))
-					return &http.Response{
-						StatusCode: tt.httpStatusCode,
-						Body:       b,
-					}, nil
-				},
-			}
+			m := &testutils.MockClient{}
+			m.DoFunc = testutils.MockResponse(tt.json, tt.httpStatusCode, m)
 			c, _ := NewClient(WithHttpClient(m))
 
 			tx, err := c.XrplTransaction(tt.input)

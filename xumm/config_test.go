@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
 )
 
 func TestXummConfigCreation(t *testing.T) {
@@ -19,7 +20,21 @@ func TestXummConfigCreation(t *testing.T) {
 		os.Setenv("XUMM_API_SECRET", "testApiSecret")
 
 		cfg, err := NewConfig()
-		assert.Equal(t, &Config{HTTPClient: &http.Client{}, BaseURL: BASEURLV1, apiKey: "testApiKey", apiSecret: "testApiSecret"}, cfg)
+		assert.Equal(t, &Config{HTTPClient: &http.Client{}, BaseURL: BASEURLV1, ApiKey: "testApiKey", ApiSecret: "testApiSecret", headers: map[string]string{"XUMM_API_KEY": "testApiKey", "XUMM_API_SECRET": "testApiSecret"}}, cfg)
+		assert.NoError(t, err)
+	})
+	t.Run("Custom http client with env", func(t *testing.T) {
+		os.Setenv("XUMM_API_KEY", "testApiKey")
+		os.Setenv("XUMM_API_SECRET", "testApiSecret")
+		mockClient := &testutils.MockClient{}
+		cfg, err := NewConfig(WithHttpClient(mockClient))
+
+		assert.Equal(t, &Config{HTTPClient: mockClient, BaseURL: BASEURLV1, ApiKey: "testApiKey", ApiSecret: "testApiSecret", headers: map[string]string{"XUMM_API_KEY": "testApiKey", "XUMM_API_SECRET": "testApiSecret"}}, cfg)
+		assert.NoError(t, err)
+	})
+	t.Run("Manually set apikey and secret", func(t *testing.T) {
+		cfg, err := NewConfig(WithAuth("manualApiKey", "manualApiSecret"))
+		assert.Equal(t, &Config{HTTPClient: &http.Client{}, BaseURL: BASEURLV1, ApiKey: "manualApiKey", ApiSecret: "manualApiSecret", headers: map[string]string{"XUMM_API_KEY": "manualApiKey", "XUMM_API_SECRET": "manualApiSecret"}}, cfg)
 		assert.NoError(t, err)
 	})
 }

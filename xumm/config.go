@@ -18,15 +18,21 @@ type HTTPClient interface {
 type Config struct {
 	HTTPClient HTTPClient
 	BaseURL    string
-	apiKey     string
-	apiSecret  string
+	ApiKey     string
+	ApiSecret  string
+	headers    map[string]string
 }
 
-func NewConfig() (*Config, error) {
+type ConfigOpt func(cfg *Config)
+
+func NewConfig(opts ...ConfigOpt) (*Config, error) {
 
 	cfg := &Config{HTTPClient: &http.Client{}, BaseURL: BASEURLV1}
 
-	if cfg.apiKey == "" || cfg.apiSecret == "" {
+	for _, opt := range opts {
+		opt(cfg)
+	}
+	if cfg.ApiKey == "" || cfg.ApiSecret == "" {
 
 		apiKey, err := getAuthEnv("XUMM_API_KEY")
 
@@ -34,14 +40,19 @@ func NewConfig() (*Config, error) {
 			return cfg, err
 		}
 
-		cfg.apiKey = apiKey
+		cfg.ApiKey = apiKey
 
 		apiSecret, err := getAuthEnv("XUMM_API_SECRET")
 
 		if err != nil {
 			return cfg, err
 		}
-		cfg.apiSecret = apiSecret
+		cfg.ApiSecret = apiSecret
+
+		cfg.headers = map[string]string{
+			"XUMM_API_KEY":    apiKey,
+			"XUMM_API_SECRET": apiSecret,
+		}
 	}
 
 	return cfg, nil
@@ -54,4 +65,21 @@ func getAuthEnv(key string) (string, error) {
 		return "", errors.New(XUMMCREDENTIALSNOTSET)
 	}
 	return v, nil
+}
+
+func WithHttpClient(c HTTPClient) ConfigOpt {
+	return func(cfg *Config) {
+		cfg.HTTPClient = c
+	}
+}
+
+func WithAuth(key, secret string) ConfigOpt {
+	return func(cfg *Config) {
+		cfg.ApiKey = key
+		cfg.ApiSecret = secret
+		cfg.headers = map[string]string{
+			"XUMM_API_KEY":    key,
+			"XUMM_API_SECRET": secret,
+		}
+	}
 }

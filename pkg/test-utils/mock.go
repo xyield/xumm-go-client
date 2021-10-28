@@ -8,7 +8,7 @@ import (
 
 type MockClient struct {
 	DoFunc func(req *http.Request) (*http.Response, error)
-	spy    *http.Request
+	Spy    *http.Request
 }
 
 func (m *MockClient) Do(req *http.Request) (*http.Response, error) {
@@ -21,7 +21,7 @@ func (m *MockClient) Do(req *http.Request) (*http.Response, error) {
 
 func MockResponse(reqString string, statusCode int, m *MockClient) func(req *http.Request) (*http.Response, error) {
 	return func(req *http.Request) (*http.Response, error) {
-		m.spy = req
+		m.Spy = req
 		return &http.Response{
 			StatusCode: statusCode,
 			Body:       io.NopCloser(bytes.NewReader([]byte(reqString))),

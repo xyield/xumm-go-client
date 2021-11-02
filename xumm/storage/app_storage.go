@@ -30,11 +30,7 @@ func (s *Storage) GetAppStorage() (*models.AppStorageResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header = map[string][]string{
-		"XUMM_API_KEY":    {s.Cfg.ApiKey},
-		"XUMM_API_SECRET": {s.Cfg.ApiSecret},
-		"Content-Type":    {"application/json"},
-	}
+	req.Header = s.Cfg.Headers
 
 	res, err := s.Cfg.HTTPClient.Do(req)
 
@@ -72,11 +68,7 @@ func (s *Storage) SetAppStorage(d map[string]interface{}) (*models.AppStorageRes
 	if err != nil {
 		return nil, err
 	}
-	req.Header = map[string][]string{
-		"XUMM_API_KEY":    {s.Cfg.ApiKey},
-		"XUMM_API_SECRET": {s.Cfg.ApiSecret},
-		"Content-Type":    {"application/json"},
-	}
+	req.Header = s.Cfg.Headers
 	res, err := s.Cfg.HTTPClient.Do(req)
 
 	if err != nil {
@@ -108,11 +100,7 @@ func (s *Storage) DeleteAppStorage() (*models.AppStorageResponse, error) {
 		return nil, err
 	}
 
-	req.Header = map[string][]string{
-		"XUMM_API_KEY":    {s.Cfg.ApiKey},
-		"XUMM_API_SECRET": {s.Cfg.ApiSecret},
-		"Content-Type":    {"application/json"},
-	}
+	req.Header = s.Cfg.Headers
 	res, err := s.Cfg.HTTPClient.Do(req)
 
 	if err != nil {

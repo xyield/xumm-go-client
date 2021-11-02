@@ -20,7 +20,7 @@ type Config struct {
 	BaseURL    string
 	ApiKey     string
 	ApiSecret  string
-	headers    map[string]string
+	Headers    map[string][]string
 }
 
 type ConfigOpt func(cfg *Config)
@@ -49,9 +49,10 @@ func NewConfig(opts ...ConfigOpt) (*Config, error) {
 		}
 		cfg.ApiSecret = apiSecret
 
-		cfg.headers = map[string]string{
-			"XUMM_API_KEY":    apiKey,
-			"XUMM_API_SECRET": apiSecret,
+		cfg.Headers = map[string][]string{
+			"XUMM_API_KEY":    {apiKey},
+			"XUMM_API_SECRET": {apiSecret},
+			"Content-Type":    {"application/json"},
 		}
 	}
 
@@ -77,9 +78,10 @@ func WithAuth(key, secret string) ConfigOpt {
 	return func(cfg *Config) {
 		cfg.ApiKey = key
 		cfg.ApiSecret = secret
-		cfg.headers = map[string]string{
-			"XUMM_API_KEY":    key,
-			"XUMM_API_SECRET": secret,
+		cfg.Headers = map[string][]string{
+			"XUMM_API_KEY":    {key},
+			"XUMM_API_SECRET": {secret},
+			"Content-Type":    {"application/json"},
 		}
 	}
 }

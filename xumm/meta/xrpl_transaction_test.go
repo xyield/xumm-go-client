@@ -1,18 +1,17 @@
-package xumm
+package meta
 
 import (
-	"os"
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/xyield/xumm-go-client/models"
 	"github.com/xyield/xumm-go-client/pkg/json"
 	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
+	"github.com/xyield/xumm-go-client/xumm"
 )
 
 func TestXrplTx(t *testing.T) {
-	os.Setenv("XUMM_API_KEY", "testApiKey")
-	os.Setenv("XUMM_API_SECRET", "testApiSecret")
 
 	bc := &models.BalanceDetails{
 		Value:        "-1.000012",
@@ -37,36 +36,6 @@ func TestXrplTx(t *testing.T) {
 		"validated": true,
 	}
 
-	json := `{
-		"txid": "A17E4DEAD62BF705D9B73B4EAD2832F1C55C6C5A0067327A45E497FD8D31C0E3",
-		"balanceChanges": {
-		  "r4bA4uZgXadPMzURqGLCvCmD48FmXJWHCG": [
-			{
-			  "counterparty": "",
-			  "currency": "XRP",
-			  "value": "-1.000012"
-			}
-		  ]
-		},
-		"node": "wss://xrpl.ws",
-		"transaction": {
-		  "Account": "r4bA4uZgXadPMzURqGLCvCmD48FmXJWHCG",
-		  "Amount": "1000000",
-		  "Destination": "rPdvC6ccq8hCdPKSPJkPmyZ4Mi1oG2FFkT",
-		  "Fee": "12",
-		  "Flags": 2147483648,
-		  "Sequence": 58549314,
-		  "SigningPubKey": "0260F06C0590C470E7E7FA9DE3D9E85B1825E19196D8893DD84431F6E9491739AC",
-		  "TransactionType": "Payment",
-		  "meta": {
-			"TransactionIndex": 0,
-			"TransactionResult": "tesSUCCESS",
-			"delivered_amount": "1000000"
-		  },
-		  "validated": true
-		}
-	  }`
-
 	txRes := &models.XrpTxResponse{
 		Txid: "A17E4DEAD62BF705D9B73B4EAD2832F1C55C6C5A0067327A45E497FD8D31C0E3",
 		Node: "wss://xrpl.ws",
@@ -77,6 +46,8 @@ func TestXrplTx(t *testing.T) {
 		},
 		Transaction: *txJson,
 	}
+
+	json := testutils.ConvertJsonFileToString("static-test-data/xrpl_transaction_test.json")
 
 	var tests = []struct {
 		testName       string
@@ -93,9 +64,12 @@ func TestXrplTx(t *testing.T) {
 		t.Run(tt.testName, func(t *testing.T) {
 			m := &testutils.MockClient{}
 			m.DoFunc = testutils.MockResponse(tt.json, tt.httpStatusCode, m)
-			c, _ := NewClient(WithHttpClient(m))
-
-			tx, err := c.XrplTransaction(tt.input)
+			cfg, err := xumm.NewConfig(xumm.WithHttpClient(m), xumm.WithAuth("testApiKey", "testApiSecret"))
+			assert.NoError(t, err)
+			meta := &Meta{
+				Cfg: cfg,
+			}
+			tx, err := meta.XrplTransaction(tt.input)
 
 			if tt.expectedError != nil {
 				assert.Nil(t, tx)
@@ -104,6 +78,11 @@ func TestXrplTx(t *testing.T) {
 			} else {
 				assert.NoError(t, err)
 				assert.Equal(t, tt.expectedOutput, tx)
+				assert.Equal(t, http.Header{
+					"XUMM_API_KEY":    {"testApiKey"},
+					"XUMM_API_SECRET": {"testApiSecret"},
+					"Content-Type":    {"application/json"},
+				}, m.Spy.Header)
 			}
 
 		})

@@ -1,18 +1,16 @@
-package xumm
+package meta
 
 import (
-	"os"
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/xyield/xumm-go-client/models"
 	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
+	"github.com/xyield/xumm-go-client/xumm"
 )
 
 func TestCuratedAssets(t *testing.T) {
-
-	os.Setenv("XUMM_API_KEY", "testApiKey")
-	os.Setenv("XUMM_API_SECRET", "testApiSecret")
 
 	ci := &models.CurrencyInfo{
 		Id:       178,
@@ -67,8 +65,8 @@ func TestCuratedAssets(t *testing.T) {
 		},
 	}
 
-	json1 := testutils.ConvertJsonFileToString("static-test-data/curated_assets_test.json")
-	json3 := `{
+	validJson := testutils.ConvertJsonFileToString("static-test-data/curated_assets_test.json")
+	errorJson := `{
 		"error": {
 		  "reference": "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c",
 		  "code": 812
@@ -83,22 +81,30 @@ func TestCuratedAssets(t *testing.T) {
 		httpStatusCode int
 	}{
 
-		{testName: "correctData", inputValue: json1, expectedOutput: car, expectedError: nil, httpStatusCode: 200},
-		{testName: "errorResponse", inputValue: json3, expectedOutput: nil, expectedError: &ErrorResponse{ErrorResponseInternal{Reference: "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c", Code: 812}}, httpStatusCode: 403},
+		{testName: "correctData", inputValue: validJson, expectedOutput: car, expectedError: nil, httpStatusCode: 200},
+		{testName: "errorResponse", inputValue: errorJson, expectedOutput: nil, expectedError: &xumm.ErrorResponse{ErrorResponseInternal: xumm.ErrorResponseInternal{Reference: "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c", Code: 812}}, httpStatusCode: 403},
 	}
 	for _, tt := range tests {
 
 		t.Run(tt.testName, func(t *testing.T) {
 			m := &testutils.MockClient{}
 			m.DoFunc = testutils.MockResponse(tt.inputValue, tt.httpStatusCode, m)
-			c, _ := NewClient(WithHttpClient(m))
-
-			ca, err := c.CuratedAssets()
+			cfg, err := xumm.NewConfig(xumm.WithHttpClient(m), xumm.WithAuth("testApiKey", "testApiSecret"))
+			assert.NoError(t, err)
+			meta := &Meta{
+				Cfg: cfg,
+			}
+			ca, err := meta.CuratedAssets()
 
 			if tt.expectedError != nil {
 				assert.Nil(t, ca)
 				assert.Error(t, err)
 				assert.EqualError(t, err, tt.expectedError.Error())
+				assert.Equal(t, http.Header{
+					"XUMM_API_KEY":    {"testApiKey"},
+					"XUMM_API_SECRET": {"testApiSecret"},
+					"Content-Type":    {"application/json"},
+				}, m.Spy.Header)
 			} else {
 
 				assert.NoError(t, err)

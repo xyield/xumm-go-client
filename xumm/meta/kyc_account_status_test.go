@@ -1,17 +1,16 @@
-package xumm
+package meta
 
 import (
-	"os"
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/xyield/xumm-go-client/models"
 	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
+	"github.com/xyield/xumm-go-client/xumm"
 )
 
 func TestKycAccountStatusTest(t *testing.T) {
-	os.Setenv("XUMM_API_KEY", "testApiKey")
-	os.Setenv("XUMM_API_SECRET", "testApiSecret")
 	tt := []struct {
 		description    string
 		input          string
@@ -36,18 +35,24 @@ func TestKycAccountStatusTest(t *testing.T) {
 		t.Run(test.description, func(t *testing.T) {
 			m := &testutils.MockClient{}
 			m.DoFunc = testutils.MockResponse(test.json, 200, m)
+			cfg, err := xumm.NewConfig(xumm.WithHttpClient(m), xumm.WithAuth("testApiKey", "testApiSecret"))
+			assert.NoError(t, err)
+			meta := &Meta{
+				Cfg: cfg,
+			}
 
-			c, _ := NewClient(WithHttpClient(m))
-
-			customer, _ := c.KycAccountStatus(test.input)
+			customer, _ := meta.KycAccountStatus(test.input)
+			assert.Equal(t, http.Header{
+				"XUMM_API_KEY":    {"testApiKey"},
+				"XUMM_API_SECRET": {"testApiSecret"},
+				"Content-Type":    {"application/json"},
+			}, m.Spy.Header)
 			assert.Equal(t, test.expectedOutput, customer)
 		})
 	}
 }
 
 func TestKycStatusState(t *testing.T) {
-	os.Setenv("XUMM_API_KEY", "testApiKey")
-	os.Setenv("XUMM_API_SECRET", "testApiSecret")
 	tt := []struct {
 		description    string
 		input          models.KycStatusStateRequest
@@ -84,10 +89,18 @@ func TestKycStatusState(t *testing.T) {
 		t.Run(test.description, func(t *testing.T) {
 			m := &testutils.MockClient{}
 			m.DoFunc = testutils.MockResponse(test.json, 200, m)
-			c, _ := NewClient(WithHttpClient(m))
-
-			customer, _ := c.KycStatusState(test.input)
+			cfg, err := xumm.NewConfig(xumm.WithHttpClient(m), xumm.WithAuth("testApiKey", "testApiSecret"))
+			assert.NoError(t, err)
+			meta := &Meta{
+				Cfg: cfg,
+			}
+			customer, _ := meta.KycStatusState(test.input)
 			assert.Equal(t, test.expectedOutput, customer)
+			assert.Equal(t, http.Header{
+				"XUMM_API_KEY":    {"testApiKey"},
+				"XUMM_API_SECRET": {"testApiSecret"},
+				"Content-Type":    {"application/json"},
+			}, m.Spy.Header)
 		})
 	}
 }

@@ -78,9 +78,9 @@ func TestRatesCurrency(t *testing.T) {
 				assert.NoError(t, err)
 				assert.Equal(t, tt.expectedOutput, ca)
 				assert.Equal(t, http.Header{
-					"XUMM_API_KEY":    {"testApiKey"},
-					"XUMM_API_SECRET": {"testApiSecret"},
-					"Content-Type":    {"application/json"},
+					"X-API-Key":    {"testApiKey"},
+					"X-API-Secret": {"testApiSecret"},
+					"Content-Type": {"application/json"},
 				}, m.Spy.Header)
 			}
 		})

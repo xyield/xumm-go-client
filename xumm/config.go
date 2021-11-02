@@ -50,9 +50,9 @@ func NewConfig(opts ...ConfigOpt) (*Config, error) {
 		cfg.ApiSecret = apiSecret
 
 		cfg.Headers = map[string][]string{
-			"XUMM_API_KEY":    {apiKey},
-			"XUMM_API_SECRET": {apiSecret},
-			"Content-Type":    {"application/json"},
+			"X-API-Key":    {apiKey},
+			"X-API-Secret": {apiSecret},
+			"Content-Type": {"application/json"},
 		}
 	}
 
@@ -79,9 +79,9 @@ func WithAuth(key, secret string) ConfigOpt {
 		cfg.ApiKey = key
 		cfg.ApiSecret = secret
 		cfg.Headers = map[string][]string{
-			"XUMM_API_KEY":    {key},
-			"XUMM_API_SECRET": {secret},
-			"Content-Type":    {"application/json"},
+			"X-API-Key":    {key},
+			"X-API-Secret": {secret},
+			"Content-Type": {"application/json"},
 		}
 	}
 }

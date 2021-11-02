@@ -101,9 +101,9 @@ func TestCuratedAssets(t *testing.T) {
 				assert.Error(t, err)
 				assert.EqualError(t, err, tt.expectedError.Error())
 				assert.Equal(t, http.Header{
-					"XUMM_API_KEY":    {"testApiKey"},
-					"XUMM_API_SECRET": {"testApiSecret"},
-					"Content-Type":    {"application/json"},
+					"X-API-Key":    {"testApiKey"},
+					"X-API-Secret": {"testApiSecret"},
+					"Content-Type": {"application/json"},
 				}, m.Spy.Header)
 			} else {
 

@@ -43,9 +43,9 @@ func TestKycAccountStatusTest(t *testing.T) {
 
 			customer, _ := meta.KycAccountStatus(test.input)
 			assert.Equal(t, http.Header{
-				"XUMM_API_KEY":    {"testApiKey"},
-				"XUMM_API_SECRET": {"testApiSecret"},
-				"Content-Type":    {"application/json"},
+				"X-API-Key":    {"testApiKey"},
+				"X-API-Secret": {"testApiSecret"},
+				"Content-Type": {"application/json"},
 			}, m.Spy.Header)
 			assert.Equal(t, test.expectedOutput, customer)
 		})
@@ -97,9 +97,9 @@ func TestKycStatusState(t *testing.T) {
 			customer, _ := meta.KycStatusState(test.input)
 			assert.Equal(t, test.expectedOutput, customer)
 			assert.Equal(t, http.Header{
-				"XUMM_API_KEY":    {"testApiKey"},
-				"XUMM_API_SECRET": {"testApiSecret"},
-				"Content-Type":    {"application/json"},
+				"X-API-Key":    {"testApiKey"},
+				"X-API-Secret": {"testApiSecret"},
+				"Content-Type": {"application/json"},
 			}, m.Spy.Header)
 		})
 	}

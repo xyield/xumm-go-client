@@ -51,9 +51,9 @@ func TestPingEndpoint(t *testing.T) {
 	pong, err := meta.Ping()
 	assert.NoError(t, err)
 	assert.Equal(t, http.Header{
-		"XUMM_API_KEY":    {"testApiKey"},
-		"XUMM_API_SECRET": {"testApiSecret"},
-		"Content-Type":    {"application/json"},
+		"X-API-Key":    {"testApiKey"},
+		"X-API-Secret": {"testApiSecret"},
+		"Content-Type": {"application/json"},
 	}, m.Spy.Header)
 	assert.Equal(t, expected, pong)
 }
@@ -79,8 +79,8 @@ func TestPingEndpointErrorResponse(t *testing.T) {
 }
 
 // func TestPingEndpointErrorUnauthorisedResponse(t *testing.T) {
-// 	os.Setenv("XUMM_API_KEY", "testApiKey")
-// 	os.Setenv("XUMM_API_SECRET", "testApiSecret")
+// 	os.Setenv("X-API-Key", "testApiKey")
+// 	os.Setenv("X-API-Secret", "testApiSecret")
 // 	json := `{
 // 		"error": true,
 // 		"message": "Endpoint unknown or method invalid for given endpoint",

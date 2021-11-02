@@ -1,4 +1,4 @@
-package xumm
+package meta
 
 import (
 	"io/ioutil"
@@ -7,26 +7,27 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/xyield/xumm-go-client/models"
+	"github.com/xyield/xumm-go-client/xumm"
 )
 
 const (
 	XRPLTRANSACTIONENDPOINT = "/platform/xrpl-tx/"
 )
 
-func (c *SDK) XrplTransaction(txid string) (*models.XrpTxResponse, error) {
-	req, err := http.NewRequest(http.MethodGet, c.BaseURL+XRPLTRANSACTIONENDPOINT+txid, nil)
-	c.SetXummHeaders(req)
+func (m *Meta) XrplTransaction(txid string) (*models.XrpTxResponse, error) {
+	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+XRPLTRANSACTIONENDPOINT+txid, nil)
+	req.Header = m.Cfg.Headers
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	res, err := c.HTTPClient.Do(req)
+	res, err := m.Cfg.HTTPClient.Do(req)
 
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	err = checkForErrorResponse(res)
+	err = xumm.CheckForErrorResponse(res)
 	if err != nil {
 		log.Println(err)
 		return nil, err

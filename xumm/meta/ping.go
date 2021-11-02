@@ -1,4 +1,4 @@
-package xumm
+package meta
 
 import (
 	"io/ioutil"
@@ -7,31 +7,32 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/xyield/xumm-go-client/models"
+	"github.com/xyield/xumm-go-client/xumm"
 )
 
 const (
-	CURATEDASSETSENDPOINT = "/platform/curated-assets"
+	PINGENDPOINT = "/platform/ping"
 )
 
-func (c *SDK) CuratedAssets() (*models.CuratedAssetsResponse, error) {
-	req, err := http.NewRequest(http.MethodGet, c.BaseURL+CURATEDASSETSENDPOINT, nil)
-	c.SetXummHeaders(req)
+func (m *Meta) Ping() (*models.Pong, error) {
+	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+PINGENDPOINT, nil)
+	req.Header = m.Cfg.Headers
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	res, err := c.HTTPClient.Do(req)
+	res, err := m.Cfg.HTTPClient.Do(req)
 
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	err = checkForErrorResponse(res)
+	err = xumm.CheckForErrorResponse(res)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	var ca models.CuratedAssetsResponse
+	var p models.Pong
 
 	b, err := ioutil.ReadAll(res.Body)
 
@@ -40,10 +41,10 @@ func (c *SDK) CuratedAssets() (*models.CuratedAssetsResponse, error) {
 		return nil, err
 	}
 
-	if err = jsoniter.Unmarshal(b, &ca); err != nil {
+	if err = jsoniter.Unmarshal(b, &p); err != nil {
 		log.Println(err)
 		return nil, err
 	}
 
-	return &ca, nil
+	return &p, nil
 }

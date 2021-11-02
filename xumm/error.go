@@ -36,7 +36,7 @@ func (e *ErrorUnauthorised) Error() string {
 	return fmt.Sprintf("Error returned with code %v and message '%v'", e.Code, e.Message)
 }
 
-func checkForErrorResponse(res *http.Response) error {
+func CheckForErrorResponse(res *http.Response) error {
 	if res.StatusCode >= 200 && res.StatusCode <= 299 {
 		return nil
 	}

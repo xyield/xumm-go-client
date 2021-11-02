@@ -1,4 +1,4 @@
-package xumm
+package storage
 
 import (
 	"bytes"
@@ -8,26 +8,37 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/xyield/xumm-go-client/models"
+	"github.com/xyield/xumm-go-client/xumm"
 )
 
 const (
 	APPSTORAGEENDPOINT = "/platform/app-storage"
 )
 
-func (c *SDK) GetAppStorage() (*models.AppStorageResponse, error) {
-	req, err := http.NewRequest(http.MethodGet, c.BaseURL+APPSTORAGEENDPOINT, nil)
+type StorageInterface interface {
+	GetAppStorage() (*models.AppStorageResponse, error)
+	SetAppStorage(d map[string]interface{}) (*models.AppStorageResponse, error)
+	DeleteAppStorage() (*models.AppStorageResponse, error)
+}
+
+type Storage struct {
+	Cfg *xumm.Config
+}
+
+func (s *Storage) GetAppStorage() (*models.AppStorageResponse, error) {
+	req, err := http.NewRequest(http.MethodGet, s.Cfg.BaseURL+APPSTORAGEENDPOINT, nil)
 	if err != nil {
 		return nil, err
 	}
-	c.SetXummHeaders(req)
+	req.Header = s.Cfg.Headers
 
-	res, err := c.HTTPClient.Do(req)
+	res, err := s.Cfg.HTTPClient.Do(req)
 
 	if err != nil {
 		return nil, err
 	}
 
-	err = checkForErrorResponse(res)
+	err = xumm.CheckForErrorResponse(res)
 	if err != nil {
 		return nil, err
 	}
@@ -46,24 +57,24 @@ func (c *SDK) GetAppStorage() (*models.AppStorageResponse, error) {
 	return &as, nil
 }
 
-func (c *SDK) SetAppStorage(d map[string]interface{}) (*models.AppStorageResponse, error) {
+func (s *Storage) SetAppStorage(d map[string]interface{}) (*models.AppStorageResponse, error) {
 	reqBody, err := jsoniter.Marshal(d)
 
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	req, err := http.NewRequest(http.MethodPost, c.BaseURL+APPSTORAGEENDPOINT, bytes.NewReader(reqBody))
+	req, err := http.NewRequest(http.MethodPost, s.Cfg.BaseURL+APPSTORAGEENDPOINT, bytes.NewReader(reqBody))
 	if err != nil {
 		return nil, err
 	}
-	c.SetXummHeaders(req)
-	res, err := c.HTTPClient.Do(req)
+	req.Header = s.Cfg.Headers
+	res, err := s.Cfg.HTTPClient.Do(req)
 
 	if err != nil {
 		return nil, err
 	}
-	err = checkForErrorResponse(res)
+	err = xumm.CheckForErrorResponse(res)
 	if err != nil {
 		return nil, err
 	}
@@ -83,20 +94,20 @@ func (c *SDK) SetAppStorage(d map[string]interface{}) (*models.AppStorageRespons
 	return &as, nil
 }
 
-func (c *SDK) DeleteAppStorage() (*models.AppStorageResponse, error) {
-	req, err := http.NewRequest(http.MethodDelete, c.BaseURL+APPSTORAGEENDPOINT, nil)
-	if err != nil {
-		return nil, err
-	}
-	c.SetXummHeaders(req)
-
-	res, err := c.HTTPClient.Do(req)
-
+func (s *Storage) DeleteAppStorage() (*models.AppStorageResponse, error) {
+	req, err := http.NewRequest(http.MethodDelete, s.Cfg.BaseURL+APPSTORAGEENDPOINT, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	err = checkForErrorResponse(res)
+	req.Header = s.Cfg.Headers
+	res, err := s.Cfg.HTTPClient.Do(req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = xumm.CheckForErrorResponse(res)
 	if err != nil {
 		return nil, err
 	}

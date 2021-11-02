@@ -1,4 +1,4 @@
-package xumm
+package meta
 
 import (
 	"bytes"
@@ -8,6 +8,7 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/xyield/xumm-go-client/models"
+	"github.com/xyield/xumm-go-client/xumm"
 )
 
 const (
@@ -15,20 +16,20 @@ const (
 )
 
 // Get account status by xrp public address
-func (c *SDK) KycAccountStatus(a string) (*models.KycAccountStatusResponse, error) {
-	req, err := http.NewRequest(http.MethodGet, c.BaseURL+KYCACCOUNTSTATUSENDPOINT+a, nil)
-	c.SetXummHeaders(req)
+func (m *Meta) KycAccountStatus(a string) (*models.KycAccountStatusResponse, error) {
+	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+KYCACCOUNTSTATUSENDPOINT+a, nil)
+	req.Header = m.Cfg.Headers
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	res, err := c.HTTPClient.Do(req)
+	res, err := m.Cfg.HTTPClient.Do(req)
 
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	err = checkForErrorResponse(res)
+	err = xumm.CheckForErrorResponse(res)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -52,26 +53,26 @@ func (c *SDK) KycAccountStatus(a string) (*models.KycAccountStatusResponse, erro
 }
 
 //Get account status by user token body
-func (c *SDK) KycStatusState(body models.KycStatusStateRequest) (*models.KycStatusStateResponse, error) {
+func (m *Meta) KycStatusState(body models.KycStatusStateRequest) (*models.KycStatusStateResponse, error) {
 	reqBody, err := jsoniter.Marshal(body)
 
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	req, err := http.NewRequest(http.MethodPost, c.BaseURL+KYCACCOUNTSTATUSENDPOINT, bytes.NewReader(reqBody))
-	c.SetXummHeaders(req)
+	req, err := http.NewRequest(http.MethodPost, m.Cfg.BaseURL+KYCACCOUNTSTATUSENDPOINT, bytes.NewReader(reqBody))
+	req.Header = m.Cfg.Headers
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	res, err := c.HTTPClient.Do(req)
+	res, err := m.Cfg.HTTPClient.Do(req)
 
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	err = checkForErrorResponse(res)
+	err = xumm.CheckForErrorResponse(res)
 	if err != nil {
 		log.Println(err)
 		return nil, err

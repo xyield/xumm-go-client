@@ -1,11 +1,13 @@
-package xumm
+package storage
 
 import (
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/xyield/xumm-go-client/models"
 	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
+	"github.com/xyield/xumm-go-client/xumm"
 )
 
 func TestGetAppStorage(t *testing.T) {
@@ -14,6 +16,7 @@ func TestGetAppStorage(t *testing.T) {
 		response       string
 		expectedOutput *models.AppStorageResponse
 		expectedError  error
+		headers        map[string]string
 	}{
 		{
 			description: "Return app storage with no data",
@@ -148,10 +151,13 @@ func TestGetAppStorage(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.description, func(t *testing.T) {
 			m := &testutils.MockClient{}
+			cfg, _ := xumm.NewConfig(xumm.WithHttpClient(m), xumm.WithAuth("testApiKey", "testApiSecret"))
+			s := &Storage{
+				Cfg: cfg,
+			}
 			m.DoFunc = testutils.MockResponse(tt.response, 200, m)
 
-			c, _ := NewClient(WithHttpClient(m), WithAuth("testApiKey", "testApiSecret"))
-			as, err := c.GetAppStorage()
+			as, err := s.GetAppStorage()
 
 			if tt.expectedError != nil {
 				assert.Nil(t, as)
@@ -159,6 +165,11 @@ func TestGetAppStorage(t *testing.T) {
 				assert.EqualError(t, err, tt.expectedError.Error())
 			} else {
 				assert.NoError(t, err)
+				assert.Equal(t, http.Header{
+					"X-API-Key":    {"testApiKey"},
+					"X-API-Secret": {"testApiSecret"},
+					"Content-Type": {"application/json"},
+				}, m.Spy.Header)
 				assert.Equal(t, tt.expectedOutput, as)
 			}
 		})
@@ -239,8 +250,11 @@ func TestSetAppStorage(t *testing.T) {
 		t.Run(tt.description, func(t *testing.T) {
 			m := &testutils.MockClient{}
 			m.DoFunc = testutils.MockResponse(tt.response, 200, m)
-			c, _ := NewClient(WithHttpClient(m), WithAuth("testApiKey", "testApiSecret"))
-			as, err := c.SetAppStorage(tt.input)
+			c, _ := xumm.NewConfig(xumm.WithHttpClient(m), xumm.WithAuth("testApiKey", "testApiSecret"))
+			s := &Storage{
+				Cfg: c,
+			}
+			as, err := s.SetAppStorage(tt.input)
 
 			if tt.expectedError != nil {
 				assert.Nil(t, as)
@@ -287,8 +301,11 @@ func TestDeleteAppStorage(t *testing.T) {
 		t.Run(tt.description, func(t *testing.T) {
 			m := &testutils.MockClient{}
 			m.DoFunc = testutils.MockResponse(tt.response, 200, m)
-			c, _ := NewClient(WithHttpClient(m), WithAuth("testApiKey", "testApiSecret"))
-			as, err := c.DeleteAppStorage()
+			c, _ := xumm.NewConfig(xumm.WithHttpClient(m), xumm.WithAuth("testApiKey", "testApiSecret"))
+			s := &Storage{
+				Cfg: c,
+			}
+			as, err := s.DeleteAppStorage()
 
 			if tt.expectedError != nil {
 				assert.Nil(t, as)

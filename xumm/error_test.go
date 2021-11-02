@@ -22,7 +22,7 @@ func TestCheckForError(t *testing.T) {
 			StatusCode: http.StatusForbidden,
 			Body:       b,
 		}
-		err := checkForErrorResponse(res)
+		err := CheckForErrorResponse(res)
 		assert.Error(t, err)
 		assert.EqualValues(t, &ErrorResponse{ErrorResponseInternal: ErrorResponseInternal{Reference: "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c", Code: 812}}, err)
 		assert.EqualError(t, err, "Error returned with reference 3a04c7d3-94aa-4d8d-9559-62bb5e8a653c and code 812")

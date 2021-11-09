@@ -1,12 +1,11 @@
 package meta
 
 import (
-	"io/ioutil"
 	"log"
 	"net/http"
 
-	jsoniter "github.com/json-iterator/go"
 	"github.com/xyield/xumm-go-client/models"
+	"github.com/xyield/xumm-go-client/pkg/utils"
 	"github.com/xyield/xumm-go-client/xumm"
 )
 
@@ -33,19 +32,8 @@ func (m *Meta) XrplTransaction(txid string) (*models.XrpTxResponse, error) {
 		return nil, err
 	}
 
-	b, err := ioutil.ReadAll(res.Body)
-
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-
 	var tx models.XrpTxResponse
+	_, err = utils.DeserialiseRequest(&tx, res.Body)
 
-	if err = jsoniter.Unmarshal(b, &tx); err != nil {
-		log.Println(err)
-		return nil, err
-	}
-
-	return &tx, nil
+	return &tx, err
 }

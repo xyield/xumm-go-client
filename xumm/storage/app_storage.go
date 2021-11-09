@@ -2,12 +2,12 @@ package storage
 
 import (
 	"bytes"
-	"io/ioutil"
 	"log"
 	"net/http"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/xyield/xumm-go-client/models"
+	"github.com/xyield/xumm-go-client/pkg/utils"
 	"github.com/xyield/xumm-go-client/xumm"
 )
 
@@ -42,19 +42,11 @@ func (s *Storage) GetAppStorage() (*models.AppStorageResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	var as models.AppStorageResponse
+	_, err = utils.DeserialiseRequest(&as, res.Body)
 
-	b, err := ioutil.ReadAll(res.Body)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if err = jsoniter.Unmarshal(b, &as); err != nil {
-		return nil, err
-	}
-
-	return &as, nil
+	return &as, err
 }
 
 func (s *Storage) SetAppStorage(d map[string]interface{}) (*models.AppStorageResponse, error) {
@@ -79,19 +71,10 @@ func (s *Storage) SetAppStorage(d map[string]interface{}) (*models.AppStorageRes
 		return nil, err
 	}
 
-	resBody, err := ioutil.ReadAll(res.Body)
-
-	if err != nil {
-		return nil, err
-	}
-
 	var as models.AppStorageResponse
+	_, err = utils.DeserialiseRequest(&as, res.Body)
 
-	if err = jsoniter.Unmarshal(resBody, &as); err != nil {
-		return nil, err
-	}
-
-	return &as, nil
+	return &as, err
 }
 
 func (s *Storage) DeleteAppStorage() (*models.AppStorageResponse, error) {
@@ -111,17 +94,9 @@ func (s *Storage) DeleteAppStorage() (*models.AppStorageResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	var as models.AppStorageResponse
+	_, err = utils.DeserialiseRequest(&as, res.Body)
 
-	b, err := ioutil.ReadAll(res.Body)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if err = jsoniter.Unmarshal(b, &as); err != nil {
-		return nil, err
-	}
-
-	return &as, nil
+	return &as, err
 }

@@ -2,12 +2,10 @@ package xumm
 
 import (
 	"fmt"
-	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 
-	jsoniter "github.com/json-iterator/go"
+	"github.com/xyield/xumm-go-client/pkg/utils"
 )
 
 type ErrorResponse struct {
@@ -45,26 +43,12 @@ func CheckForErrorResponse(res *http.Response) error {
 	if res.StatusCode == 404 {
 		var e ErrorUnauthorised
 
-		DeserialiseRequest(&e, res.Body)
+		utils.DeserialiseRequest(&e, res.Body)
 		return &e
 	}
 
 	var e ErrorResponse
 
-	DeserialiseRequest(&e, res.Body)
+	utils.DeserialiseRequest(&e, res.Body)
 	return &e
-}
-
-// write test for this to check works with multiple interfaces
-func DeserialiseRequest(v interface{}, body io.ReadCloser) interface{} {
-	b, err := ioutil.ReadAll(body)
-	if err != nil {
-		log.Println(err)
-	}
-
-	err = jsoniter.Unmarshal(b, &v)
-	if err != nil {
-		log.Println(err)
-	}
-	return v
 }

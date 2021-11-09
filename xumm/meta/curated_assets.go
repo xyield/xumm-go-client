@@ -1,12 +1,11 @@
 package meta
 
 import (
-	"io/ioutil"
 	"log"
 	"net/http"
 
-	jsoniter "github.com/json-iterator/go"
 	"github.com/xyield/xumm-go-client/models"
+	"github.com/xyield/xumm-go-client/pkg/utils"
 	"github.com/xyield/xumm-go-client/xumm"
 )
 
@@ -34,17 +33,7 @@ func (m *Meta) CuratedAssets() (*models.CuratedAssetsResponse, error) {
 	}
 	var ca models.CuratedAssetsResponse
 
-	b, err := ioutil.ReadAll(res.Body)
+	_, err = utils.DeserialiseRequest(&ca, res.Body)
 
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-
-	if err = jsoniter.Unmarshal(b, &ca); err != nil {
-		log.Println(err)
-		return nil, err
-	}
-
-	return &ca, nil
+	return &ca, err
 }

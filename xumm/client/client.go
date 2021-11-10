@@ -4,12 +4,14 @@ import (
 	"github.com/xyield/xumm-go-client/xumm"
 	"github.com/xyield/xumm-go-client/xumm/meta"
 	"github.com/xyield/xumm-go-client/xumm/storage"
+	"github.com/xyield/xumm-go-client/xumm/xapp"
 )
 
 type Client struct {
 	Config  *xumm.Config
 	Storage storage.StorageInterface
 	Meta    meta.MetaInterface
+	Xapp    xapp.XappInterface
 }
 
 func New(cfg *xumm.Config) *Client {
@@ -19,6 +21,9 @@ func New(cfg *xumm.Config) *Client {
 			Cfg: cfg,
 		},
 		Meta: &meta.Meta{
+			Cfg: cfg,
+		},
+		Xapp: &xapp.Xapp{
 			Cfg: cfg,
 		},
 	}

@@ -45,8 +45,11 @@ func (s *Storage) GetAppStorage() (*models.AppStorageResponse, error) {
 
 	var as models.AppStorageResponse
 	_, err = utils.DeserialiseRequest(&as, res.Body)
+	if err != nil {
+		return nil, err
+	}
 
-	return &as, err
+	return &as, nil
 }
 
 func (s *Storage) SetAppStorage(d map[string]interface{}) (*models.AppStorageResponse, error) {
@@ -73,8 +76,11 @@ func (s *Storage) SetAppStorage(d map[string]interface{}) (*models.AppStorageRes
 
 	var as models.AppStorageResponse
 	_, err = utils.DeserialiseRequest(&as, res.Body)
+	if err != nil {
+		return nil, err
+	}
 
-	return &as, err
+	return &as, nil
 }
 
 func (s *Storage) DeleteAppStorage() (*models.AppStorageResponse, error) {
@@ -97,6 +103,9 @@ func (s *Storage) DeleteAppStorage() (*models.AppStorageResponse, error) {
 
 	var as models.AppStorageResponse
 	_, err = utils.DeserialiseRequest(&as, res.Body)
+	if err != nil {
+		return nil, err
+	}
 
-	return &as, err
+	return &as, nil
 }

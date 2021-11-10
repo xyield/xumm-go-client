@@ -37,8 +37,11 @@ func (m *Meta) KycAccountStatus(a string) (*models.KycAccountStatusResponse, err
 
 	var kyc models.KycAccountStatusResponse
 	_, err = utils.DeserialiseRequest(&kyc, res.Body)
+	if err != nil {
+		return nil, err
+	}
 
-	return &kyc, err
+	return &kyc, nil
 }
 
 //Get account status by user token body
@@ -69,6 +72,9 @@ func (m *Meta) KycStatusState(body models.KycStatusStateRequest) (*models.KycSta
 
 	var kyc models.KycStatusStateResponse
 	_, err = utils.DeserialiseRequest(&kyc, res.Body)
+	if err != nil {
+		return nil, err
+	}
 
-	return &kyc, err
+	return &kyc, nil
 }

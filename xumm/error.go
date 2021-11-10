@@ -49,6 +49,10 @@ func CheckForErrorResponse(res *http.Response) error {
 
 	var e ErrorResponse
 
-	utils.DeserialiseRequest(&e, res.Body)
+	_, err := utils.DeserialiseRequest(&e, res.Body)
+	if err != nil {
+		return err
+	}
+
 	return &e
 }

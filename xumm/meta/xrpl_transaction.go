@@ -34,6 +34,9 @@ func (m *Meta) XrplTransaction(txid string) (*models.XrpTxResponse, error) {
 
 	var tx models.XrpTxResponse
 	_, err = utils.DeserialiseRequest(&tx, res.Body)
+	if err != nil {
+		return nil, err
+	}
 
-	return &tx, err
+	return &tx, nil
 }

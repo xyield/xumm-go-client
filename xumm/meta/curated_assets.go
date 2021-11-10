@@ -34,6 +34,9 @@ func (m *Meta) CuratedAssets() (*models.CuratedAssetsResponse, error) {
 	var ca models.CuratedAssetsResponse
 
 	_, err = utils.DeserialiseRequest(&ca, res.Body)
+	if err != nil {
+		return nil, err
+	}
 
-	return &ca, err
+	return &ca, nil
 }

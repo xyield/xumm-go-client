@@ -37,5 +37,5 @@ func (m *Meta) Ping() (*models.Pong, error) {
 		return nil, err
 	}
 
-	return &p, err
+	return &p, nil
 }

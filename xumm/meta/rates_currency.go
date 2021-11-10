@@ -52,6 +52,9 @@ func (m *Meta) RatesCurrency(cur string) (*models.RatesCurrencyResponse, error) 
 
 	var rc models.RatesCurrencyResponse
 	_, err = utils.DeserialiseRequest(&rc, res.Body)
+	if err != nil {
+		return nil, err
+	}
 
-	return &rc, err
+	return &rc, nil
 }

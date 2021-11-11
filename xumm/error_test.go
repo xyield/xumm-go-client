@@ -67,13 +67,13 @@ func TestCheckForError(t *testing.T) {
 
 	t.Run("If unauthorised error returns function creates and logs an error", func(t *testing.T) {
 
-		expectedError := &ErrorUnauthorised{
+		expectedError := &ErrorNotFound{
 			Reference: "Endpoint unknown or method invalid for given endpoint",
 			Code:      404,
 			Message:   "message",
 			Req:       "/v1/platform/payload/payload_uuid",
 			Method:    "GET",
-			ErrorTest: true,
+			Err:       true,
 		}
 
 		json := `{
@@ -97,7 +97,7 @@ func TestCheckForError(t *testing.T) {
 	})
 	t.Run("If partial unauthorised error returns function creates and logs an error", func(t *testing.T) {
 
-		expectedError := &ErrorUnauthorised{
+		expectedError := &ErrorNotFound{
 			Reference: "Endpoint unknown or method invalid for given endpoint",
 			Code:      404,
 		}

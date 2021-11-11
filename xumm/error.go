@@ -20,8 +20,8 @@ type ErrorResponseBody struct {
 	Message   string `json:"message,omitempty"`
 }
 
-type ErrorUnauthorised struct {
-	ErrorTest bool   `json:"error,omitempty"`
+type ErrorNotFound struct {
+	Err       bool   `json:"error,omitempty"`
 	Message   string `json:"message,omitempty"`
 	Reference string `json:"reference"`
 	Code      int    `json:"code"`
@@ -44,7 +44,7 @@ func (e *ErrorResponse) Error() string {
 	return fmt.Sprintf("Error returned with reference %v and code %v", e.ErrorResponseBody.Reference, e.ErrorResponseBody.Code)
 }
 
-func (e *ErrorUnauthorised) Error() string {
+func (e *ErrorNotFound) Error() string {
 	if e.Message != "" {
 		return fmt.Sprintf("Error returned with code %v, reference '%v' and message '%v'", e.Code, e.Reference, e.Message)
 	}
@@ -58,7 +58,7 @@ func CheckForErrorResponse(res *http.Response) error {
 	log.Println("Error response received from Xumm")
 
 	if res.StatusCode == 404 {
-		var e ErrorUnauthorised
+		var e ErrorNotFound
 
 		DeserialiseRequest(&e, res.Body)
 		return &e

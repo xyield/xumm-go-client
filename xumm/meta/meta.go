@@ -1,8 +1,8 @@
 package meta
 
 import (
-	"github.com/xyield/xumm-go-client/models"
 	"github.com/xyield/xumm-go-client/xumm"
+	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
 type MetaInterface interface {

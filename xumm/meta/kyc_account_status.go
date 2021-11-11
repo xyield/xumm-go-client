@@ -6,9 +6,9 @@ import (
 	"net/http"
 
 	jsoniter "github.com/json-iterator/go"
-	"github.com/xyield/xumm-go-client/models"
 	"github.com/xyield/xumm-go-client/pkg/utils"
 	"github.com/xyield/xumm-go-client/xumm"
+	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
 const (

@@ -10,14 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TODO: we currently deserialise the request twice for all calls
-// 1. into a possible error interface
-// 2. into the actual response body if there are no erros from req
-// -> break into ReadAll and unmarshal fns instead
-
-// TODO: check error message from ReadAll and Unmarshall?
-// TODO: Update these structs from error to new interface - confusing?
-
 type testStruct struct {
 	ErrorMessage string `json:"message"`
 	ErrorCode    int    `json:"code"`

@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/xyield/xumm-go-client/models"
 	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
 	"github.com/xyield/xumm-go-client/xumm"
+	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
 func TestRatesCurrency(t *testing.T) {
@@ -43,6 +43,13 @@ func TestRatesCurrency(t *testing.T) {
 		}
 	  }`
 
+	errorJsonWithMessage := `{
+		"error": {  
+		  "reference": "7dfab34a-3563-4c67-b535-4e8fa36546ca",
+		  "message": "Unknown currency"
+		}
+	  }`
+
 	var tests = []struct {
 		testName       string
 		testValue      string
@@ -55,7 +62,8 @@ func TestRatesCurrency(t *testing.T) {
 		{testName: "correct data", testValue: "USD", inputValue: validJson, expectedOutput: c, expectedError: nil, httpStatusCode: 200},
 		{testName: "Incorrect length currency code", testValue: "USDaas", inputValue: errorJson, expectedOutput: nil, expectedError: &CurrencyCodeError{Code: "USDaas"}, httpStatusCode: -1},
 		{testName: "Incorrect characters in currency code", testValue: "US$", inputValue: errorJson, expectedOutput: nil, expectedError: &CurrencyCodeError{Code: "US$"}, httpStatusCode: -1},
-		{testName: "error response", testValue: "USD", inputValue: errorJson, expectedOutput: nil, expectedError: &xumm.ErrorResponse{ErrorResponseInternal: xumm.ErrorResponseInternal{Reference: "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c", Code: 812}}, httpStatusCode: 403},
+		{testName: "error response", testValue: "USD", inputValue: errorJson, expectedOutput: nil, expectedError: &xumm.ErrorResponse{ErrorResponseBody: xumm.ErrorResponseBody{Reference: "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c", Code: 812}}, httpStatusCode: 403},
+		{testName: "Unknown currency returns error with message", testValue: "ZZZ", inputValue: errorJsonWithMessage, expectedOutput: nil, expectedError: &xumm.ErrorResponse{ErrorResponseBody: xumm.ErrorResponseBody{Reference: "7dfab34a-3563-4c67-b535-4e8fa36546ca", Message: "Unknown currency"}}, httpStatusCode: 400},
 	}
 
 	for _, tt := range tests {

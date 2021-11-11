@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/xyield/xumm-go-client/models"
 	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
 	"github.com/xyield/xumm-go-client/xumm"
+	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
 func TestGetXappOtt(t *testing.T) {

@@ -1,13 +1,12 @@
 package xapp
 
 import (
-	"io/ioutil"
 	"log"
 	"net/http"
 
-	jsoniter "github.com/json-iterator/go"
-	"github.com/xyield/xumm-go-client/models"
+	"github.com/xyield/xumm-go-client/pkg/utils"
 	"github.com/xyield/xumm-go-client/xumm"
+	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
 // type invalidToken struct{}
@@ -41,24 +40,12 @@ func (x *Xapp) GetXappOtt(t string) (*models.XappResponse, error) {
 		return nil, err
 	}
 
-	b, err := ioutil.ReadAll(res.Body)
-
+	var xr models.XappResponse
+	_, err = utils.DeserialiseRequest(&xr, res.Body)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
 
-	var xr models.XappResponse
-
-	if err = jsoniter.Unmarshal(b, &xr); err != nil {
-		log.Println(err)
-		return nil, err
-	}
-
-	return &xr, nil
-
-	// var xr models.XappResponse
-	// _, err = utils.DeserialiseRequest(&xr, res.Body)
-
-	// return &xr, err
+	return &xr, err
 }

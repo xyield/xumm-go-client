@@ -1,13 +1,12 @@
 package meta
 
 import (
-	"io/ioutil"
 	"log"
 	"net/http"
 
-	jsoniter "github.com/json-iterator/go"
-	"github.com/xyield/xumm-go-client/models"
+	"github.com/xyield/xumm-go-client/pkg/utils"
 	"github.com/xyield/xumm-go-client/xumm"
+	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
 const (
@@ -33,16 +32,8 @@ func (m *Meta) Ping() (*models.Pong, error) {
 		return nil, err
 	}
 	var p models.Pong
-
-	b, err := ioutil.ReadAll(res.Body)
-
+	_, err = utils.DeserialiseRequest(&p, res.Body)
 	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-
-	if err = jsoniter.Unmarshal(b, &p); err != nil {
-		log.Println(err)
 		return nil, err
 	}
 

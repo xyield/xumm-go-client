@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/xyield/xumm-go-client/models"
 	"github.com/xyield/xumm-go-client/pkg/json"
 	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
 	"github.com/xyield/xumm-go-client/xumm"
+	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
 func TestXrplTx(t *testing.T) {

@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/xyield/xumm-go-client/models"
 	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
 	"github.com/xyield/xumm-go-client/xumm"
+	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
 func TestCuratedAssets(t *testing.T) {
@@ -82,7 +82,7 @@ func TestCuratedAssets(t *testing.T) {
 	}{
 
 		{testName: "correctData", inputValue: validJson, expectedOutput: car, expectedError: nil, httpStatusCode: 200},
-		{testName: "errorResponse", inputValue: errorJson, expectedOutput: nil, expectedError: &xumm.ErrorResponse{ErrorResponseInternal: xumm.ErrorResponseInternal{Reference: "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c", Code: 812}}, httpStatusCode: 403},
+		{testName: "errorResponse", inputValue: errorJson, expectedOutput: nil, expectedError: &xumm.ErrorResponse{ErrorResponseBody: xumm.ErrorResponseBody{Reference: "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c", Code: 812}}, httpStatusCode: 403},
 	}
 	for _, tt := range tests {
 

@@ -40,9 +40,6 @@ type errReader int
 func (errReader) Read(p []byte) (n int, err error) {
 	return 0, errors.New("test error")
 }
-func (errReader) Close() error {
-	return io.EOF
-}
 
 func TestDeserialiseRequest(t *testing.T) {
 
@@ -55,7 +52,7 @@ func TestDeserialiseRequest(t *testing.T) {
 		"message": "There is an error",
 		"code": 400
 	  }`
-	rc := io.NopCloser(strings.NewReader(jsonObj))
+	rc := strings.NewReader(jsonObj)
 
 	rcError := errReader(0)
 	var iError errorTest2
@@ -63,7 +60,7 @@ func TestDeserialiseRequest(t *testing.T) {
 	var tests = []struct {
 		testName       string
 		inputInterface interface{}
-		inputBody      io.ReadCloser
+		inputBody      io.Reader
 		expectedOutput interface{}
 		expectedError  bool
 	}{
@@ -84,7 +81,6 @@ func TestDeserialiseRequest(t *testing.T) {
 				assert.NoError(t, err)
 				assert.Equal(t, tt.expectedOutput, d)
 			}
-
 		})
 	}
 }

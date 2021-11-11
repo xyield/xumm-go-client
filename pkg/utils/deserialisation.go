@@ -8,7 +8,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
-func DeserialiseRequest(v interface{}, body io.ReadCloser) (interface{}, error) {
+func DeserialiseRequest(v interface{}, body io.Reader) (interface{}, error) {
 
 	b, err := ioutil.ReadAll(body)
 	if err != nil {

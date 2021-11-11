@@ -100,13 +100,12 @@ func TestCuratedAssets(t *testing.T) {
 				assert.Nil(t, ca)
 				assert.Error(t, err)
 				assert.EqualError(t, err, tt.expectedError.Error())
+			} else {
 				assert.Equal(t, http.Header{
 					"X-API-Key":    {"testApiKey"},
 					"X-API-Secret": {"testApiSecret"},
 					"Content-Type": {"application/json"},
 				}, m.Spy.Header)
-			} else {
-
 				assert.NoError(t, err)
 				assert.Equal(t, tt.expectedOutput, ca)
 			}

@@ -78,26 +78,25 @@ func TestPingEndpointErrorResponse(t *testing.T) {
 	assert.EqualError(t, err, "Error returned with reference 3a04c7d3-94aa-4d8d-9559-62bb5e8a653c and code 812")
 }
 
-// func TestPingEndpointErrorUnauthorisedResponse(t *testing.T) {
-// 	os.Setenv("X-API-Key", "testApiKey")
-// 	os.Setenv("X-API-Secret", "testApiSecret")
-// 	json := `{
-// 		"error": true,
-// 		"message": "Endpoint unknown or method invalid for given endpoint",
-// 		"reference": "",
-// 		"code": 404,
-// 		"req": "/v1/platform/payload/payload_uuid",
-// 		"method": "GET"
-// 	  }`
-// 	mockClient := &testutils.MockClient{
-// 		DoFunc: func(req *http.Request) (*http.Response, error) {
-// 			b := ioutil.NopCloser(bytes.NewReader([]byte(json)))
-// 			return &http.Response{StatusCode: 404, Body: b}, nil
-// 		},
-// 	}
-// 	c, _ := NewClient(WithHttpClient(mockClient))
-// 	p, err := c.Ping()
-// 	assert.Nil(t, p)
-// 	assert.Error(t, err)
-// 	assert.EqualError(t, err, "Error returned with code 404 and message 'Endpoint unknown or method invalid for given endpoint'")
-// }
+func TestPingEndpointErrorUnauthorisedResponse(t *testing.T) {
+	json := `{
+		"error": true,
+		"message": "Endpoint unknown or method invalid for given endpoint",
+		"reference": "",
+		"code": 404,
+		"req": "/v1/platform/payload/payload_uuid",
+		"method": "GET"
+	  }`
+
+	m := &testutils.MockClient{}
+	m.DoFunc = testutils.MockResponse(json, 404, m)
+	cfg, err := xumm.NewConfig(xumm.WithHttpClient(m), xumm.WithAuth("testApiKey", "testApiSecret"))
+	assert.NoError(t, err)
+	meta := &Meta{
+		Cfg: cfg,
+	}
+	p, err := meta.Ping()
+	assert.Nil(t, p)
+	assert.Error(t, err)
+	assert.EqualError(t, err, "Error returned with code 404, reference '' and message 'Endpoint unknown or method invalid for given endpoint'")
+}

@@ -2,13 +2,12 @@ package meta
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"regexp"
 
-	jsoniter "github.com/json-iterator/go"
 	"github.com/xyield/xumm-go-client/models"
+	"github.com/xyield/xumm-go-client/pkg/utils"
 	"github.com/xyield/xumm-go-client/xumm"
 )
 
@@ -51,17 +50,9 @@ func (m *Meta) RatesCurrency(cur string) (*models.RatesCurrencyResponse, error) 
 		return nil, err
 	}
 
-	b, err := ioutil.ReadAll(res.Body)
-
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-
 	var rc models.RatesCurrencyResponse
-
-	if err = jsoniter.Unmarshal(b, &rc); err != nil {
-		log.Println(err)
+	_, err = utils.DeserialiseRequest(&rc, res.Body)
+	if err != nil {
 		return nil, err
 	}
 

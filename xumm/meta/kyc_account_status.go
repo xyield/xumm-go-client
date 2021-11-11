@@ -2,12 +2,12 @@ package meta
 
 import (
 	"bytes"
-	"io/ioutil"
 	"log"
 	"net/http"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/xyield/xumm-go-client/models"
+	"github.com/xyield/xumm-go-client/pkg/utils"
 	"github.com/xyield/xumm-go-client/xumm"
 )
 
@@ -35,17 +35,9 @@ func (m *Meta) KycAccountStatus(a string) (*models.KycAccountStatusResponse, err
 		return nil, err
 	}
 
-	b, err := ioutil.ReadAll(res.Body)
-
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-
 	var kyc models.KycAccountStatusResponse
-
-	if err = jsoniter.Unmarshal(b, &kyc); err != nil {
-		log.Println(err)
+	_, err = utils.DeserialiseRequest(&kyc, res.Body)
+	if err != nil {
 		return nil, err
 	}
 
@@ -78,17 +70,9 @@ func (m *Meta) KycStatusState(body models.KycStatusStateRequest) (*models.KycSta
 		return nil, err
 	}
 
-	resBody, err := ioutil.ReadAll(res.Body)
-
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-
 	var kyc models.KycStatusStateResponse
-
-	if err = jsoniter.Unmarshal(resBody, &kyc); err != nil {
-		log.Println(err)
+	_, err = utils.DeserialiseRequest(&kyc, res.Body)
+	if err != nil {
 		return nil, err
 	}
 

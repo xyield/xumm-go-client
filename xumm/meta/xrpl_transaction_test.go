@@ -47,7 +47,7 @@ func TestXrplTx(t *testing.T) {
 		Transaction: *txJson,
 	}
 
-	json := testutils.ConvertJsonFileToString("static-test-data/xrpl_transaction_test.json")
+	json := testutils.ConvertJsonFileToJsonString("static-test-data/xrpl_transaction_test.json")
 
 	var tests = []struct {
 		testName       string

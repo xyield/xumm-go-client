@@ -10,6 +10,10 @@ type XummPostPayload struct {
 	CustomMeta *XummCustomMeta         `json:"custom_meta,omitempty"`
 }
 
+type JsonTransaction struct {
+	TransactionType string `json:"TransactionType,omitempty"`
+}
+
 type XummPostPayloadOptions struct {
 	Submit    bool                             `json:"submit,omitempty"`
 	Multisign bool                             `json:"multisign,omitempty"`

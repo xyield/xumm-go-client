@@ -33,33 +33,33 @@ func TestPostPayload(t *testing.T) {
 			},
 			jsonRequest: testutils.ConvertJsonFileToJsonString("static-test-data/post_payload_request.json"),
 			jsonResponse: `{
-				"uuid": "<payload-uuid>",
+				"uuid": "95516771-5c9e-4b90-ab04-116c938ddba4",
 				"next": {
-				  "always": "https://xumm.app/sign/<payload-uuid>",
-				  "no_push_msg_received": "https://xumm.app/sign/<payload-uuid>/qr"
+				  "always": "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4",
+				  "no_push_msg_received": "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4/qr"
 				},
 				"refs": {
-				  "qr_png": "https://xumm.app/sign/<payload-uuid>_q.png",
-				  "qr_matrix": "https://xumm.app/sign/<payload-uuid>_q.json",
+				  "qr_png": "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4_q.png",
+				  "qr_matrix": "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4_q.json",
 				  "qr_uri_quality_opts": [
 					"m",
 					"q",
 					"h"
 				  ],
-				  "websocket_status": "wss://xumm.app/sign/<payload-uuid>"
+				  "websocket_status": "wss://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4"
 				},
 				"pushed": true
 			  }`,
 			expectedOutput: &models.XummPostPayloadResponse{
-				UUID: "<payload-uuid>",
+				UUID: "95516771-5c9e-4b90-ab04-116c938ddba4",
 				Next: models.Next{
-					Always:            "https://xumm.app/sign/<payload-uuid>",
-					NoPushMsgReceived: "https://xumm.app/sign/<payload-uuid>/qr",
+					Always:            "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4",
+					NoPushMsgReceived: "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4/qr",
 				},
 				Refs: models.Refs{
-					WebsocketStatus: "wss://xumm.app/sign/<payload-uuid>",
-					QrPng:           "https://xumm.app/sign/<payload-uuid>_q.png",
-					QrMatrix:        "https://xumm.app/sign/<payload-uuid>_q.json",
+					WebsocketStatus: "wss://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4",
+					QrPng:           "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4_q.png",
+					QrMatrix:        "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4_q.json",
 					QrURIQualityOpts: []string{
 						"m",
 						"q",
@@ -81,33 +81,33 @@ func TestPostPayload(t *testing.T) {
 			},
 			jsonRequest: testutils.ConvertJsonFileToJsonString("static-test-data/post_payload_invalid_request.json"),
 			jsonResponse: `{
-				"uuid": "<payload-uuid>",
+				"uuid": "95516771-5c9e-4b90-ab04-116c938ddba4",
 				"next": {
-				  "always": "https://xumm.app/sign/<payload-uuid>",
-				  "no_push_msg_received": "https://xumm.app/sign/<payload-uuid>/qr"
+				  "always": "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4",
+				  "no_push_msg_received": "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4/qr"
 				},
 				"refs": {
-				  "qr_png": "https://xumm.app/sign/<payload-uuid>_q.png",
-				  "qr_matrix": "https://xumm.app/sign/<payload-uuid>_q.json",
+				  "qr_png": "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4_q.png",
+				  "qr_matrix": "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4_q.json",
 				  "qr_uri_quality_opts": [
 					"m",
 					"q",
 					"h"
 				  ],
-				  "websocket_status": "wss://xumm.app/sign/<payload-uuid>"
+				  "websocket_status": "wss://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4"
 				},
 				"pushed": true
 			  }`,
 			expectedOutput: &models.XummPostPayloadResponse{
-				UUID: "<payload-uuid>",
+				UUID: "95516771-5c9e-4b90-ab04-116c938ddba4",
 				Next: models.Next{
-					Always:            "https://xumm.app/sign/<payload-uuid>",
-					NoPushMsgReceived: "https://xumm.app/sign/<payload-uuid>/qr",
+					Always:            "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4",
+					NoPushMsgReceived: "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4/qr",
 				},
 				Refs: models.Refs{
-					WebsocketStatus: "wss://xumm.app/sign/<payload-uuid>",
-					QrPng:           "https://xumm.app/sign/<payload-uuid>_q.png",
-					QrMatrix:        "https://xumm.app/sign/<payload-uuid>_q.json",
+					WebsocketStatus: "wss://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4",
+					QrPng:           "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4_q.png",
+					QrMatrix:        "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4_q.json",
 					QrURIQualityOpts: []string{
 						"m",
 						"q",
@@ -139,7 +139,7 @@ func TestPostPayload(t *testing.T) {
 				assert.EqualError(t, err, tt.expectedError.Error())
 			} else {
 				body, _ := ioutil.ReadAll(m.Spy.Body)
-				assert.Equal(t, tt.jsonRequest, string(body))
+				assert.JSONEq(t, tt.jsonRequest, string(body))
 				assert.Equal(t, http.Header{
 					"X-API-Key":    {"testApiKey"},
 					"X-API-Secret": {"testApiSecret"},

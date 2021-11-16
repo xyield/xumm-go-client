@@ -15,7 +15,7 @@ func TestConvertFileToJsonString(t *testing.T) {
 		{
 			description:    "Test spaces in values aren't removed",
 			inputFileName:  "static-test-data/jsonmap_with_spaces_in_values.json",
-			expectedOutput: "{\"string\":\"Hello\",\"sentence\":\"Hello World, testing 1,2...\"}",
+			expectedOutput: "{\"string\":\"Hello\",\"sentence\":\"Hello World, testing 1,2...\",\"int\":5}",
 		},
 		{
 			description:    "Test nested objects in json map",

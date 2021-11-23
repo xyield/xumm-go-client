@@ -25,21 +25,6 @@ func (p *Payload) PostPayload(body models.XummPostPayload) (*models.XummPostPayl
 		if _, ok := transactionTypeFromString[tx.(string)]; !ok {
 			return nil, &TransactionTypeError{}
 		}
-		// tx, err := jsoniter.Marshal(body.TxJson)
-		// if err != nil {
-		// 	log.Println(err)
-		// 	return nil, err
-		// }
-		// var jt models.JsonTransaction
-		// _, err = utils.DeserialiseRequest(&jt, bytes.NewReader(tx))
-		// if err != nil {
-		// 	log.Println(err)
-		// 	return nil, err
-		// }
-		// if jt.TransactionType == "" {
-		// 	log.Println("No valid transaction type provided in TxJson")
-		// 	return nil, &TransactionTypeError{}
-		// }
 	}
 
 	reqBody, err := jsoniter.Marshal(body)

@@ -16,7 +16,6 @@ func (e *TransactionTypeError) Error() string {
 }
 
 const (
-	// Invalid TransactionType = iota
 	SignIn TransactionType = 1 << iota
 	Payment
 	OfferCreate

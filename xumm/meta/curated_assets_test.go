@@ -65,7 +65,7 @@ func TestCuratedAssets(t *testing.T) {
 		},
 	}
 
-	validJson := testutils.ConvertJsonFileToString("static-test-data/curated_assets_test.json")
+	validJson := testutils.ConvertJsonFileToJsonString("static-test-data/curated_assets_test.json")
 	errorJson := `{
 		"error": {
 		  "reference": "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c",
@@ -73,7 +73,7 @@ func TestCuratedAssets(t *testing.T) {
 		}
 	  }`
 
-	var tests = []struct {
+	tests := []struct {
 		testName       string
 		inputValue     string
 		expectedOutput *models.CuratedAssetsResponse
@@ -100,13 +100,12 @@ func TestCuratedAssets(t *testing.T) {
 				assert.Nil(t, ca)
 				assert.Error(t, err)
 				assert.EqualError(t, err, tt.expectedError.Error())
+			} else {
 				assert.Equal(t, http.Header{
 					"X-API-Key":    {"testApiKey"},
 					"X-API-Secret": {"testApiSecret"},
 					"Content-Type": {"application/json"},
 				}, m.Spy.Header)
-			} else {
-
 				assert.NoError(t, err)
 				assert.Equal(t, tt.expectedOutput, ca)
 			}

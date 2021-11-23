@@ -24,11 +24,11 @@ func TestPostPayload(t *testing.T) {
 		httpStatusCode int
 	}{
 		{
-			description: "sucessful POST paylaod request",
+			description: "sucessful POST payload request",
 			payloadRequest: &models.XummPostPayload{
 				UserToken: "token",
 				TxJson: json.AnyJson{
-					"TransactionType": "payment",
+					"TransactionType": "Payment",
 				},
 			},
 			jsonRequest: testutils.ConvertJsonFileToJsonString("static-test-data/post_payload_request.json"),

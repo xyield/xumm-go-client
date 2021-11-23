@@ -1,6 +1,6 @@
 {
     "user_token": "token",
     "txjson": {
-        "TransactionType": "payment"
+        "TransactionType": "Payment"
     }
 }

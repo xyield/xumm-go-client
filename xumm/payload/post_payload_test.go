@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/xyield/xumm-go-client/pkg/json"
+	anyjson "github.com/xyield/xumm-go-client/pkg/json"
 	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
 	"github.com/xyield/xumm-go-client/xumm"
 	"github.com/xyield/xumm-go-client/xumm/models"
@@ -24,10 +24,10 @@ func TestPostPayload(t *testing.T) {
 		httpStatusCode int
 	}{
 		{
-			description: "sucessful POST payload request",
+			description: "successful POST payload request",
 			payloadRequest: &models.XummPostPayload{
 				UserToken: "token",
-				TxJson: json.AnyJson{
+				TxJson: anyjson.AnyJson{
 					"TransactionType": "Payment",
 				},
 			},
@@ -75,7 +75,7 @@ func TestPostPayload(t *testing.T) {
 			description: "unsucessful POST paylaod request - no transactionType",
 			payloadRequest: &models.XummPostPayload{
 				UserToken: "token",
-				TxJson: json.AnyJson{
+				TxJson: anyjson.AnyJson{
 					"noTransactionType": "test",
 				},
 			},
@@ -118,6 +118,25 @@ func TestPostPayload(t *testing.T) {
 			},
 			expectedError:  &TransactionTypeError{},
 			httpStatusCode: 0,
+		},
+		{
+			description: "unsucessful POST paylaod request - bad request/duplicate",
+			payloadRequest: &models.XummPostPayload{
+				UserToken: "token",
+				TxJson: anyjson.AnyJson{
+					"TransactionType": "Payment",
+				},
+			},
+			jsonRequest: testutils.ConvertJsonFileToJsonString("static-test-data/post_payload_request.json"),
+			jsonResponse: `{
+				"error": {
+				  "reference": "95516771-5c9e-4b90-ab04-116c938ddba4",
+				  "code": 600
+				}
+			  }`,
+			expectedOutput: nil,
+			expectedError:  &xumm.ErrorResponse{ErrorResponseBody: xumm.ErrorResponseBody{Reference: "95516771-5c9e-4b90-ab04-116c938ddba4", Code: 600}},
+			httpStatusCode: 400,
 		},
 	}
 

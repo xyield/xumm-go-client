@@ -26,7 +26,11 @@ func (p *Payload) GetPayloadByUuid(uuid string) (*models.PayloadUuidResponse, er
 		return nil, &EmptyUuidError{}
 	}
 
-	req, err := http.NewRequest(http.MethodGet, p.Cfg.BaseURL+GETPAYLOADBYUUIDENDPOINT+uuid, nil)
+	return GetPayload(p, uuid)
+}
+
+func GetPayload(p *Payload, endpt string) (*models.PayloadUuidResponse, error) {
+	req, err := http.NewRequest(http.MethodGet, p.Cfg.BaseURL+GETPAYLOADBYUUIDENDPOINT+endpt, nil)
 	if err != nil {
 		log.Println(err)
 		return nil, err

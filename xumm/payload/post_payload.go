@@ -34,12 +34,13 @@ func (p *Payload) PostPayload(body models.XummPostPayload) (*models.XummPostPayl
 	}
 
 	req, err := http.NewRequest(http.MethodGet, p.Cfg.BaseURL+POSTPAYLOADENDPOINT, bytes.NewReader(reqBody))
-
-	req.Header = p.Cfg.Headers
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
+
+	req.Header = p.Cfg.Headers
+
 	res, err := p.Cfg.HTTPClient.Do(req)
 
 	if err != nil {

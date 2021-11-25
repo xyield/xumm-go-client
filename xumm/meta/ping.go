@@ -21,7 +21,6 @@ func (m *Meta) Ping() (*models.Pong, error) {
 		return nil, err
 	}
 	res, err := m.Cfg.HTTPClient.Do(req)
-
 	if err != nil {
 		log.Println(err)
 		return nil, err

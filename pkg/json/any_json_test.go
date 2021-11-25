@@ -1,4 +1,4 @@
-package json
+package anyjson
 
 import (
 	"encoding/json"

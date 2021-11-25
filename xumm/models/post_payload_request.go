@@ -1,10 +1,10 @@
 package models
 
-import "github.com/xyield/xumm-go-client/pkg/json"
+import anyjson "github.com/xyield/xumm-go-client/pkg/json"
 
 type XummPostPayload struct {
 	UserToken  string                  `json:"user_token,omitempty"`
-	TxJson     json.AnyJson            `json:"txjson,omitempty"`
+	TxJson     anyjson.AnyJson         `json:"txjson,omitempty"`
 	TxBlob     string                  `json:"txblob,omitempty"`
 	Options    *XummPostPayloadOptions `json:"options,omitempty"`
 	CustomMeta *XummCustomMeta         `json:"custom_meta,omitempty"`
@@ -23,7 +23,7 @@ type XummPostPayloadOptionsReturnUrl struct {
 }
 
 type XummCustomMeta struct {
-	Identifier  string       `json:"identifier"`
-	Blob        json.AnyJson `json:"blob"`
-	Instruction string       `json:"instruction"`
+	Identifier  string          `json:"identifier"`
+	Blob        anyjson.AnyJson `json:"blob"`
+	Instruction string          `json:"instruction"`
 }

@@ -16,7 +16,12 @@ func DeserialiseRequest(v interface{}, body io.Reader) (interface{}, error) {
 		return nil, err
 	}
 
-	err = jsoniter.Unmarshal(b, &v)
+	return UnmarshalResponse(v, b)
+}
+
+func UnmarshalResponse(v interface{}, b []byte) (interface{}, error) {
+
+	err := jsoniter.Unmarshal(b, &v)
 	if err != nil {
 		log.Println(err)
 		return nil, err

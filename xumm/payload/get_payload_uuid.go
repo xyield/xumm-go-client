@@ -20,7 +20,7 @@ func (e *EmptyUuidError) Error() string {
 	return "Empty UUID provided."
 }
 
-func (p *Payload) GetPayloadByUuid(uuid string) (*models.PayloadUuidResponse, error) {
+func (p *Payload) GetPayloadByUuid(uuid string) (*models.XummPayload, error) {
 
 	if uuid == "" {
 		return nil, &EmptyUuidError{}
@@ -29,7 +29,7 @@ func (p *Payload) GetPayloadByUuid(uuid string) (*models.PayloadUuidResponse, er
 	return GetPayload(p, uuid)
 }
 
-func GetPayload(p *Payload, endpt string) (*models.PayloadUuidResponse, error) {
+func GetPayload(p *Payload, endpt string) (*models.XummPayload, error) {
 	req, err := http.NewRequest(http.MethodGet, p.Cfg.BaseURL+GETPAYLOADBYUUIDENDPOINT+endpt, nil)
 	if err != nil {
 		log.Println(err)
@@ -50,7 +50,7 @@ func GetPayload(p *Payload, endpt string) (*models.PayloadUuidResponse, error) {
 		return nil, err
 	}
 
-	var pur models.PayloadUuidResponse
+	var pur models.XummPayload
 
 	_, err = utils.DeserialiseRequest(&pur, res.Body)
 	if err != nil {

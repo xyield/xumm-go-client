@@ -17,7 +17,7 @@ func TestGetPayloadUuid(t *testing.T) {
 		description      string
 		uuid             string
 		jsonResponse     string
-		expectedOutput   *models.PayloadUuidResponse
+		expectedOutput   *models.XummPayload
 		expectedError    error
 		httpResponseCode int
 	}{
@@ -25,7 +25,7 @@ func TestGetPayloadUuid(t *testing.T) {
 			description:  "valid uuid",
 			uuid:         "f94fc5d2-0dfe-4123-9182-a9f3b5addc8a",
 			jsonResponse: testutils.ConvertJsonFileToJsonString("static-test-data/valid_get_payload_response.json"),
-			expectedOutput: &models.PayloadUuidResponse{
+			expectedOutput: &models.XummPayload{
 				Meta: models.PayloadMeta{
 					Exists:              true,
 					UUID:                "f94fc5d2-0dfe-4123-9182-a9f3b5addc8a",

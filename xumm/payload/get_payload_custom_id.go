@@ -15,7 +15,7 @@ func (e *EmptyIdError) Error() string {
 	return "Empty custom ID provided."
 }
 
-func (p *Payload) GetPayloadByCustomId(customId string) (*models.PayloadUuidResponse, error) {
+func (p *Payload) GetPayloadByCustomId(customId string) (*models.XummPayload, error) {
 
 	if customId == "" {
 		return nil, &EmptyIdError{}

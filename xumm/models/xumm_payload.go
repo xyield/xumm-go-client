@@ -4,7 +4,7 @@ import (
 	anyjson "github.com/xyield/xumm-go-client/pkg/json"
 )
 
-type PayloadUuidResponse struct {
+type XummPayload struct {
 	Meta        PayloadMeta        `json:"meta"`
 	CustomMeta  XummCustomMeta     `json:"custom_meta"`
 	Application PayloadApplication `json:"application"`

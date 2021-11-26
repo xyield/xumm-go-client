@@ -19,7 +19,7 @@ func TestPostPayload(t *testing.T) {
 		payloadRequest *models.XummPostPayload
 		jsonRequest    string
 		jsonResponse   string
-		expectedOutput *models.XummPostPayloadResponse
+		expectedOutput *models.CreatedPayload
 		expectedError  error
 		httpStatusCode int
 	}{
@@ -50,7 +50,7 @@ func TestPostPayload(t *testing.T) {
 				},
 				"pushed": true
 			  }`,
-			expectedOutput: &models.XummPostPayloadResponse{
+			expectedOutput: &models.CreatedPayload{
 				UUID: "95516771-5c9e-4b90-ab04-116c938ddba4",
 				Next: models.Next{
 					Always:            "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4",
@@ -98,7 +98,7 @@ func TestPostPayload(t *testing.T) {
 				},
 				"pushed": true
 			  }`,
-			expectedOutput: &models.XummPostPayloadResponse{
+			expectedOutput: &models.CreatedPayload{
 				UUID: "95516771-5c9e-4b90-ab04-116c938ddba4",
 				Next: models.Next{
 					Always:            "https://xumm.app/sign/95516771-5c9e-4b90-ab04-116c938ddba4",

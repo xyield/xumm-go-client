@@ -1,6 +1,6 @@
 package models
 
-type XummPostPayloadResponse struct {
+type CreatedPayload struct {
 	UUID   string `json:"uuid"`
 	Next   Next   `json:"next"`
 	Refs   Refs   `json:"refs"`

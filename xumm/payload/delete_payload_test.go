@@ -69,11 +69,11 @@ func TestDeletePayloadByUuid(t *testing.T) {
 					Instruction: "Hey ❤️ ...",
 				},
 			},
-			statusCode: 200,
-			expectedError: ,
+			statusCode:    200,
+			expectedError: nil,
 		},
 		{
-			description: "OK but no cancelled",
+			description: "OK but not cancelled",
 			uuid:        "XXX",
 			jsonResponse: `{
 				"result": {
@@ -121,8 +121,8 @@ func TestDeletePayloadByUuid(t *testing.T) {
 					CustomInstruction:   "Hey ❤️ ...",
 				},
 			},
-			statusCode: 200,
-			expectedError: ,
+			statusCode:    200,
+			expectedError: nil,
 		},
 	}
 }

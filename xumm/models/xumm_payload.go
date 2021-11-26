@@ -24,26 +24,26 @@ type XummCancelResult struct {
 }
 
 type PayloadMeta struct {
-	Exists              bool        `json:"exists,omitempty"`
-	UUID                string      `json:"uuid"`
-	Multisign           bool        `json:"multisign,omitempty"`
-	Submit              bool        `json:"submit,omitempty"`
-	Destination         string      `json:"destination,omitempty"`
-	ResolvedDestination string      `json:"resolved_destination,omitempty"`
-	Finished            bool        `json:"finished,omitempty"`
-	Resolved            bool        `json:"resolved,omitempty"`
-	Signed              bool        `json:"signed,omitempty"`
-	Cancelled           bool        `json:"cancelled,omitempty"`
-	Expired             bool        `json:"expired,omitempty"`
-	Pushed              bool        `json:"pushed,omitempty"`
-	AppOpened           bool        `json:"app_opened,omitempty"`
-	OpenedByDeeplink    interface{} `json:"opened_by_deeplink,omitempty"`
-	ReturnURLApp        string      `json:"return_url_app,omitempty"`
-	ReturnURLWeb        interface{} `json:"return_url_web,omitempty"`
-	CustomIdentifier    string      `json:"custom_identifier,omitempty"`
-	CustomBlob          string      `json:"custom_blob,omitempty"`
-	CustomInstruction   string      `json:"custom_instruction,omitempty"`
-	IsXapp              bool        `json:"is_xapp,omitempty"`
+	Exists              bool            `json:"exists,omitempty"`
+	UUID                string          `json:"uuid"`
+	Multisign           bool            `json:"multisign,omitempty"`
+	Submit              bool            `json:"submit,omitempty"`
+	Destination         string          `json:"destination,omitempty"`
+	ResolvedDestination string          `json:"resolved_destination,omitempty"`
+	Finished            bool            `json:"finished,omitempty"`
+	Resolved            bool            `json:"resolved,omitempty"`
+	Signed              bool            `json:"signed,omitempty"`
+	Cancelled           bool            `json:"cancelled,omitempty"`
+	Expired             bool            `json:"expired,omitempty"`
+	Pushed              bool            `json:"pushed,omitempty"`
+	AppOpened           bool            `json:"app_opened,omitempty"`
+	OpenedByDeeplink    interface{}     `json:"opened_by_deeplink,omitempty"`
+	ReturnURLApp        string          `json:"return_url_app,omitempty"`
+	ReturnURLWeb        interface{}     `json:"return_url_web,omitempty"`
+	CustomIdentifier    string          `json:"custom_identifier,omitempty"`
+	CustomBlob          anyjson.AnyJson `json:"custom_blob,omitempty"`
+	CustomInstruction   string          `json:"custom_instruction,omitempty"`
+	IsXapp              bool            `json:"is_xapp,omitempty"`
 }
 
 type PayloadApplication struct {

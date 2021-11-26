@@ -129,7 +129,7 @@ func TestGetPayloadUuid(t *testing.T) {
 				Cfg: c,
 			}
 
-			pr, err := p.GetPayloadByUuid(test.uuid)
+			pr, err := p.GetPayloadByUUID(test.uuid)
 
 			if test.expectedError != nil {
 				assert.Nil(t, pr)

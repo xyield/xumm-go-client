@@ -21,5 +21,5 @@ func (p *Payload) GetPayloadByCustomId(customId string) (*models.XummPayload, er
 		return nil, &EmptyIdError{}
 	}
 
-	return GetPayload(p, customId)
+	return GetPayload(p, GETPAYLOADBYCUSTOMIDENDPOINT+customId)
 }

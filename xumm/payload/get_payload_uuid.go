@@ -9,10 +9,6 @@ import (
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
-const (
-	GETPAYLOADBYUUIDENDPOINT = "/platform/payload/"
-)
-
 type EmptyUuidError struct {
 }
 
@@ -20,17 +16,17 @@ func (e *EmptyUuidError) Error() string {
 	return "Empty UUID provided."
 }
 
-func (p *Payload) GetPayloadByUuid(uuid string) (*models.XummPayload, error) {
+func (p *Payload) GetPayloadByUUID(uuid string) (*models.XummPayload, error) {
 
 	if uuid == "" {
 		return nil, &EmptyUuidError{}
 	}
 
-	return GetPayload(p, uuid)
+	return GetPayload(p, PAYLOADENDPOINT+uuid)
 }
 
 func GetPayload(p *Payload, endpt string) (*models.XummPayload, error) {
-	req, err := http.NewRequest(http.MethodGet, p.Cfg.BaseURL+GETPAYLOADBYUUIDENDPOINT+endpt, nil)
+	req, err := http.NewRequest(http.MethodGet, p.Cfg.BaseURL+endpt, nil)
 	if err != nil {
 		log.Println(err)
 		return nil, err

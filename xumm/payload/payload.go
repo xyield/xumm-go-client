@@ -7,8 +7,9 @@ import (
 
 type PayloadInterface interface {
 	PostPayload(models.XummPostPayload) (*models.CreatedPayload, error)
-	GetPayloadByUuid(uuid string) (*models.XummPayload, error)
+	GetPayloadByUUID(uuid string) (*models.XummPayload, error)
 	GetPayloadByCustomId(customId string) (*models.XummPayload, error)
+	CancelPayloadByUUID(uuid string) (*models.XummDeletePayloadResponse, error)
 }
 
 type Payload struct {

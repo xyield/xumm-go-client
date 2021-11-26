@@ -1,13 +1,17 @@
 package payload
 
 import (
+	"net/http"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	anyjson "github.com/xyield/xumm-go-client/pkg/json"
+	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
+	"github.com/xyield/xumm-go-client/xumm"
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
-func TestDeletePayloadByUuid(t *testing.T) {
+func TestCancelPayloadByUuid(t *testing.T) {
 	tt := []struct {
 		description    string
 		uuid           string
@@ -26,7 +30,7 @@ func TestDeletePayloadByUuid(t *testing.T) {
 				},
 				"meta": {
 				  "exists": true,
-				  "uuid": "<some-uuid>",
+				  "uuid": "XXX",
 				  "multisign": false,
 				  "submit": true,
 				  "destination": "rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY",
@@ -51,7 +55,7 @@ func TestDeletePayloadByUuid(t *testing.T) {
 				},
 				Meta: models.PayloadMeta{
 					Exists:              true,
-					UUID:                "<some-uuid>",
+					UUID:                "XXX",
 					Multisign:           false,
 					Submit:              true,
 					Destination:         "rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY",
@@ -82,7 +86,7 @@ func TestDeletePayloadByUuid(t *testing.T) {
 				},
 				"meta": {
 				  "exists": true,
-				  "uuid": "<some-uuid>",
+				  "uuid": "XXX",
 				  "multisign": false,
 				  "submit": true,
 				  "destination": "rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY",
@@ -105,7 +109,7 @@ func TestDeletePayloadByUuid(t *testing.T) {
 				},
 				Meta: models.PayloadMeta{
 					Exists:              true,
-					UUID:                "<some-uuid>",
+					UUID:                "XXX",
 					Multisign:           false,
 					Submit:              true,
 					Destination:         "rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY",
@@ -124,5 +128,31 @@ func TestDeletePayloadByUuid(t *testing.T) {
 			statusCode:    200,
 			expectedError: nil,
 		},
+	}
+
+	for _, test := range tt {
+		t.Run(test.description, func(t *testing.T) {
+			m := &testutils.MockClient{}
+			m.DoFunc = testutils.MockResponse(test.jsonResponse, test.statusCode, m)
+			c, _ := xumm.NewConfig(xumm.WithHttpClient(m), xumm.WithAuth("testApiKey", "testApiSecret"))
+			p := &Payload{
+				Cfg: c,
+			}
+			res, err := p.CancelPayloadByUUID(test.uuid)
+
+			if test.expectedError != nil {
+				assert.Nil(t, res)
+				assert.Error(t, err)
+				assert.EqualError(t, err, test.expectedError.Error())
+			} else {
+				assert.Equal(t, http.Header{
+					"X-API-Key":    {"testApiKey"},
+					"X-API-Secret": {"testApiSecret"},
+					"Content-Type": {"application/json"},
+				}, m.Spy.Header)
+				assert.NoError(t, err)
+				assert.Equal(t, test.expectedOutput, res)
+			}
+		})
 	}
 }

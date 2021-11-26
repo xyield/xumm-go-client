@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	POSTPAYLOADENDPOINT = "/platform/payload"
+	PAYLOADENDPOINT = "/platform/payload"
 )
 
 func (p *Payload) PostPayload(body models.XummPostPayload) (*models.CreatedPayload, error) {
@@ -33,7 +33,7 @@ func (p *Payload) PostPayload(body models.XummPostPayload) (*models.CreatedPaylo
 		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodGet, p.Cfg.BaseURL+POSTPAYLOADENDPOINT, bytes.NewReader(reqBody))
+	req, err := http.NewRequest(http.MethodGet, p.Cfg.BaseURL+PAYLOADENDPOINT, bytes.NewReader(reqBody))
 	if err != nil {
 		log.Println(err)
 		return nil, err

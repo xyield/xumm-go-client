@@ -11,19 +11,19 @@ import (
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
-func TestGetPayloadUuid(t *testing.T) {
+func TestGetPayloadCustomId(t *testing.T) {
 
 	tt := []struct {
 		description      string
-		uuid             string
+		customId         string
 		jsonResponse     string
 		expectedOutput   *models.XummPayload
 		expectedError    error
 		httpResponseCode int
 	}{
 		{
-			description:  "valid uuid",
-			uuid:         "f94fc5d2-0dfe-4123-9182-a9f3b5addc8a",
+			description:  "Successful get request with custom Id",
+			customId:     "123456789",
 			jsonResponse: testutils.ConvertJsonFileToJsonString("static-test-data/valid_get_payload_response.json"),
 			expectedOutput: &models.XummPayload{
 				Meta: models.PayloadMeta{
@@ -81,29 +81,29 @@ func TestGetPayloadUuid(t *testing.T) {
 			httpResponseCode: 200,
 		},
 		{
-			description:      "Empty uuid provided",
-			uuid:             "",
+			description:      "Invalid custom Id provided",
+			customId:         "",
 			jsonResponse:     "",
 			expectedOutput:   nil,
-			expectedError:    &EmptyUuidError{},
+			expectedError:    &EmptyIdError{},
 			httpResponseCode: 0,
 		},
 		{
-			description: "uuid not found",
-			uuid:        "XXX",
+			description: "Custom Id not found",
+			customId:    "XXX",
 			jsonResponse: `{
 				"error": {
-					"reference": "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c",
+					"reference": "d1ad8cf2-1e4a-4d7d-b1f5-5c692770bd28",
 					"code": 404
 				}
 			}`,
 			expectedOutput:   nil,
-			expectedError:    &xumm.ErrorResponse{ErrorResponseBody: xumm.ErrorResponseBody{Reference: "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c", Code: 404}},
+			expectedError:    &xumm.ErrorResponse{ErrorResponseBody: xumm.ErrorResponseBody{Reference: "d1ad8cf2-1e4a-4d7d-b1f5-5c692770bd28", Code: 404}},
 			httpResponseCode: 404,
 		},
 		{
-			description: "uuid error",
-			uuid:        "XXX",
+			description: "Custom Id error",
+			customId:    "XXX",
 			jsonResponse: `{
 				"error": true,
 				"message": "Endpoint unknown or method invalid for given endpoint",
@@ -118,6 +118,7 @@ func TestGetPayloadUuid(t *testing.T) {
 			httpResponseCode: 404,
 		},
 	}
+
 	for _, test := range tt {
 		t.Run(test.description, func(t *testing.T) {
 
@@ -129,7 +130,7 @@ func TestGetPayloadUuid(t *testing.T) {
 				Cfg: c,
 			}
 
-			pr, err := p.GetPayloadByUuid(test.uuid)
+			pr, err := p.GetPayloadByCustomId(test.customId)
 
 			if test.expectedError != nil {
 				assert.Nil(t, pr)

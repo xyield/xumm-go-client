@@ -15,7 +15,7 @@ const (
 	POSTPAYLOADENDPOINT = "/platform/payload"
 )
 
-func (p *Payload) PostPayload(body models.XummPostPayload) (*models.XummPostPayloadResponse, error) {
+func (p *Payload) PostPayload(body models.XummPostPayload) (*models.CreatedPayload, error) {
 
 	if body.TxJson != nil {
 		if _, ok := body.TxJson["TransactionType"]; !ok {
@@ -54,7 +54,7 @@ func (p *Payload) PostPayload(body models.XummPostPayload) (*models.XummPostPayl
 		return nil, err
 	}
 
-	var pr models.XummPostPayloadResponse
+	var pr models.CreatedPayload
 	_, err = utils.DeserialiseRequest(&pr, res.Body)
 	if err != nil {
 		return nil, err

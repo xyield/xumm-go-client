@@ -128,6 +128,35 @@ func TestCancelPayloadByUuid(t *testing.T) {
 			statusCode:    200,
 			expectedError: nil,
 		},
+		{
+			description: "Cancel payload error",
+			uuid:        "XXX",
+			jsonResponse: `{
+				"error": {
+				  "reference": "d1ad8cf2-1e4a-4d7d-b1f5-5c692770bd28",
+				  "code": 404
+				}
+			  }`,
+			expectedOutput: nil,
+			statusCode:     404,
+			expectedError:  &xumm.ErrorResponse{ErrorResponseBody: xumm.ErrorResponseBody{Reference: "d1ad8cf2-1e4a-4d7d-b1f5-5c692770bd28", Code: 404}},
+		},
+		{
+			description: "UUID error",
+			uuid:        "XXX",
+			jsonResponse: `{
+				"error": true,
+				"message": "Endpoint unknown or method invalid for given endpoint",
+				"reference": "",
+				"code": 404,
+				"req": "/v1/platform/payload/xxx",
+				"method": "DELETE"
+			  }`,
+			expectedOutput: nil,
+			statusCode:     404,
+			expectedError: &xumm.ErrorNotFound{Err: true, Message: "Endpoint unknown or method invalid for given endpoint", Reference: "",
+				Code: 404, Req: "/v1/platform/payload/xxx", Method: "DELETE"},
+		},
 	}
 
 	for _, test := range tt {

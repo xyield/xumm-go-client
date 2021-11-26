@@ -81,7 +81,7 @@ func TestGetPayloadCustomId(t *testing.T) {
 			httpResponseCode: 200,
 		},
 		{
-			description:      "Invaid custom Id provided",
+			description:      "Invalid custom Id provided",
 			customId:         "",
 			jsonResponse:     "",
 			expectedOutput:   nil,

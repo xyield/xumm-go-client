@@ -54,11 +54,11 @@ func (s *Storage) GetAppStorage() (*models.AppStorageResponse, error) {
 
 func (s *Storage) SetAppStorage(d map[string]interface{}) (*models.AppStorageResponse, error) {
 	reqBody, err := jsoniter.Marshal(d)
-
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
+
 	req, err := http.NewRequest(http.MethodPost, s.Cfg.BaseURL+APPSTORAGEENDPOINT, bytes.NewReader(reqBody))
 	if err != nil {
 		return nil, err

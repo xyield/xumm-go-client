@@ -1,4 +1,4 @@
-package meta
+package payload
 
 import (
 	"log"
@@ -9,32 +9,33 @@ import (
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
-const (
-	PINGENDPOINT = "/platform/ping"
-)
+func (p *Payload) CancelPayloadByUUID(uuid string) (*models.XummDeletePayloadResponse, error) {
+	req, err := http.NewRequest(http.MethodGet, p.Cfg.BaseURL+PAYLOADENDPOINT+uuid, nil)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
 
-func (m *Meta) Ping() (*models.Pong, error) {
-	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+PINGENDPOINT, nil)
-	req.Header = m.Cfg.Headers
+	req.Header = p.Cfg.Headers
+
+	res, err := p.Cfg.HTTPClient.Do(req)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	res, err := m.Cfg.HTTPClient.Do(req)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
+
 	err = xumm.CheckForErrorResponse(res)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	var p models.Pong
-	_, err = utils.DeserialiseRequest(&p, res.Body)
+
+	var dr models.XummDeletePayloadResponse
+
+	_, err = utils.DeserialiseRequest(&dr, res.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return &p, nil
+	return &dr, nil
 }

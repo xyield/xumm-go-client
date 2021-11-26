@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func ConvertJsonFileToString(fn string) string {
+func ConvertJsonFileToJsonString(fn string) string {
 	f, err := os.Open(fn)
 
 	if err != nil {

@@ -2,9 +2,11 @@ package xumm
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 
+	anyjson "github.com/xyield/xumm-go-client/pkg/json"
 	"github.com/xyield/xumm-go-client/pkg/utils"
 )
 
@@ -28,9 +30,6 @@ type ErrorNotFound struct {
 }
 
 func (e *ErrorResponse) Error() string {
-
-	// Possible combos: {ref, code} {ref, message} {ref, code, message}
-
 	if e.ErrorResponseBody.Message != "" && e.ErrorResponseBody.Code != 0 {
 		return fmt.Sprintf("Error returned with reference %v, code %v and message '%v'", e.ErrorResponseBody.Reference, e.ErrorResponseBody.Code, e.ErrorResponseBody.Message)
 	}
@@ -56,10 +55,32 @@ func CheckForErrorResponse(res *http.Response) error {
 	log.Println("Error response received from Xumm")
 
 	if res.StatusCode == 404 {
-		var e ErrorNotFound
 
-		utils.DeserialiseRequest(&e, res.Body)
-		return &e
+		b, _ := ioutil.ReadAll(res.Body)
+		var aj anyjson.AnyJson
+		_, err := utils.UnmarshalResponse(&aj, b)
+		if err != nil {
+			return err
+		}
+
+		if _, ok := aj["code"]; ok {
+
+			var e ErrorNotFound
+
+			_, err := utils.UnmarshalResponse(&e, b)
+			if err != nil {
+				return err
+			}
+			return &e
+		} else {
+			var e ErrorResponse
+
+			_, err := utils.UnmarshalResponse(&e, b)
+			if err != nil {
+				return err
+			}
+			return &e
+		}
 	}
 
 	var e ErrorResponse

@@ -12,32 +12,6 @@ import (
 
 func TestGetXappOtt(t *testing.T) {
 
-	testJson := `{
-		"locale": "en",
-		"version": "1.0.1",
-		"account": "r...",
-		"accountaccess": "FULL",
-		"accounttype": "REGULAR",
-		"style": "LIGHT",
-		"origin": {
-		"type": "TX",
-		"data": {
-			"txid": "..."
-		}
-		},
-		"user": "XUMM-App-UserUUID",
-		"user_device": {
-		"currency": "EUR"
-		}
-	}`
-
-	errorJson := `{
-		"error": {
-		  "reference": "000000-81ba-4b3c-baa4-b2ff3c1b445e",
-		  "code": 400
-		}
-	  }`
-
 	outputXappResponse := &models.XappResponse{
 		Locale:        "en",
 		Version:       "1.0.1",
@@ -58,20 +32,63 @@ func TestGetXappOtt(t *testing.T) {
 	}
 
 	var tests = []struct {
-		testName       string
+		description    string
 		ottInput       string
 		jsonResponse   string
 		expectedOutput *models.XappResponse
 		expectedError  error
 		httpStatusCode int
 	}{
-		{testName: "valid get ott", ottInput: "token", jsonResponse: testJson, expectedOutput: outputXappResponse, expectedError: nil, httpStatusCode: 200},
-		{testName: "check ottInput isn't empty", ottInput: "", jsonResponse: testJson, expectedOutput: nil, expectedError: &InvalidToken{}, httpStatusCode: 0},
-		{testName: "error response", ottInput: "token", jsonResponse: errorJson, expectedOutput: nil, expectedError: &xumm.ErrorResponse{ErrorResponseBody: xumm.ErrorResponseBody{Reference: "000000-81ba-4b3c-baa4-b2ff3c1b445e", Code: 400}}, httpStatusCode: 400},
+		{
+			description: "valid get ott",
+			ottInput:    "token",
+			jsonResponse: `{
+				"locale": "en",
+				"version": "1.0.1",
+				"account": "r...",
+				"accountaccess": "FULL",
+				"accounttype": "REGULAR",
+				"style": "LIGHT",
+				"origin": {
+				"type": "TX",
+				"data": {
+					"txid": "..."
+				}
+				},
+				"user": "XUMM-App-UserUUID",
+				"user_device": {
+				"currency": "EUR"
+				}
+			}`,
+			expectedOutput: outputXappResponse,
+			expectedError:  nil,
+			httpStatusCode: 200,
+		},
+		{
+			description:    "check ottInput isn't empty",
+			ottInput:       "",
+			jsonResponse:   "",
+			expectedOutput: nil,
+			expectedError:  &InvalidToken{},
+			httpStatusCode: 0,
+		},
+		{
+			description: "error response",
+			ottInput:    "token",
+			jsonResponse: `{
+				"error": {
+				  "reference": "000000-81ba-4b3c-baa4-b2ff3c1b445e",
+				  "code": 400
+				}
+			  }`,
+			expectedOutput: nil,
+			expectedError:  &xumm.ErrorResponse{ErrorResponseBody: xumm.ErrorResponseBody{Reference: "000000-81ba-4b3c-baa4-b2ff3c1b445e", Code: 400}},
+			httpStatusCode: 400,
+		},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.testName, func(t *testing.T) {
+		t.Run(tt.description, func(t *testing.T) {
 			m := &testutils.MockClient{}
 			m.DoFunc = testutils.MockResponse(tt.jsonResponse, tt.httpStatusCode, m)
 			cfg, err := xumm.NewConfig(xumm.WithHttpClient(m), xumm.WithAuth("testApiKey", "testApiSecret"))

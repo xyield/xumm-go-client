@@ -1,6 +1,7 @@
 package xapp
 
 import (
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -30,6 +31,13 @@ func TestGetXappOtt(t *testing.T) {
 		}
 	}`
 
+	errorJson := `{
+		"error": {
+		  "reference": "000000-81ba-4b3c-baa4-b2ff3c1b445e",
+		  "code": 400
+		}
+	  }`
+
 	outputXappResponse := &models.XappResponse{
 		Locale:        "en",
 		Version:       "1.0.1",
@@ -58,7 +66,8 @@ func TestGetXappOtt(t *testing.T) {
 		httpStatusCode int
 	}{
 		{testName: "valid get ott", ottInput: "token", jsonResponse: testJson, expectedOutput: outputXappResponse, expectedError: nil, httpStatusCode: 200},
-		// {testName: "check ottInput isn't empty", ottInput: "", jsonResponse: testJson, expectedOutput: nil, expectedError: invalidToken, httpStatusCode: 0},
+		{testName: "check ottInput isn't empty", ottInput: "", jsonResponse: testJson, expectedOutput: nil, expectedError: &InvalidToken{}, httpStatusCode: 0},
+		{testName: "error response", ottInput: "token", jsonResponse: errorJson, expectedOutput: nil, expectedError: &xumm.ErrorResponse{ErrorResponseBody: xumm.ErrorResponseBody{Reference: "000000-81ba-4b3c-baa4-b2ff3c1b445e", Code: 400}}, httpStatusCode: 400},
 	}
 
 	for _, tt := range tests {
@@ -71,9 +80,21 @@ func TestGetXappOtt(t *testing.T) {
 				Cfg: cfg,
 			}
 
-			xr, _ := xapp.GetXappOtt(tt.ottInput)
+			xr, err := xapp.GetXappOtt(tt.ottInput)
 
-			assert.Equal(t, tt.expectedOutput, xr)
+			if tt.expectedError != nil {
+				assert.Nil(t, xr)
+				assert.Error(t, err)
+				assert.EqualError(t, err, tt.expectedError.Error())
+			} else {
+				assert.Equal(t, http.Header{
+					"X-API-Key":    {"testApiKey"},
+					"X-API-Secret": {"testApiSecret"},
+					"Content-Type": {"application/json"},
+				}, m.Spy.Header)
+				assert.NoError(t, err)
+				assert.Equal(t, tt.expectedOutput, xr)
+			}
 		})
 	}
 }

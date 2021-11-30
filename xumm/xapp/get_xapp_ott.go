@@ -1,6 +1,7 @@
 package xapp
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -9,19 +10,23 @@ import (
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
-// type invalidToken struct{}
+type InvalidToken struct{}
 
-// func (e *invalidToken) Error() string {
-// 	return fmt.Sprintln("Invalid OTT entered")
-// }
+func (e *InvalidToken) Error() string {
+	return fmt.Sprintln("Invalid OTT entered")
+}
 
 const (
-	GETXAPPOTTENDPOINT = "/platform/xapp/ott/"
+	XAPPENDPOINT = "/platform/xapp/"
 )
 
 func (x *Xapp) GetXappOtt(t string) (*models.XappResponse, error) {
 
-	req, err := http.NewRequest(http.MethodGet, x.Cfg.BaseURL+GETXAPPOTTENDPOINT+t, nil)
+	if t == "" {
+		return nil, &InvalidToken{}
+	}
+
+	req, err := http.NewRequest(http.MethodGet, x.Cfg.BaseURL+XAPPENDPOINT+"ott/"+t, nil)
 	req.Header = x.Cfg.Headers
 	if err != nil {
 		log.Println(err)

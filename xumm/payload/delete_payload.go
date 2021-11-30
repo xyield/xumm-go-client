@@ -10,7 +10,7 @@ import (
 )
 
 func (p *Payload) CancelPayloadByUUID(uuid string) (*models.XummDeletePayloadResponse, error) {
-	req, err := http.NewRequest(http.MethodGet, p.Cfg.BaseURL+PAYLOADENDPOINT+uuid, nil)
+	req, err := http.NewRequest(http.MethodDelete, p.Cfg.BaseURL+PAYLOADENDPOINT+uuid, nil)
 	if err != nil {
 		log.Println(err)
 		return nil, err

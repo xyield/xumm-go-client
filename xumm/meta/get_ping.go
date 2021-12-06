@@ -10,18 +10,17 @@ import (
 )
 
 const (
-	XRPLTRANSACTIONENDPOINT = "/platform/xrpl-tx/"
+	PINGENDPOINT = "/platform/ping"
 )
 
-func (m *Meta) XrplTransaction(txid string) (*models.XrpTxResponse, error) {
-	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+XRPLTRANSACTIONENDPOINT+txid, nil)
+func (m *Meta) GetPing() (*models.Pong, error) {
+	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+PINGENDPOINT, nil)
 	req.Header = m.Cfg.Headers
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
 	res, err := m.Cfg.HTTPClient.Do(req)
-
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -31,12 +30,11 @@ func (m *Meta) XrplTransaction(txid string) (*models.XrpTxResponse, error) {
 		log.Println(err)
 		return nil, err
 	}
-
-	var tx models.XrpTxResponse
-	_, err = utils.DeserialiseRequest(&tx, res.Body)
+	var p models.Pong
+	_, err = utils.DeserialiseRequest(&p, res.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return &tx, nil
+	return &p, nil
 }

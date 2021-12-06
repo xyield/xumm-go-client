@@ -48,7 +48,7 @@ func TestPingEndpoint(t *testing.T) {
 	meta := &Meta{
 		Cfg: cfg,
 	}
-	pong, err := meta.Ping()
+	pong, err := meta.GetPing()
 	assert.NoError(t, err)
 	assert.Equal(t, http.Header{
 		"X-API-Key":    {"testApiKey"},
@@ -58,7 +58,7 @@ func TestPingEndpoint(t *testing.T) {
 	assert.Equal(t, expected, pong)
 }
 
-func TestPingEndpointErrorResponse(t *testing.T) {
+func TestGetPingEndpointErrorResponse(t *testing.T) {
 	json := `{
 		"error": {
 			"reference": "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c",
@@ -72,13 +72,13 @@ func TestPingEndpointErrorResponse(t *testing.T) {
 	meta := &Meta{
 		Cfg: cfg,
 	}
-	p, err := meta.Ping()
+	p, err := meta.GetPing()
 	assert.Nil(t, p)
 	assert.Error(t, err)
 	assert.EqualError(t, err, "Error returned with reference 3a04c7d3-94aa-4d8d-9559-62bb5e8a653c and code 812")
 }
 
-func TestPingEndpointErrorUnauthorisedResponse(t *testing.T) {
+func TestGetPingEndpointErrorUnauthorisedResponse(t *testing.T) {
 	json := `{
 		"error": true,
 		"message": "Endpoint unknown or method invalid for given endpoint",
@@ -95,7 +95,7 @@ func TestPingEndpointErrorUnauthorisedResponse(t *testing.T) {
 	meta := &Meta{
 		Cfg: cfg,
 	}
-	p, err := meta.Ping()
+	p, err := meta.GetPing()
 	assert.Nil(t, p)
 	assert.Error(t, err)
 	assert.EqualError(t, err, "Error returned with code 404, reference '' and message 'Endpoint unknown or method invalid for given endpoint'")

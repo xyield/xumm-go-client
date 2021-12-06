@@ -6,12 +6,12 @@ import (
 )
 
 type MetaInterface interface {
-	Ping() (*models.Pong, error)
-	CuratedAssets() (*models.CuratedAssetsResponse, error)
+	GetPing() (*models.Pong, error)
+	GetCuratedAssets() (*models.CuratedAssetsResponse, error)
 	KycAccountStatus(a string) (*models.KycAccountStatusResponse, error)
 	KycStatusState(body models.KycStatusStateRequest) (*models.KycStatusStateResponse, error)
-	RatesCurrency(cur string) (*models.RatesCurrencyResponse, error)
-	XrplTransaction(txid string) (*models.XrpTxResponse, error)
+	GetRatesForCurrency(cur string) (*models.RatesCurrencyResponse, error)
+	GetXrplTransaction(txid string) (*models.XrpTxResponse, error)
 }
 
 type Meta struct {

@@ -28,7 +28,7 @@ func main() {
         fmt.Println(err)
     }
 
-    p, err := c.Ping()
+    p, err := c.GetPing()
 
     if err != nil {
         // Handle error here

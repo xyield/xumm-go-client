@@ -10,17 +10,18 @@ import (
 )
 
 const (
-	PINGENDPOINT = "/platform/ping"
+	CURATEDASSETSENDPOINT = "/platform/curated-assets"
 )
 
-func (m *Meta) Ping() (*models.Pong, error) {
-	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+PINGENDPOINT, nil)
+func (m *Meta) GetCuratedAssets() (*models.CuratedAssetsResponse, error) {
+	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+CURATEDASSETSENDPOINT, nil)
 	req.Header = m.Cfg.Headers
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
 	res, err := m.Cfg.HTTPClient.Do(req)
+
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -30,11 +31,12 @@ func (m *Meta) Ping() (*models.Pong, error) {
 		log.Println(err)
 		return nil, err
 	}
-	var p models.Pong
-	_, err = utils.DeserialiseRequest(&p, res.Body)
+	var ca models.CuratedAssetsResponse
+
+	_, err = utils.DeserialiseRequest(&ca, res.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return &p, nil
+	return &ca, nil
 }

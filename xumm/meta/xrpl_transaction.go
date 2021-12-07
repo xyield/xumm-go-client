@@ -15,7 +15,7 @@ const (
 
 func (m *Meta) XrplTransaction(txid string) (*models.XrpTxResponse, error) {
 	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+XRPLTRANSACTIONENDPOINT+txid, nil)
-	req.Header = m.Cfg.Headers
+	req.Header = m.Cfg.GetHeaders()
 	if err != nil {
 		log.Println(err)
 		return nil, err

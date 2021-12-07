@@ -32,7 +32,7 @@ func GetPayload(p *Payload, endpt string) (*models.XummPayload, error) {
 		return nil, err
 	}
 
-	req.Header = p.Cfg.Headers
+	req.Header = p.Cfg.GetHeaders()
 
 	res, err := p.Cfg.HTTPClient.Do(req)
 	if err != nil {

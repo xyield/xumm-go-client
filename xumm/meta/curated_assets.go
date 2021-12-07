@@ -15,7 +15,7 @@ const (
 
 func (m *Meta) CuratedAssets() (*models.CuratedAssetsResponse, error) {
 	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+CURATEDASSETSENDPOINT, nil)
-	req.Header = m.Cfg.Headers
+	req.Header = m.Cfg.GetHeaders()
 	if err != nil {
 		log.Println(err)
 		return nil, err

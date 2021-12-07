@@ -33,7 +33,7 @@ func (m *Meta) RatesCurrency(cur string) (*models.RatesCurrencyResponse, error) 
 
 	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+RATESCURRENCYENDPOINT+cur, nil)
 
-	req.Header = m.Cfg.Headers
+	req.Header = m.Cfg.GetHeaders()
 	if err != nil {
 		log.Println(err)
 		return nil, err

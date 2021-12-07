@@ -20,7 +20,7 @@ type Config struct {
 	BaseURL    string
 	ApiKey     string
 	ApiSecret  string
-	Headers    map[string][]string
+	headers    map[string][]string
 }
 
 type ConfigOpt func(cfg *Config)
@@ -49,7 +49,7 @@ func NewConfig(opts ...ConfigOpt) (*Config, error) {
 		}
 		cfg.ApiSecret = apiSecret
 
-		cfg.Headers = map[string][]string{
+		cfg.headers = map[string][]string{
 			"X-API-Key":    {apiKey},
 			"X-API-Secret": {apiSecret},
 			"Content-Type": {"application/json"},
@@ -78,10 +78,26 @@ func WithAuth(key, secret string) ConfigOpt {
 	return func(cfg *Config) {
 		cfg.ApiKey = key
 		cfg.ApiSecret = secret
-		cfg.Headers = map[string][]string{
+		cfg.headers = map[string][]string{
 			"X-API-Key":    {key},
 			"X-API-Secret": {secret},
 			"Content-Type": {"application/json"},
 		}
 	}
+}
+
+func (cfg *Config) AddHeader(key, value string) {
+
+	newHeaders := make(map[string][]string)
+	h := cfg.headers
+	for k, v := range h {
+		newHeaders[k] = v
+	}
+	newHeaders[key] = []string{value}
+
+	cfg.headers = newHeaders
+}
+
+func (cfg *Config) GetHeaders() map[string][]string {
+	return cfg.headers
 }

@@ -30,7 +30,7 @@ func (s *Storage) GetAppStorage() (*models.AppStorageResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header = s.Cfg.Headers
+	req.Header = s.Cfg.GetHeaders()
 
 	res, err := s.Cfg.HTTPClient.Do(req)
 
@@ -63,7 +63,7 @@ func (s *Storage) SetAppStorage(d map[string]interface{}) (*models.AppStorageRes
 	if err != nil {
 		return nil, err
 	}
-	req.Header = s.Cfg.Headers
+	req.Header = s.Cfg.GetHeaders()
 	res, err := s.Cfg.HTTPClient.Do(req)
 
 	if err != nil {
@@ -89,7 +89,7 @@ func (s *Storage) DeleteAppStorage() (*models.AppStorageResponse, error) {
 		return nil, err
 	}
 
-	req.Header = s.Cfg.Headers
+	req.Header = s.Cfg.GetHeaders()
 	res, err := s.Cfg.HTTPClient.Do(req)
 
 	if err != nil {

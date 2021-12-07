@@ -12,10 +12,7 @@ import (
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
-func TestPostXappEvent(t *testing.T) {
-
-	f := new(bool)
-	*f = false
+func TestPostXappPush(t *testing.T) {
 
 	var tests = []struct {
 		description    string
@@ -27,30 +24,7 @@ func TestPostXappEvent(t *testing.T) {
 		httpStatusCode int
 	}{
 		{
-			description: "successfully create event with 'silent' set to false",
-			request: models.XappRequest{
-				UserToken: "token",
-				Subtitle:  "subtitle",
-				Body:      "body",
-				Data:      anyjson.AnyJson{},
-				Silent:    f,
-			},
-			jsonRequest: `{
-				"user_token": "token",
-				"subtitle": "subtitle",
-				"body": "body",
-				"silent": false
-			}`,
-			jsonResponse: `{
-				"pushed": true,
-				"uuid": "token"
-			  }`,
-			expectedOutput: &models.XappResponse{Pushed: true, UUID: "token"},
-			expectedError:  nil,
-			httpStatusCode: 200,
-		},
-		{
-			description: "successfully create event without 'silent' set",
+			description: "successfully create push",
 			request: models.XappRequest{
 				UserToken: "token",
 				Subtitle:  "subtitle",
@@ -63,10 +37,9 @@ func TestPostXappEvent(t *testing.T) {
 				"body": "body"
 			}`,
 			jsonResponse: `{
-				"pushed": true,
-				"uuid": "token"
+				"pushed": true
 			  }`,
-			expectedOutput: &models.XappResponse{Pushed: true, UUID: "token"},
+			expectedOutput: &models.XappResponse{Pushed: true},
 			expectedError:  nil,
 			httpStatusCode: 200,
 		},
@@ -77,22 +50,20 @@ func TestPostXappEvent(t *testing.T) {
 				Subtitle:  "",
 				Body:      "body",
 				Data:      anyjson.AnyJson{},
-				Silent:    f,
 			},
 			jsonRequest:    "",
 			jsonResponse:   "",
 			expectedOutput: nil,
-			expectedError:  &invalidEventRequestError{},
+			expectedError:  &invalidPushRequestError{},
 			httpStatusCode: 200,
 		},
 		{
-			description: "error creating event",
+			description: "error creating push",
 			request: models.XappRequest{
 				UserToken: "token",
 				Subtitle:  "subtitle",
 				Body:      "body",
 				Data:      anyjson.AnyJson{},
-				Silent:    f,
 			},
 			jsonRequest: `{
 				"user_token": "token",
@@ -122,16 +93,16 @@ func TestPostXappEvent(t *testing.T) {
 				Cfg: cfg,
 			}
 
-			xe, err := xapp.PostXappEvent(tt.request)
+			xp, err := xapp.PostXappPush(tt.request)
 
 			if tt.expectedError != nil {
-				assert.Nil(t, xe)
+				assert.Nil(t, xp)
 				assert.Error(t, err)
 				assert.EqualError(t, err, tt.expectedError.Error())
 			} else {
 				body, _ := ioutil.ReadAll(m.Spy.Body)
 				assert.JSONEq(t, tt.jsonRequest, string(body))
-				assert.Equal(t, xe, tt.expectedOutput)
+				assert.Equal(t, xp, tt.expectedOutput)
 				assert.Equal(t, http.Header{
 					"X-API-Key":    {"testApiKey"},
 					"X-API-Secret": {"testApiSecret"},

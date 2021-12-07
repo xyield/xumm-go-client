@@ -10,16 +10,15 @@ import (
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
-type invalidEventRequestError struct{}
+type invalidPushRequestError struct{}
 
-func (*invalidEventRequestError) Error() string {
+func (*invalidPushRequestError) Error() string {
 	return "Empty user token and/or subtitle provided."
 }
 
-func (x *Xapp) PostXappEvent(b models.XappRequest) (*models.XappResponse, error) {
-
+func (x *Xapp) PostXappPush(b models.XappRequest) (*models.XappResponse, error) {
 	if b.UserToken == "" || b.Subtitle == "" {
-		return nil, &invalidEventRequestError{}
+		return nil, &invalidPushRequestError{}
 	}
 
 	reqBody, err := json.Marshal(b)
@@ -27,7 +26,7 @@ func (x *Xapp) PostXappEvent(b models.XappRequest) (*models.XappResponse, error)
 		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, x.Cfg.BaseURL+XAPPENDPOINT+"event", bytes.NewReader(reqBody))
+	req, err := http.NewRequest(http.MethodPost, x.Cfg.BaseURL+XAPPENDPOINT+"push", bytes.NewReader(reqBody))
 	if err != nil {
 		return nil, err
 	}
@@ -43,12 +42,13 @@ func (x *Xapp) PostXappEvent(b models.XappRequest) (*models.XappResponse, error)
 		return nil, err
 	}
 
-	var event models.XappResponse
+	var push models.XappResponse
 
-	_, err = utils.DeserialiseRequest(&event, res.Body)
+	_, err = utils.DeserialiseRequest(&push, res.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return &event, nil
+	return &push, nil
+
 }

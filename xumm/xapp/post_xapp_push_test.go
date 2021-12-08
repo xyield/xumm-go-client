@@ -49,7 +49,7 @@ func TestPostXappPush(t *testing.T) {
 				UserToken: "",
 				Subtitle:  "",
 				Body:      "body",
-				Data:      anyjson.AnyJson{},
+				Data:      anyjson.AnyJson{"test_json": "TestJson"},
 			},
 			jsonRequest:    "",
 			jsonResponse:   "",
@@ -63,7 +63,7 @@ func TestPostXappPush(t *testing.T) {
 				UserToken: "token",
 				Subtitle:  "subtitle",
 				Body:      "body",
-				Data:      anyjson.AnyJson{},
+				Data:      anyjson.AnyJson{"test_json": "TestJson"},
 			},
 			jsonRequest: `{
 				"user_token": "token",

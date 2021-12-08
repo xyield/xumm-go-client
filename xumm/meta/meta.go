@@ -6,7 +6,7 @@ import (
 )
 
 type MetaInterface interface {
-	GetPing() (*models.Pong, error)
+	Ping() (*models.Pong, error)
 	GetCuratedAssets() (*models.CuratedAssetsResponse, error)
 	KycAccountStatus(a string) (*models.KycAccountStatusResponse, error)
 	KycStatusState(body models.KycStatusStateRequest) (*models.KycStatusStateResponse, error)

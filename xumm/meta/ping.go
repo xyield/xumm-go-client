@@ -13,7 +13,7 @@ const (
 	PINGENDPOINT = "/platform/ping"
 )
 
-func (m *Meta) GetPing() (*models.Pong, error) {
+func (m *Meta) Ping() (*models.Pong, error) {
 	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+PINGENDPOINT, nil)
 	req.Header = m.Cfg.Headers
 	if err != nil {

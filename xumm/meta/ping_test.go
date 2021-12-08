@@ -71,27 +71,6 @@ func TestGetPing(t *testing.T) {
 			},
 			httpStatusCode: 403,
 		},
-		{
-			description: "unauthorised ping request",
-			jsonResponse: `{
-				"error": true,
-				"message": "Endpoint unknown or method invalid for given endpoint",
-				"reference": "",
-				"code": 404,
-				"req": "/v1/platform/payload/payload_uuid",
-				"method": "GET"
-			}`,
-			expectedOutput: nil,
-			expectedError: &xumm.ErrorNotFound{
-				Err:       true,
-				Message:   "Endpoint unknown or method invalid for given endpoint",
-				Reference: "",
-				Code:      404,
-				Req:       "/v1/platform/payload/payload_uuid",
-				Method:    "GET",
-			},
-			httpStatusCode: 404,
-		},
 	}
 
 	for _, tt := range tests {

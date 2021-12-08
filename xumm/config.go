@@ -2,6 +2,7 @@ package xumm
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"os"
 )
@@ -88,14 +89,11 @@ func WithAuth(key, secret string) ConfigOpt {
 
 func (cfg *Config) AddHeader(key, value string) {
 
-	newHeaders := make(map[string][]string)
-	h := cfg.headers
-	for k, v := range h {
-		newHeaders[k] = v
+	if key == "X-API-Key" || key == "X-API-Secret" {
+		log.Println("It is not possible to override X-API-key or X-API-Secret headers")
+		return
 	}
-	newHeaders[key] = []string{value}
-
-	cfg.headers = newHeaders
+	cfg.headers[key] = []string{value}
 }
 
 func (cfg *Config) GetHeaders() map[string][]string {

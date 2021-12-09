@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	BASEURLV1             = "https://xumm.app/api/v1"
+	BASEURLV1 = "https://xumm.app/api/v1"
+	// #nosec G101 -- This is a false positive
 	XUMMCREDENTIALSNOTSET = "API Key or Secret not set"
 )
 

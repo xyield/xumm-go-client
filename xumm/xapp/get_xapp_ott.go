@@ -27,7 +27,7 @@ func (x *Xapp) GetXappOtt(t string) (*models.XappOttResponse, error) {
 	}
 
 	req, err := http.NewRequest(http.MethodGet, x.Cfg.BaseURL+XAPPENDPOINT+"ott/"+t, nil)
-	req.Header = x.Cfg.Headers
+	req.Header = x.Cfg.GetHeaders()
 	if err != nil {
 		log.Println(err)
 		return nil, err

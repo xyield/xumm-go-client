@@ -2,6 +2,7 @@ package xumm
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"os"
 )
@@ -20,10 +21,16 @@ type Config struct {
 	BaseURL    string
 	ApiKey     string
 	ApiSecret  string
-	Headers    map[string][]string
+	headers    map[string][]string
 }
 
 type ConfigOpt func(cfg *Config)
+
+type CredentialOverrideError struct{}
+
+func (c CredentialOverrideError) Error() string {
+	return "Cannot override secret and key credentials - use WithAuth to manually set these."
+}
 
 func NewConfig(opts ...ConfigOpt) (*Config, error) {
 
@@ -49,7 +56,7 @@ func NewConfig(opts ...ConfigOpt) (*Config, error) {
 		}
 		cfg.ApiSecret = apiSecret
 
-		cfg.Headers = map[string][]string{
+		cfg.headers = map[string][]string{
 			"X-API-Key":    {apiKey},
 			"X-API-Secret": {apiSecret},
 			"Content-Type": {"application/json"},
@@ -78,10 +85,24 @@ func WithAuth(key, secret string) ConfigOpt {
 	return func(cfg *Config) {
 		cfg.ApiKey = key
 		cfg.ApiSecret = secret
-		cfg.Headers = map[string][]string{
+		cfg.headers = map[string][]string{
 			"X-API-Key":    {key},
 			"X-API-Secret": {secret},
 			"Content-Type": {"application/json"},
 		}
 	}
+}
+
+func (cfg *Config) AddHeader(key, value string) error {
+
+	if key == "X-API-Key" || key == "X-API-Secret" {
+		log.Println("It is not possible to override X-API-key or X-API-Secret headers, please use WithAuth() to manually set these.")
+		return CredentialOverrideError{}
+	}
+	cfg.headers[key] = []string{value}
+	return nil
+}
+
+func (cfg *Config) GetHeaders() map[string][]string {
+	return cfg.headers
 }

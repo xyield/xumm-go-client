@@ -39,7 +39,7 @@ func (p *Payload) PostPayload(body models.XummPostPayload) (*models.CreatedPaylo
 		return nil, err
 	}
 
-	req.Header = p.Cfg.Headers
+	req.Header = p.Cfg.GetHeaders()
 
 	res, err := p.Cfg.HTTPClient.Do(req)
 

@@ -18,7 +18,7 @@ const (
 // Get account status by xrp public address
 func (m *Meta) KycAccountStatus(a string) (*models.KycAccountStatusResponse, error) {
 	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+KYCACCOUNTSTATUSENDPOINT+a, nil)
-	req.Header = m.Cfg.Headers
+	req.Header = m.Cfg.GetHeaders()
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -53,7 +53,7 @@ func (m *Meta) KycStatusState(body models.KycStatusStateRequest) (*models.KycSta
 		return nil, err
 	}
 	req, err := http.NewRequest(http.MethodPost, m.Cfg.BaseURL+KYCACCOUNTSTATUSENDPOINT, bytes.NewReader(reqBody))
-	req.Header = m.Cfg.Headers
+	req.Header = m.Cfg.GetHeaders()
 	if err != nil {
 		log.Println(err)
 		return nil, err

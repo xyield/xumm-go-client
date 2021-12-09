@@ -16,7 +16,7 @@ func (p *Payload) CancelPayloadByUUID(uuid string) (*models.XummDeletePayloadRes
 		return nil, err
 	}
 
-	req.Header = p.Cfg.Headers
+	req.Header = p.Cfg.GetHeaders()
 
 	res, err := p.Cfg.HTTPClient.Do(req)
 	if err != nil {

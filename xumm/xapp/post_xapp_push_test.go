@@ -29,12 +29,21 @@ func TestPostXappPush(t *testing.T) {
 				UserToken: "token",
 				Subtitle:  "subtitle",
 				Body:      "body",
-				Data:      anyjson.AnyJson{},
+				Data: anyjson.AnyJson{
+					"test_json": "TestJson",
+					"integer":   3,
+					"float64":   float64(1.2),
+				},
 			},
 			jsonRequest: `{
 				"user_token": "token",
 				"subtitle": "subtitle",
-				"body": "body"
+				"body": "body",
+				"data": {
+					"test_json": "TestJson",
+					"integer":   3,
+					"float64":   1.2
+				}
 			}`,
 			jsonResponse: `{
 				"pushed": true
@@ -49,13 +58,13 @@ func TestPostXappPush(t *testing.T) {
 				UserToken: "",
 				Subtitle:  "",
 				Body:      "body",
-				Data:      anyjson.AnyJson{"test_json": "TestJson"},
+				Data:      anyjson.AnyJson{},
 			},
 			jsonRequest:    "",
 			jsonResponse:   "",
 			expectedOutput: nil,
 			expectedError:  &invalidPushRequestError{},
-			httpStatusCode: 200,
+			httpStatusCode: 0,
 		},
 		{
 			description: "error creating push",
@@ -79,6 +88,24 @@ func TestPostXappPush(t *testing.T) {
 			expectedOutput: nil,
 			expectedError:  &xumm.ErrorResponse{ErrorResponseBody: xumm.ErrorResponseBody{Reference: "42d58b17-ee92-419d-b8ec-15797d10c4ed", Code: 400}},
 			httpStatusCode: 400,
+		},
+		{
+			description: "test request body serialisation when body is empty",
+			request: models.XappRequest{
+				UserToken: "token",
+				Subtitle:  "subtitle",
+				Data:      anyjson.AnyJson{},
+			},
+			jsonRequest: `{
+				"user_token": "token",
+				"subtitle": "subtitle"
+			}`,
+			jsonResponse: `{
+				"pushed": true
+			  }`,
+			expectedOutput: &models.XappResponse{Pushed: true},
+			expectedError:  nil,
+			httpStatusCode: 200,
 		},
 	}
 

@@ -73,7 +73,8 @@ func TestAnyJsonDeserialisation(t *testing.T) {
 		t.Run(tt.description, func(t *testing.T) {
 			var a AnyJson
 
-			json.Unmarshal([]byte(tt.input), &a)
+			err := json.Unmarshal([]byte(tt.input), &a)
+			assert.NoError(t, err)
 			assert.Equal(t, tt.expectedOutput, a)
 		})
 	}

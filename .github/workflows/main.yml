@@ -23,3 +23,12 @@ jobs:
       - uses: securego/gosec@master
         with:
           args: -exclude-dir pkg/test-utils ./...
+  golang-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          # Optional: version of golangci-lint to use in form of v1.2 or v1.2.3 or `latest` to use the latest version
+          version: v1.43

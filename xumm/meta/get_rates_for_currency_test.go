@@ -44,7 +44,7 @@ func TestGetRatesForCurrency(t *testing.T) {
 	  }`
 
 	errorJsonWithMessage := `{
-		"error": {  
+		"error": {
 		  "reference": "7dfab34a-3563-4c67-b535-4e8fa36546ca",
 		  "message": "Unknown currency"
 		}

@@ -13,7 +13,7 @@ go get github.com/xyield/xumm-go-client
 ## How to use xYield
 
 Register your app with the Xumm developer console
-Set Xumm credentials as environment variables 
+Set Xumm credentials as environment variables
 
 ```bash
 export XUMM_API_KEY=<key_from_console>
@@ -39,8 +39,8 @@ func main() {
 ```
 
 
-## Future work 
-Continue to develop all endpoints 
+## Future work
+Continue to develop all endpoints
 </br>
 Integration testing in pipeline to connect to Xumm API
 </br>

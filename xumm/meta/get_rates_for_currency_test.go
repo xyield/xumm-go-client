@@ -10,7 +10,7 @@ import (
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
-func TestRatesCurrency(t *testing.T) {
+func TestGetRatesForCurrency(t *testing.T) {
 
 	c := &models.RatesCurrencyResponse{
 		Usd: 1,
@@ -76,7 +76,7 @@ func TestRatesCurrency(t *testing.T) {
 			meta := &Meta{
 				Cfg: cfg,
 			}
-			ca, err := meta.RatesCurrency(tt.testValue)
+			ca, err := meta.GetRatesForCurrency(tt.testValue)
 
 			if tt.expectedError != nil {
 				assert.Nil(t, ca)

@@ -11,7 +11,7 @@ import (
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
-func TestXrplTx(t *testing.T) {
+func TestGetXrplTx(t *testing.T) {
 
 	bc := &models.BalanceDetails{
 		Value:        "-1.000012",
@@ -69,7 +69,7 @@ func TestXrplTx(t *testing.T) {
 			meta := &Meta{
 				Cfg: cfg,
 			}
-			tx, err := meta.XrplTransaction(tt.input)
+			tx, err := meta.GetXrplTransaction(tt.input)
 
 			if tt.expectedError != nil {
 				assert.Nil(t, tx)

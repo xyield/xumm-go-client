@@ -23,7 +23,7 @@ func (e *CurrencyCodeError) Error() string {
 	return fmt.Sprintf("Currency code %v is not valid", e.Code)
 }
 
-func (m *Meta) RatesCurrency(cur string) (*models.RatesCurrencyResponse, error) {
+func (m *Meta) GetRatesForCurrency(cur string) (*models.RatesCurrencyResponse, error) {
 
 	ok, _ := regexp.MatchString(`^[a-zA-Z]{3}$`, cur)
 

@@ -10,11 +10,11 @@ import (
 )
 
 const (
-	CURATEDASSETSENDPOINT = "/platform/curated-assets"
+	XRPLTRANSACTIONENDPOINT = "/platform/xrpl-tx/"
 )
 
-func (m *Meta) CuratedAssets() (*models.CuratedAssetsResponse, error) {
-	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+CURATEDASSETSENDPOINT, nil)
+func (m *Meta) GetXrplTransaction(txid string) (*models.XrpTxResponse, error) {
+	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+XRPLTRANSACTIONENDPOINT+txid, nil)
 	req.Header = m.Cfg.GetHeaders()
 	if err != nil {
 		log.Println(err)
@@ -31,12 +31,12 @@ func (m *Meta) CuratedAssets() (*models.CuratedAssetsResponse, error) {
 		log.Println(err)
 		return nil, err
 	}
-	var ca models.CuratedAssetsResponse
 
-	_, err = utils.DeserialiseRequest(&ca, res.Body)
+	var tx models.XrpTxResponse
+	_, err = utils.DeserialiseRequest(&tx, res.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return &ca, nil
+	return &tx, nil
 }

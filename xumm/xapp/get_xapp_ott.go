@@ -20,7 +20,7 @@ const (
 	XAPPENDPOINT = "/platform/xapp/"
 )
 
-func (x *Xapp) GetXappOtt(t string) (*models.XappResponse, error) {
+func (x *Xapp) GetXappOtt(t string) (*models.XappOttResponse, error) {
 
 	if t == "" {
 		return nil, &InvalidToken{}
@@ -45,7 +45,7 @@ func (x *Xapp) GetXappOtt(t string) (*models.XappResponse, error) {
 		return nil, err
 	}
 
-	var xr models.XappResponse
+	var xr models.XappOttResponse
 	_, err = utils.DeserialiseRequest(&xr, res.Body)
 	if err != nil {
 		log.Println(err)

@@ -30,7 +30,7 @@ func (x *Xapp) PostXappPush(b models.XappRequest) (*models.XappResponse, error) 
 	if err != nil {
 		return nil, err
 	}
-	req.Header = x.Cfg.Headers
+	req.Header = x.Cfg.GetHeaders()
 
 	res, err := x.Cfg.HTTPClient.Do(req)
 	if err != nil {

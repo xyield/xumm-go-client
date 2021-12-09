@@ -20,8 +20,8 @@ type HTTPClient interface {
 type Config struct {
 	HTTPClient HTTPClient
 	BaseURL    string
-	ApiKey     string
-	ApiSecret  string
+	apiKey     string
+	apiSecret  string
 	headers    map[string][]string
 }
 
@@ -40,7 +40,7 @@ func NewConfig(opts ...ConfigOpt) (*Config, error) {
 	for _, opt := range opts {
 		opt(cfg)
 	}
-	if cfg.ApiKey == "" || cfg.ApiSecret == "" {
+	if cfg.apiKey == "" || cfg.apiSecret == "" {
 
 		apiKey, err := getAuthEnv("XUMM_API_KEY")
 
@@ -48,14 +48,14 @@ func NewConfig(opts ...ConfigOpt) (*Config, error) {
 			return cfg, err
 		}
 
-		cfg.ApiKey = apiKey
+		cfg.apiKey = apiKey
 
 		apiSecret, err := getAuthEnv("XUMM_API_SECRET")
 
 		if err != nil {
 			return cfg, err
 		}
-		cfg.ApiSecret = apiSecret
+		cfg.apiSecret = apiSecret
 
 		cfg.headers = map[string][]string{
 			"X-API-Key":    {apiKey},
@@ -84,8 +84,8 @@ func WithHttpClient(c HTTPClient) ConfigOpt {
 
 func WithAuth(key, secret string) ConfigOpt {
 	return func(cfg *Config) {
-		cfg.ApiKey = key
-		cfg.ApiSecret = secret
+		cfg.apiKey = key
+		cfg.apiSecret = secret
 		cfg.headers = map[string][]string{
 			"X-API-Key":    {key},
 			"X-API-Secret": {secret},

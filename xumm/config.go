@@ -26,6 +26,12 @@ type Config struct {
 
 type ConfigOpt func(cfg *Config)
 
+type CredentialOverrideError struct{}
+
+func (c CredentialOverrideError) Error() string {
+	return "Cannot override secret and key credentials - use WithAuth to manually set these."
+}
+
 func NewConfig(opts ...ConfigOpt) (*Config, error) {
 
 	cfg := &Config{HTTPClient: &http.Client{}, BaseURL: BASEURLV1}
@@ -87,13 +93,14 @@ func WithAuth(key, secret string) ConfigOpt {
 	}
 }
 
-func (cfg *Config) AddHeader(key, value string) {
+func (cfg *Config) AddHeader(key, value string) error {
 
 	if key == "X-API-Key" || key == "X-API-Secret" {
-		log.Println("It is not possible to override X-API-key or X-API-Secret headers")
-		return
+		log.Println("It is not possible to override X-API-key or X-API-Secret headers, please use WithAuth() to manually set these.")
+		return CredentialOverrideError{}
 	}
 	cfg.headers[key] = []string{value}
+	return nil
 }
 
 func (cfg *Config) GetHeaders() map[string][]string {

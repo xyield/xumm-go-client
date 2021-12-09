@@ -38,15 +38,16 @@ func TestXummConfigCreation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 	t.Run("Set extra headers leaving default intact", func(t *testing.T) {
-		cfg, err := NewConfig(WithAuth("manualApiKey", "manualApiSecret"))
-		cfg.AddHeader("testKey", "testValue")
+		cfg, _ := NewConfig(WithAuth("manualApiKey", "manualApiSecret"))
+		err := cfg.AddHeader("testKey", "testValue")
 		assert.Equal(t, &Config{HTTPClient: &http.Client{}, BaseURL: BASEURLV1, ApiKey: "manualApiKey", ApiSecret: "manualApiSecret", headers: map[string][]string{"X-API-Key": {"manualApiKey"}, "X-API-Secret": {"manualApiSecret"}, "Content-Type": {"application/json"}, "testKey": {"testValue"}}}, cfg)
 		assert.NoError(t, err)
 	})
 	t.Run("Set an existing header with no overwrite", func(t *testing.T) {
-		cfg, err := NewConfig(WithAuth("manualApiKey", "manualApiSecret"))
-		cfg.AddHeader("X-API-Key", "testKey")
+		cfg, _ := NewConfig(WithAuth("manualApiKey", "manualApiSecret"))
+		err := cfg.AddHeader("X-API-Key", "testKey")
 		assert.Equal(t, &Config{HTTPClient: &http.Client{}, BaseURL: BASEURLV1, ApiKey: "manualApiKey", ApiSecret: "manualApiSecret", headers: map[string][]string{"X-API-Key": {"manualApiKey"}, "X-API-Secret": {"manualApiSecret"}, "Content-Type": {"application/json"}}}, cfg)
-		assert.NoError(t, err)
+		assert.Error(t, err)
+		assert.EqualError(t, err, "Cannot override secret and key credentials - use WithAuth to manually set these.")
 	})
 }

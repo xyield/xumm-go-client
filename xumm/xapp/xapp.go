@@ -6,7 +6,7 @@ import (
 )
 
 type XappInterface interface {
-	GetXappOtt(t string) (*models.XappResponse, error)
+	GetXappOtt(t string) (*models.XappOttResponse, error)
 }
 
 type Xapp struct {

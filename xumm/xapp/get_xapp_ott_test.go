@@ -12,7 +12,7 @@ import (
 
 func TestGetXappOtt(t *testing.T) {
 
-	outputXappResponse := &models.XappResponse{
+	outputXappResponse := &models.XappOttResponse{
 		Locale:        "en",
 		Version:       "1.0.1",
 		Account:       "r...",
@@ -35,7 +35,7 @@ func TestGetXappOtt(t *testing.T) {
 		description    string
 		ottInput       string
 		jsonResponse   string
-		expectedOutput *models.XappResponse
+		expectedOutput *models.XappOttResponse
 		expectedError  error
 		httpStatusCode int
 	}{

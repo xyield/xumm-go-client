@@ -10,7 +10,7 @@ import (
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
-func TestCuratedAssets(t *testing.T) {
+func TestGetCuratedAssets(t *testing.T) {
 
 	ci := &models.CurrencyInfo{
 		Id:       178,
@@ -94,7 +94,7 @@ func TestCuratedAssets(t *testing.T) {
 			meta := &Meta{
 				Cfg: cfg,
 			}
-			ca, err := meta.CuratedAssets()
+			ca, err := meta.GetCuratedAssets()
 
 			if tt.expectedError != nil {
 				assert.Nil(t, ca)

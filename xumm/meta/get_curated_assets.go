@@ -13,7 +13,7 @@ const (
 	CURATEDASSETSENDPOINT = "/platform/curated-assets"
 )
 
-func (m *Meta) CuratedAssets() (*models.CuratedAssetsResponse, error) {
+func (m *Meta) GetCuratedAssets() (*models.CuratedAssetsResponse, error) {
 	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+CURATEDASSETSENDPOINT, nil)
 	req.Header = m.Cfg.Headers
 	if err != nil {

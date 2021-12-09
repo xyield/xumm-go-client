@@ -10,7 +10,7 @@ import (
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
-func TestGetPing(t *testing.T) {
+func TestPing(t *testing.T) {
 
 	var tests = []struct {
 		description    string

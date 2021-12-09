@@ -13,7 +13,7 @@ const (
 	XRPLTRANSACTIONENDPOINT = "/platform/xrpl-tx/"
 )
 
-func (m *Meta) XrplTransaction(txid string) (*models.XrpTxResponse, error) {
+func (m *Meta) GetXrplTransaction(txid string) (*models.XrpTxResponse, error) {
 	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+XRPLTRANSACTIONENDPOINT+txid, nil)
 	req.Header = m.Cfg.Headers
 	if err != nil {

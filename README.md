@@ -2,15 +2,15 @@
 
 ![example workflow](https://github.com/xyield/xumm-go-client/actions/workflows/main.yml/badge.svg)
 
+This is a client written in golang for using the XUMM API. The API docs can be found [here](https://xumm.readme.io/reference/about).
 ## Installation:
 The latest version can be installed using `go get` :
 
 ```bash
-go get github.com/xyield/xumm-go-client
+go get github.com/xyield/xumm-go-client@master
 ```
 
-
-## How to use xYield
+## How to use this client
 
 Register your app with the Xumm developer console
 Set Xumm credentials as environment variables
@@ -21,18 +21,21 @@ export XUMM_API_SECRET=<secret_from_console>
 ```
 
 ```go
+package main
+
 func main() {
-    c, err := xumm.NewClient()
+    cfg, err := xumm.NewConfig()
+	if err != nil {
+		log.Panicln(err)
+	}
 
-    if err != nil {
-        fmt.Println(err)
-    }
+	client := client.New(cfg)
 
-    p, err := c.GetPing()
+	pong, err := client.Meta.Ping()
 
-    if err != nil {
-        // Handle error here
-    }
+	if err != nil {
+		log.Println(err.Error())
+	}
 
     // Do something
 }

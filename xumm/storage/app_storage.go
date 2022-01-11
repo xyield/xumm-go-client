@@ -25,6 +25,7 @@ type Storage struct {
 	Cfg *xumm.Config
 }
 
+// GetAppStorage Retrieve simple JSON objects attached to your XUMM App.
 func (s *Storage) GetAppStorage() (*models.AppStorageResponse, error) {
 	req, err := http.NewRequest(http.MethodGet, s.Cfg.BaseURL+APPSTORAGEENDPOINT, nil)
 	if err != nil {
@@ -52,6 +53,7 @@ func (s *Storage) GetAppStorage() (*models.AppStorageResponse, error) {
 	return &as, nil
 }
 
+//SetAppStorage Save simple JSON objects and attach it to your XUMM App.
 func (s *Storage) SetAppStorage(d map[string]interface{}) (*models.AppStorageResponse, error) {
 	reqBody, err := jsoniter.Marshal(d)
 	if err != nil {
@@ -83,6 +85,7 @@ func (s *Storage) SetAppStorage(d map[string]interface{}) (*models.AppStorageRes
 	return &as, nil
 }
 
+// DeleteAppStorage Remove all simple JSON objects attached to your XUMM App.
 func (s *Storage) DeleteAppStorage() (*models.AppStorageResponse, error) {
 	req, err := http.NewRequest(http.MethodDelete, s.Cfg.BaseURL+APPSTORAGEENDPOINT, nil)
 	if err != nil {

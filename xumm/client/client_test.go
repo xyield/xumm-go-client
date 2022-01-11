@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/xyield/xumm-go-client"
+	"github.com/xyield/xumm-go-client/xumm"
 	"github.com/xyield/xumm-go-client/xumm/meta"
 	"github.com/xyield/xumm-go-client/xumm/payload"
 	"github.com/xyield/xumm-go-client/xumm/storage"

@@ -6,9 +6,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/xyield/xumm-go-client"
 	anyjson "github.com/xyield/xumm-go-client/utils/json"
 	testutils "github.com/xyield/xumm-go-client/utils/test-utils"
+	"github.com/xyield/xumm-go-client/xumm"
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
 

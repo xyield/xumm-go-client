@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/xyield/xumm-go-client"
+	"github.com/xyield/xumm-go-client/xumm"
 	"github.com/xyield/xumm-go-client/xumm/meta"
 	"github.com/xyield/xumm-go-client/xumm/payload"
 	"github.com/xyield/xumm-go-client/xumm/storage"

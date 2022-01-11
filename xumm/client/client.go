@@ -8,6 +8,7 @@ import (
 	"github.com/xyield/xumm-go-client/xumm/xapp"
 )
 
+// Client struct is used to interact with the XUMM api.
 type Client struct {
 	Config  *xumm.Config
 	Storage storage.StorageInterface
@@ -16,6 +17,7 @@ type Client struct {
 	Xapp    xapp.XappInterface
 }
 
+// New creates a new Client object for interacting with the XUMM api.
 func New(cfg *xumm.Config) *Client {
 	return &Client{
 		Config: cfg,

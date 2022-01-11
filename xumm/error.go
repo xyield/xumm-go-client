@@ -10,16 +10,19 @@ import (
 	anyjson "github.com/xyield/xumm-go-client/utils/json"
 )
 
+// ErrorResponse is the top level of an error returned by XUMM.
 type ErrorResponse struct {
 	ErrorResponseBody ErrorResponseBody `json:"error"`
 }
 
+// ErrorResponseBody is the nested object of an ErrorResponse returned by XUMM.
 type ErrorResponseBody struct {
 	Reference string `json:"reference"`
 	Code      int    `json:"code,omitempty"`
 	Message   string `json:"message,omitempty"`
 }
 
+// ErrorNotFound is a special error returned by XUMM when resource is not found.
 type ErrorNotFound struct {
 	Err       bool   `json:"error,omitempty"`
 	Message   string `json:"message,omitempty"`
@@ -48,6 +51,7 @@ func (e *ErrorNotFound) Error() string {
 	return fmt.Sprintf("Error returned with code %v and reference '%v'", e.Code, e.Reference)
 }
 
+// CheckForErrorResponse checks a returned http response for a XUMM error.
 func CheckForErrorResponse(res *http.Response) error {
 	if res.StatusCode >= 200 && res.StatusCode <= 299 {
 		return nil

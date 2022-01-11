@@ -13,6 +13,7 @@ const (
 	PINGENDPOINT = "/platform/ping"
 )
 
+// Ping method tests connectivity to XUMM api.
 func (m *Meta) Ping() (*models.Pong, error) {
 	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+PINGENDPOINT, nil)
 	req.Header = m.Cfg.GetHeaders()

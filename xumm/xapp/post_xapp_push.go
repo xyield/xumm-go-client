@@ -15,7 +15,8 @@ type invalidPushRequestError struct{}
 func (*invalidPushRequestError) Error() string {
 	return "Empty user token and/or subtitle provided."
 }
-
+// PostXappPush allows publishing a push notification linking to an xApp. If the user clears the push notification there is no way to retrieve the link to the xApp.
+// 2 parameters are required for the POST request, b.UserToken and b.Subtitle.
 func (x *Xapp) PostXappPush(b models.XappRequest) (*models.XappResponse, error) {
 	if b.UserToken == "" || b.Subtitle == "" {
 		return nil, &invalidPushRequestError{}

@@ -9,9 +9,9 @@ Quick Start
 To use this library you will need to configure a new Config object e.g.
 	cfg, _ := xumm.NewConfig()
 
-If you do not provide any arguments, reasonable defauls are used such as:
+If you do not provide any arguments, reasonable defaults are used such as:
 	* standard Golang library HTTP client
-	* xumm API base URL of https://xumm.app/api/v1
+	* XUMM api base URL of https://xumm.app/api/v1
 	* check your environment variables for XUMM_API_KEY and XUMM_API_SECRET - use the WithAuth() method to set these manually instead
 
 The environment variables are used to set authentication headers.

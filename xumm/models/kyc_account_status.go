@@ -1,6 +1,6 @@
 package models
 
-type KycAccountStatusResponse struct {
+type GetKycStatusByAccountResponse struct {
 	Account     string `json:"account"`
 	KycApproved bool   `json:"kycApproved"`
 }

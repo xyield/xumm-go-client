@@ -1,6 +1,6 @@
 package models
 
-import anyjson "github.com/xyield/xumm-go-client/pkg/json"
+import anyjson "github.com/xyield/xumm-go-client/utils/json"
 
 type AppStorageResponse struct {
 	Application Application     `json:"application"`

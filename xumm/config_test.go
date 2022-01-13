@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	testutils "github.com/xyield/xumm-go-client/pkg/test-utils"
+	testutils "github.com/xyield/xumm-go-client/utils/test-utils"
 )
 
 func TestXummConfigCreation(t *testing.T) {

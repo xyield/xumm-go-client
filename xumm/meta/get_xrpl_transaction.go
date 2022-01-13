@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/xyield/xumm-go-client/pkg/utils"
+	"github.com/xyield/xumm-go-client/utils"
 	"github.com/xyield/xumm-go-client/xumm"
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
@@ -13,6 +13,8 @@ const (
 	XRPLTRANSACTIONENDPOINT = "/platform/xrpl-tx/"
 )
 
+// GetXrplTransaction fetches transaction & outcome live from XRP ledger full history nodes (through the XUMM platform) containing parsed transaction outcome balance mutations.
+// Takes 1 parameter, txid (64 hexadecimal characters).
 func (m *Meta) GetXrplTransaction(txid string) (*models.XrpTxResponse, error) {
 	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+XRPLTRANSACTIONENDPOINT+txid, nil)
 	req.Header = m.Cfg.GetHeaders()

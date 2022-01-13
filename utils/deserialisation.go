@@ -8,6 +8,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
+// DeserialiseRequest deserialises a response body into the provided interface object.
 func DeserialiseRequest(v interface{}, body io.Reader) (interface{}, error) {
 
 	b, err := ioutil.ReadAll(body)
@@ -19,6 +20,7 @@ func DeserialiseRequest(v interface{}, body io.Reader) (interface{}, error) {
 	return UnmarshalResponse(v, b)
 }
 
+// UnmarshalResponse unmarshals a response body into the provided interface object.
 func UnmarshalResponse(v interface{}, b []byte) (interface{}, error) {
 
 	err := jsoniter.Unmarshal(b, &v)

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/xyield/xumm-go-client/pkg/utils"
+	"github.com/xyield/xumm-go-client/utils"
 	"github.com/xyield/xumm-go-client/xumm"
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
@@ -16,6 +16,8 @@ func (*invalidEventRequestError) Error() string {
 	return "Empty user token and/or subtitle provided."
 }
 
+// PostXappEvent allows publishing an xApp event in the "Requests" event list of a user, while sending a Push notification pointing to the event.
+// 2 parameters are required for the POST request, b.UserToken and b.Subtitle.
 func (x *Xapp) PostXappEvent(b models.XappRequest) (*models.XappResponse, error) {
 
 	if b.UserToken == "" || b.Subtitle == "" {

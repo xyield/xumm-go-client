@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	jsoniter "github.com/json-iterator/go"
-	"github.com/xyield/xumm-go-client/pkg/utils"
+	"github.com/xyield/xumm-go-client/utils"
 	"github.com/xyield/xumm-go-client/xumm"
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
@@ -15,6 +15,9 @@ const (
 	PAYLOADENDPOINT = "/platform/payload"
 )
 
+// PostPayload method submits a payload containing a sign request to the XUMM platform.
+// Takes a single argument of a XummPostPayload which MUST have either TxJson or TxBlob field filled.
+// If using TxJson, it must be formatted as per XRPL transaction format specification at xrpl.org.
 func (p *Payload) PostPayload(body models.XummPostPayload) (*models.CreatedPayload, error) {
 
 	if body.TxJson != nil {

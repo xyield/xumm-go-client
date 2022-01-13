@@ -6,8 +6,10 @@ import (
 	"github.com/ugorji/go/codec"
 )
 
+// AnyJson type is used when deserialising an unknown fields into a Golang struct.
 type AnyJson map[string]interface{}
 
+// UnmarshalJSON unmarshals a response body into the AnyJson type.
 func (a *AnyJson) UnmarshalJSON(data []byte) error {
 
 	var jh codec.JsonHandle

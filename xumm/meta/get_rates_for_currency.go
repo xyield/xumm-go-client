@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"regexp"
 
-	"github.com/xyield/xumm-go-client/pkg/utils"
+	"github.com/xyield/xumm-go-client/utils"
 	"github.com/xyield/xumm-go-client/xumm"
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
@@ -15,6 +15,7 @@ const (
 	RATESCURRENCYENDPOINT = "/platform/rates/"
 )
 
+// CurrencyCodeError returns an error if an invalid currency code is given.
 type CurrencyCodeError struct {
 	Code string
 }
@@ -23,6 +24,8 @@ func (e *CurrencyCodeError) Error() string {
 	return fmt.Sprintf("Currency code %v is not valid", e.Code)
 }
 
+// GetRatesForCurrency gets semi-live XRP exchange rates.
+// Takes 1 parameter, a 3 alpha char currency code, eg. INR.
 func (m *Meta) GetRatesForCurrency(cur string) (*models.RatesCurrencyResponse, error) {
 
 	ok, _ := regexp.MatchString(`^[a-zA-Z]{3}$`, cur)

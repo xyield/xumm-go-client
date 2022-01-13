@@ -1,7 +1,7 @@
 package models
 
 import (
-	anyjson "github.com/xyield/xumm-go-client/pkg/json"
+	anyjson "github.com/xyield/xumm-go-client/utils/json"
 )
 
 type XummPayload struct {

@@ -5,11 +5,12 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/xyield/xumm-go-client/pkg/utils"
+	"github.com/xyield/xumm-go-client/utils"
 	"github.com/xyield/xumm-go-client/xumm"
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
+// InvalidToken returns an error when an invalid one time token is given.
 type InvalidToken struct{}
 
 func (e *InvalidToken) Error() string {
@@ -19,7 +20,9 @@ func (e *InvalidToken) Error() string {
 const (
 	XAPPENDPOINT = "/platform/xapp/"
 )
-
+// GetXappOtt allows the xApp to retrieve verified session related information from the XUMM user.
+// xApps are embedded apps. Publishing an xApp and calling xApp API endpoints are only available for XRPL Labs / XUMM partners.
+// 1 parameter is required, a token (UUID).
 func (x *Xapp) GetXappOtt(t string) (*models.XappOttResponse, error) {
 
 	if t == "" {

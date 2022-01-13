@@ -1,6 +1,6 @@
 package models
 
-import anyjson "github.com/xyield/xumm-go-client/pkg/json"
+import anyjson "github.com/xyield/xumm-go-client/utils/json"
 
 type XrpTxResponse struct {
 	Txid           string                      `json:"txid"`

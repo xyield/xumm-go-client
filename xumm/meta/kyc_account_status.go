@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	jsoniter "github.com/json-iterator/go"
-	"github.com/xyield/xumm-go-client/pkg/utils"
+	"github.com/xyield/xumm-go-client/utils"
 	"github.com/xyield/xumm-go-client/xumm"
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
@@ -15,7 +15,7 @@ const (
 	KYCACCOUNTSTATUSENDPOINT = "/platform/kyc-status/"
 )
 
-// Get account status by xrp public address
+// KycAccountStatus fetches the KYC status for a XUMM user (based on a public XRPL account address, r...).
 func (m *Meta) KycAccountStatus(a string) (*models.KycAccountStatusResponse, error) {
 	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+KYCACCOUNTSTATUSENDPOINT+a, nil)
 	req.Header = m.Cfg.GetHeaders()
@@ -44,7 +44,8 @@ func (m *Meta) KycAccountStatus(a string) (*models.KycAccountStatusResponse, err
 	return &kyc, nil
 }
 
-//Get account status by user token body
+// KycStatusState fetches the KYC status for a XUMM user (based on an issued user_token).
+// Takes 1 parameter, user_token.
 func (m *Meta) KycStatusState(body models.KycStatusStateRequest) (*models.KycStatusStateResponse, error) {
 	reqBody, err := jsoniter.Marshal(body)
 

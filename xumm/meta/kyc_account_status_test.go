@@ -15,7 +15,7 @@ func TestGetKycStatusByAccountTest(t *testing.T) {
 		description    string
 		input          string
 		json           string
-		expectedOutput *models.GetKycStatusByAccountResponse
+		expectedOutput *models.KycStatusByAccountResponse
 	}{
 		{
 			description: "Valid account with kyc status true",
@@ -24,7 +24,7 @@ func TestGetKycStatusByAccountTest(t *testing.T) {
 				"account": "rGBP1ZYpgiArYbDSvqu7Ps8AmWrD6hiqwe",
 				"kycApproved": true
 			  }`,
-			expectedOutput: &models.GetKycStatusByAccountResponse{
+			expectedOutput: &models.KycStatusByAccountResponse{
 				Account:     "rGBP1ZYpgiArYbDSvqu7Ps8AmWrD6hiqwe",
 				KycApproved: true,
 			},
@@ -55,13 +55,13 @@ func TestGetKycStatusByAccountTest(t *testing.T) {
 func TestGetKycStatusByUserToken(t *testing.T) {
 	tt := []struct {
 		description    string
-		input          models.GetKycStatusByUserTokenRequest
+		input          models.KycStatusByUserTokenRequest
 		json           string
-		expectedOutput *models.GetKycStatusByUserTokenResponse
+		expectedOutput *models.KycStatusByUserTokenResponse
 	}{
 		{
 			description: "Valid account with kyc status none",
-			input: models.GetKycStatusByUserTokenRequest{
+			input: models.KycStatusByUserTokenRequest{
 				UserToken: "test-token",
 			},
 			json: `{
@@ -73,7 +73,7 @@ func TestGetKycStatusByUserToken(t *testing.T) {
 				  "SUCCESSFUL": "KYC flow has been started and was SUCCESSFUL :)"
 				}
 			  }`,
-			expectedOutput: &models.GetKycStatusByUserTokenResponse{
+			expectedOutput: &models.KycStatusByUserTokenResponse{
 				KycStatus: "NONE",
 				PossibleStatuses: models.PossibleStatuses{
 					None:       "No KYC attempt has been made",

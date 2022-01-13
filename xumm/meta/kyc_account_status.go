@@ -12,13 +12,13 @@ import (
 )
 
 const (
-	GetKycStatusByAccountENDPOINT = "/platform/kyc-status/"
+	KYCSTATUSENDPOINT = "/platform/kyc-status/"
 )
 
 // GetKycStatusByAccount fetches the KYC status for a XUMM user (based on a public XRPL account address, r...).
 // Takes 1 parameter, account.
-func (m *Meta) GetKycStatusByAccount(a string) (*models.GetKycStatusByAccountResponse, error) {
-	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+GetKycStatusByAccountENDPOINT+a, nil)
+func (m *Meta) GetKycStatusByAccount(a string) (*models.KycStatusByAccountResponse, error) {
+	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+KYCSTATUSENDPOINT+a, nil)
 	req.Header = m.Cfg.GetHeaders()
 	if err != nil {
 		log.Println(err)
@@ -36,7 +36,7 @@ func (m *Meta) GetKycStatusByAccount(a string) (*models.GetKycStatusByAccountRes
 		return nil, err
 	}
 
-	var kyc models.GetKycStatusByAccountResponse
+	var kyc models.KycStatusByAccountResponse
 	_, err = utils.DeserialiseRequest(&kyc, res.Body)
 	if err != nil {
 		return nil, err
@@ -47,14 +47,14 @@ func (m *Meta) GetKycStatusByAccount(a string) (*models.GetKycStatusByAccountRes
 
 // GetKycStatusByUserToken fetches the KYC status for a XUMM user (based on an issued user_token).
 // Takes 1 parameter, user_token.
-func (m *Meta) GetKycStatusByUserToken(body models.GetKycStatusByUserTokenRequest) (*models.GetKycStatusByUserTokenResponse, error) {
+func (m *Meta) GetKycStatusByUserToken(body models.KycStatusByUserTokenRequest) (*models.KycStatusByUserTokenResponse, error) {
 	reqBody, err := jsoniter.Marshal(body)
 
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	req, err := http.NewRequest(http.MethodPost, m.Cfg.BaseURL+GetKycStatusByAccountENDPOINT, bytes.NewReader(reqBody))
+	req, err := http.NewRequest(http.MethodPost, m.Cfg.BaseURL+KYCSTATUSENDPOINT, bytes.NewReader(reqBody))
 	req.Header = m.Cfg.GetHeaders()
 	if err != nil {
 		log.Println(err)
@@ -72,7 +72,7 @@ func (m *Meta) GetKycStatusByUserToken(body models.GetKycStatusByUserTokenReques
 		return nil, err
 	}
 
-	var kyc models.GetKycStatusByUserTokenResponse
+	var kyc models.KycStatusByUserTokenResponse
 	_, err = utils.DeserialiseRequest(&kyc, res.Body)
 	if err != nil {
 		return nil, err

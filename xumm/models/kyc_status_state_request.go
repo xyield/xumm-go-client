@@ -1,5 +1,5 @@
 package models
 
-type GetKycStatusByUserTokenRequest struct {
+type KycStatusByUserTokenRequest struct {
 	UserToken string
 }

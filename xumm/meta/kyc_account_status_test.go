@@ -10,12 +10,12 @@ import (
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
-func TestKycAccountStatusTest(t *testing.T) {
+func TestGetKycStatusByAccountTest(t *testing.T) {
 	tt := []struct {
 		description    string
 		input          string
 		json           string
-		expectedOutput *models.KycAccountStatusResponse
+		expectedOutput *models.KycStatusByAccountResponse
 	}{
 		{
 			description: "Valid account with kyc status true",
@@ -24,7 +24,7 @@ func TestKycAccountStatusTest(t *testing.T) {
 				"account": "rGBP1ZYpgiArYbDSvqu7Ps8AmWrD6hiqwe",
 				"kycApproved": true
 			  }`,
-			expectedOutput: &models.KycAccountStatusResponse{
+			expectedOutput: &models.KycStatusByAccountResponse{
 				Account:     "rGBP1ZYpgiArYbDSvqu7Ps8AmWrD6hiqwe",
 				KycApproved: true,
 			},
@@ -41,7 +41,7 @@ func TestKycAccountStatusTest(t *testing.T) {
 				Cfg: cfg,
 			}
 
-			customer, _ := meta.KycAccountStatus(test.input)
+			customer, _ := meta.GetKycStatusByAccount(test.input)
 			assert.Equal(t, http.Header{
 				"X-API-Key":    {"testApiKey"},
 				"X-API-Secret": {"testApiSecret"},
@@ -52,16 +52,16 @@ func TestKycAccountStatusTest(t *testing.T) {
 	}
 }
 
-func TestKycStatusState(t *testing.T) {
+func TestGetKycStatusByUserToken(t *testing.T) {
 	tt := []struct {
 		description    string
-		input          models.KycStatusStateRequest
+		input          models.KycStatusByUserTokenRequest
 		json           string
-		expectedOutput *models.KycStatusStateResponse
+		expectedOutput *models.KycStatusByUserTokenResponse
 	}{
 		{
 			description: "Valid account with kyc status none",
-			input: models.KycStatusStateRequest{
+			input: models.KycStatusByUserTokenRequest{
 				UserToken: "test-token",
 			},
 			json: `{
@@ -73,7 +73,7 @@ func TestKycStatusState(t *testing.T) {
 				  "SUCCESSFUL": "KYC flow has been started and was SUCCESSFUL :)"
 				}
 			  }`,
-			expectedOutput: &models.KycStatusStateResponse{
+			expectedOutput: &models.KycStatusByUserTokenResponse{
 				KycStatus: "NONE",
 				PossibleStatuses: models.PossibleStatuses{
 					None:       "No KYC attempt has been made",
@@ -94,7 +94,7 @@ func TestKycStatusState(t *testing.T) {
 			meta := &Meta{
 				Cfg: cfg,
 			}
-			customer, _ := meta.KycStatusState(test.input)
+			customer, _ := meta.GetKycStatusByUserToken(test.input)
 			assert.Equal(t, test.expectedOutput, customer)
 			assert.Equal(t, http.Header{
 				"X-API-Key":    {"testApiKey"},

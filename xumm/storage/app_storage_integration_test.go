@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package storage
@@ -11,7 +12,7 @@ import (
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
-func TestStorageIntegration(t *testing.T) {
+func TestAppStorageIntegration(t *testing.T) {
 	cfg, _ := xumm.NewConfig()
 	s := Storage{
 		Cfg: cfg,

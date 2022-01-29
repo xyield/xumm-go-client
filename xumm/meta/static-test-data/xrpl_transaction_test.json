@@ -5,7 +5,11 @@
         {
           "counterparty": "",
           "currency": "XRP",
-          "value": "-1.000012"
+          "value": "-1.000012",
+          "formatted": {
+            "value": "-0.589015",
+            "currency": "XRP"
+          }
         }
       ]
     },

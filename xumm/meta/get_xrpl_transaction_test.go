@@ -1,3 +1,6 @@
+//go:build unit
+// +build unit
+
 package meta
 
 import (
@@ -12,12 +15,6 @@ import (
 )
 
 func TestGetXrplTx(t *testing.T) {
-
-	bc := &models.BalanceDetails{
-		Value:        "-1.000012",
-		Currency:     "XRP",
-		CounterParty: "",
-	}
 
 	txJson := &anyjson.AnyJson{
 		"Account":         "r4bA4uZgXadPMzURqGLCvCmD48FmXJWHCG",
@@ -36,6 +33,16 @@ func TestGetXrplTx(t *testing.T) {
 		"validated": true,
 	}
 
+	f := models.Formatted{
+		Value:    "-0.589015",
+		Currency: "XRP",
+	}
+	bc := &models.BalanceDetails{
+		Value:        "-1.000012",
+		Currency:     "XRP",
+		CounterParty: "",
+		Formatted:    f,
+	}
 	txRes := &models.XrpTxResponse{
 		Txid: "A17E4DEAD62BF705D9B73B4EAD2832F1C55C6C5A0067327A45E497FD8D31C0E3",
 		Node: "wss://xrpl.ws",
@@ -49,6 +56,13 @@ func TestGetXrplTx(t *testing.T) {
 
 	json := testutils.ConvertJsonFileToJsonString("static-test-data/xrpl_transaction_test.json")
 
+	errorJson := `{
+		"error": {
+		  "reference": "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c",
+		  "code": 812
+		}
+	  }`
+
 	var tests = []struct {
 		testName       string
 		input          string
@@ -58,6 +72,8 @@ func TestGetXrplTx(t *testing.T) {
 		httpStatusCode int
 	}{
 		{testName: "valid transaction id", input: "A17E4DEAD62BF705D9B73B4EAD2832F1C55C6C5A0067327A45E497FD8D31C0E3", json: json, expectedOutput: txRes, expectedError: nil, httpStatusCode: 200},
+		{testName: "empty transaction id", input: "", json: "", expectedOutput: nil, expectedError: &EmptyTransactionId{}, httpStatusCode: 0},
+		{testName: "error response", input: "A17E4DEAD62BF705D9B73B4EAD2832F1C55C6C5A0067327A45E497FD8D31C0E3", json: errorJson, expectedOutput: nil, expectedError: &xumm.ErrorResponse{ErrorResponseBody: xumm.ErrorResponseBody{Reference: "3a04c7d3-94aa-4d8d-9559-62bb5e8a653c", Code: 812}}, httpStatusCode: 403},
 	}
 
 	for _, tt := range tests {

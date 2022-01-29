@@ -10,7 +10,13 @@ type XrpTxResponse struct {
 }
 
 type BalanceDetails struct {
-	CounterParty string `json:"counterParty,omitempty"`
-	Currency     string `json:"currency,omitempty"`
-	Value        string `json:"value,omitempty"`
+	CounterParty string    `json:"counterParty"`
+	Currency     string    `json:"currency"`
+	Value        string    `json:"value"`
+	Formatted    Formatted `json:"formatted"`
+}
+
+type Formatted struct {
+	Value    string `json:"value"`
+	Currency string `json:"currency"`
 }

@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -13,9 +14,21 @@ const (
 	XRPLTRANSACTIONENDPOINT = "/platform/xrpl-tx/"
 )
 
+// EmptyTransactionId returns an error when an empty transaction ID is given.
+type EmptyTransactionId struct{}
+
+func (e *EmptyTransactionId) Error() string {
+	return fmt.Sprintln("No transaction ID provided")
+}
+
 // GetXrplTransaction fetches transaction & outcome live from XRP ledger full history nodes (through the XUMM platform) containing parsed transaction outcome balance mutations.
 // Takes 1 parameter, txid (64 hexadecimal characters).
 func (m *Meta) GetXrplTransaction(txid string) (*models.XrpTxResponse, error) {
+
+	if txid == "" {
+		return nil, &EmptyTransactionId{}
+	}
+
 	req, err := http.NewRequest(http.MethodGet, m.Cfg.BaseURL+XRPLTRANSACTIONENDPOINT+txid, nil)
 	req.Header = m.Cfg.GetHeaders()
 	if err != nil {

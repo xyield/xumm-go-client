@@ -12,6 +12,12 @@ type PayloadInterface interface {
 	CancelPayloadByUUID(uuid string) (*models.XummDeletePayloadResponse, error)
 }
 
+type WSCfg struct {
+	url  string
+	msgs chan string
+}
+
 type Payload struct {
-	Cfg *xumm.Config
+	Cfg   *xumm.Config
+	WSCfg WSCfg
 }

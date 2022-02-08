@@ -1,6 +1,7 @@
 package payload
 
 import (
+	anyjson "github.com/xyield/xumm-go-client/utils/json"
 	"github.com/xyield/xumm-go-client/xumm"
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
@@ -14,7 +15,8 @@ type PayloadInterface interface {
 
 type WSCfg struct {
 	url  string
-	msgs chan string
+	msgs chan anyjson.AnyJson
+	// done chan *models.XummPayload
 }
 
 type Payload struct {

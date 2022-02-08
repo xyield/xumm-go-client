@@ -1,6 +1,7 @@
 package payload
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -15,9 +16,8 @@ import (
 
 var upgrader = websocket.Upgrader{}
 
-func MockWebSocket(wsFunc http.HandlerFunc)
-
 func TestSubscribe(t *testing.T) {
+	// done := make(chan string)
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 		c, err := upgrader.Upgrade(w, r, nil)
@@ -27,18 +27,70 @@ func TestSubscribe(t *testing.T) {
 		defer c.Close()
 
 		d := anyjson.AnyJson{
-			"message": "Hello",
+			"message": "Welcome 10e94f5f-caa5-4030-8a58-6d9f3cbd9ac5",
 		}
 
 		c.WriteJSON(d)
+		// c.WriteJSON(&models.XummPayload{
+		// 	Meta: models.PayloadMeta{
+		// 		Exists:              true,
+		// 		UUID:                "f94fc5d2-0dfe-4123-9182-a9f3b5addc8a",
+		// 		Multisign:           false,
+		// 		Submit:              false,
+		// 		Destination:         "",
+		// 		ResolvedDestination: "",
+		// 		Resolved:            false,
+		// 		Signed:              false,
+		// 		Cancelled:           false,
+		// 		Expired:             false,
+		// 		Pushed:              false,
+		// 		AppOpened:           false,
+		// 		OpenedByDeeplink:    nil,
+		// 		ReturnURLApp:        "test",
+		// 		ReturnURLWeb:        nil,
+		// 		IsXapp:              false,
+		// 	},
+		// 	Application: models.PayloadApplication{
+		// 		Name:            "test",
+		// 		Description:     "test",
+		// 		Disabled:        0,
+		// 		Uuidv4:          "27AC8810-F458-4386-8ED9-2B9A4D9BE212",
+		// 		IconURL:         "https://test.com",
+		// 		IssuedUserToken: "test",
+		// 	},
+		// 	Payload: models.Payload{
+		// 		TxType:           "SignIn",
+		// 		TxDestination:    "",
+		// 		TxDestinationTag: 0,
+		// 		RequestJSON: anyjson.AnyJson{
+		// 			"TransactionType": "SignIn",
+		// 			"SignIn":          true,
+		// 		},
+		// 		Origintype:       "test",
+		// 		Signmethod:       "test",
+		// 		CreatedAt:        "2021-11-23T21:22:22Z",
+		// 		ExpiresAt:        "2021-11-24T21:22:22Z",
+		// 		ExpiresInSeconds: 86239,
+		// 	},
+		// 	Response: models.PayloadResponse{
+		// 		Hex:                "test",
+		// 		Txid:               "test",
+		// 		ResolvedAt:         "test",
+		// 		DispatchedTo:       "test",
+		// 		DispatchedResult:   "test",
+		// 		DispatchedNodetype: "test",
+		// 		MultisignAccount:   "test",
+		// 		Account:            "test",
+		// 	},
+		// })
+		// <-done
 	}))
 
-	// res, _ := http.Get(s.URL)
-	// b, _ := ioutil.ReadAll(res.Body)
-	// fmt.Println(string(b))
+	defer s.Close()
 
 	cfg, _ := xumm.NewConfig()
 
+	// defer close(ch)
 	wsURL, _ := convertHttpToWS(s.URL)
 	p := &Payload{
 		Cfg: cfg,
@@ -47,9 +99,15 @@ func TestSubscribe(t *testing.T) {
 		},
 	}
 
-	_, err := p.Subscribe("adjpdjdads")
-
+	_, err := p.Subscribe("10e94f5f-caa5-4030-8a58-6d9f3cbd9ac5")
 	assert.NoError(t, err)
+
+	var msgs []anyjson.AnyJson
+	for v := range p.WSCfg.msgs {
+		fmt.Println(v)
+		msgs = append(msgs, v)
+	}
+	assert.Equal(t, []anyjson.AnyJson{{"message": "Welcome 10e94f5f-caa5-4030-8a58-6d9f3cbd9ac5"}}, msgs)
 }
 
 // type testServer struct{}

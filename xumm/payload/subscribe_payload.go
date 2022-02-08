@@ -64,7 +64,6 @@ func recieveMessage(conn *websocket.Conn, msgs chan anyjson.AnyJson, done chan s
 			log.Println("Could not read message!")
 			log.Println(err)
 		}
-		// utils.PrettyPrintJson(msg)
 		msgs <- msg
 		if checkMessage(msg, "payload_uuidv4") {
 			done <- msg["payload_uuidv4"].(string)

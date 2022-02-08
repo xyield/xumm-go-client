@@ -15,8 +15,7 @@ type PayloadInterface interface {
 
 type WSCfg struct {
 	url  string
-	msgs chan anyjson.AnyJson
-	// done chan *models.XummPayload
+	msgs []anyjson.AnyJson
 }
 
 type Payload struct {

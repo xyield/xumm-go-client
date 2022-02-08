@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/assert"
 	anyjson "github.com/xyield/xumm-go-client/utils/json"
+	testutils "github.com/xyield/xumm-go-client/utils/test-utils"
 	"github.com/xyield/xumm-go-client/xumm"
 )
 
@@ -23,7 +24,6 @@ func TestSubscribe(t *testing.T) {
 		if err != nil {
 			log.Println("Upgrade:", err)
 		}
-		defer c.Close()
 
 		d := anyjson.AnyJson{
 			"message": "Welcome 10e94f5f-caa5-4030-8a58-6d9f3cbd9ac5",
@@ -37,9 +37,10 @@ func TestSubscribe(t *testing.T) {
 
 	defer s.Close()
 
-	cfg, _ := xumm.NewConfig()
+	m := &testutils.MockClient{}
+	m.DoFunc = testutils.MockResponse(`{}`, 200, m)
+	cfg, _ := xumm.NewConfig(xumm.WithHttpClient(m), xumm.WithAuth("testApiKey", "testApiSecret"))
 
-	// defer close(ch)
 	wsURL, _ := convertHttpToWS(s.URL)
 	p := &Payload{
 		Cfg: cfg,
@@ -51,17 +52,18 @@ func TestSubscribe(t *testing.T) {
 	_, err := p.Subscribe("10e94f5f-caa5-4030-8a58-6d9f3cbd9ac5")
 	assert.NoError(t, err)
 
-	var msgs []anyjson.AnyJson
-	for v := range p.WSCfg.msgs {
-		msgs = append(msgs, v)
-	}
-	assert.Equal(t, []anyjson.AnyJson{{"message": "Welcome 10e94f5f-caa5-4030-8a58-6d9f3cbd9ac5"}, {"payload_uuidv4": "ccb0ca8e-d498-4aa8-bed0-d55d9015f556"}}, msgs)
+	// var msgs []anyjson.AnyJson
+	// for v := range p.WSCfg.msgs {
+	// 	msgs = append(msgs, v)
+	// }
+	assert.Equal(t, []anyjson.AnyJson{{"message": "Welcome 10e94f5f-caa5-4030-8a58-6d9f3cbd9ac5"}, {"payload_uuidv4": "ccb0ca8e-d498-4aa8-bed0-d55d9015f556"}}, p.WSCfg.msgs)
 }
 
 func TestCheckMessage(t *testing.T) {
 	tt := []struct {
 		description string
 		input       anyjson.AnyJson
+		key         string
 		expected    bool
 	}{
 		{
@@ -69,6 +71,7 @@ func TestCheckMessage(t *testing.T) {
 			input: anyjson.AnyJson{
 				"payload_uuidv4": "ccb0ca8e-d498-4aa8-bed0-d55d9015f556",
 			},
+			key:      "payload_uuidv4",
 			expected: true,
 		},
 		{
@@ -76,6 +79,7 @@ func TestCheckMessage(t *testing.T) {
 			input: anyjson.AnyJson{
 				"expired": "true",
 			},
+			key:      "expired",
 			expected: true,
 		},
 		{
@@ -83,22 +87,17 @@ func TestCheckMessage(t *testing.T) {
 			input: anyjson.AnyJson{
 				"message": "Welcome ccb0ca8e-d498-4aa8-bed0-d55d9015f556",
 			},
+			key:      "expired",
 			expected: false,
 		},
 	}
 
 	for _, tc := range tt {
 		t.Run(tc.description, func(t *testing.T) {
-			assert.Equal(t, tc.expected, checkMessage(tc.input))
+			assert.Equal(t, tc.expected, checkMessage(tc.input, tc.key))
 		})
 	}
 }
-
-// type testServer struct{}
-
-// func (t *testServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-
-// }
 
 func convertHttpToWS(u string) (string, error) {
 	s, err := url.Parse(u)

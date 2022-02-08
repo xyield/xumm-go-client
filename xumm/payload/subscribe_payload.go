@@ -1,11 +1,10 @@
 package payload
 
 import (
-	"fmt"
 	"log"
-	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/xyield/xumm-go-client/utils"
 	anyjson "github.com/xyield/xumm-go-client/utils/json"
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
@@ -16,7 +15,7 @@ func (p *Payload) Subscribe(uuid string) (*models.XummPayload, error) {
 		log.Println("Error connecting to websocket:", err)
 		return nil, err
 	}
-	defer ws.Close()
+	// defer ws.Close()
 
 	p.WSCfg.msgs = make(chan anyjson.AnyJson)
 
@@ -24,14 +23,13 @@ func (p *Payload) Subscribe(uuid string) (*models.XummPayload, error) {
 
 	// TO DO: Write a for loop that accepts msgs
 
-	//hack to make websocket doesn't close before message is sent
-	time.Sleep(time.Duration(time.Millisecond) * 50)
-
 	return nil, nil
 }
 
+// Recieves messages from an open connection reads them and fires them into a channel
 func recieveMessage(conn *websocket.Conn, c chan anyjson.AnyJson) {
 	defer close(c)
+	defer conn.Close()
 
 	for {
 		var msg anyjson.AnyJson
@@ -40,9 +38,24 @@ func recieveMessage(conn *websocket.Conn, c chan anyjson.AnyJson) {
 			log.Println("Could not read message!")
 			log.Println(err)
 		}
-		fmt.Println("message:", msg)
 		c <- msg
-		//hack until something can break out of the loop
-		break
+		if checkMessage(msg) {
+			return
+		}
+		// break
 	}
+}
+
+// Check if message contains payload uuid or expired true
+func checkMessage(m anyjson.AnyJson) bool {
+	utils.PrettyPrintJson(m)
+	if _, ok := m["payload_uuidv4"]; ok {
+		return ok
+	}
+
+	if _, ok := m["expired"]; ok {
+		return true
+	}
+
+	return false
 }

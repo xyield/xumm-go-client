@@ -1,7 +1,6 @@
 package payload
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -31,59 +30,9 @@ func TestSubscribe(t *testing.T) {
 		}
 
 		c.WriteJSON(d)
-		// c.WriteJSON(&models.XummPayload{
-		// 	Meta: models.PayloadMeta{
-		// 		Exists:              true,
-		// 		UUID:                "f94fc5d2-0dfe-4123-9182-a9f3b5addc8a",
-		// 		Multisign:           false,
-		// 		Submit:              false,
-		// 		Destination:         "",
-		// 		ResolvedDestination: "",
-		// 		Resolved:            false,
-		// 		Signed:              false,
-		// 		Cancelled:           false,
-		// 		Expired:             false,
-		// 		Pushed:              false,
-		// 		AppOpened:           false,
-		// 		OpenedByDeeplink:    nil,
-		// 		ReturnURLApp:        "test",
-		// 		ReturnURLWeb:        nil,
-		// 		IsXapp:              false,
-		// 	},
-		// 	Application: models.PayloadApplication{
-		// 		Name:            "test",
-		// 		Description:     "test",
-		// 		Disabled:        0,
-		// 		Uuidv4:          "27AC8810-F458-4386-8ED9-2B9A4D9BE212",
-		// 		IconURL:         "https://test.com",
-		// 		IssuedUserToken: "test",
-		// 	},
-		// 	Payload: models.Payload{
-		// 		TxType:           "SignIn",
-		// 		TxDestination:    "",
-		// 		TxDestinationTag: 0,
-		// 		RequestJSON: anyjson.AnyJson{
-		// 			"TransactionType": "SignIn",
-		// 			"SignIn":          true,
-		// 		},
-		// 		Origintype:       "test",
-		// 		Signmethod:       "test",
-		// 		CreatedAt:        "2021-11-23T21:22:22Z",
-		// 		ExpiresAt:        "2021-11-24T21:22:22Z",
-		// 		ExpiresInSeconds: 86239,
-		// 	},
-		// 	Response: models.PayloadResponse{
-		// 		Hex:                "test",
-		// 		Txid:               "test",
-		// 		ResolvedAt:         "test",
-		// 		DispatchedTo:       "test",
-		// 		DispatchedResult:   "test",
-		// 		DispatchedNodetype: "test",
-		// 		MultisignAccount:   "test",
-		// 		Account:            "test",
-		// 	},
-		// })
-		// <-done
+		c.WriteJSON(anyjson.AnyJson{
+			"payload_uuidv4": "ccb0ca8e-d498-4aa8-bed0-d55d9015f556",
+		})
 	}))
 
 	defer s.Close()
@@ -104,10 +53,45 @@ func TestSubscribe(t *testing.T) {
 
 	var msgs []anyjson.AnyJson
 	for v := range p.WSCfg.msgs {
-		fmt.Println(v)
 		msgs = append(msgs, v)
 	}
-	assert.Equal(t, []anyjson.AnyJson{{"message": "Welcome 10e94f5f-caa5-4030-8a58-6d9f3cbd9ac5"}}, msgs)
+	assert.Equal(t, []anyjson.AnyJson{{"message": "Welcome 10e94f5f-caa5-4030-8a58-6d9f3cbd9ac5"}, {"payload_uuidv4": "ccb0ca8e-d498-4aa8-bed0-d55d9015f556"}}, msgs)
+}
+
+func TestCheckMessage(t *testing.T) {
+	tt := []struct {
+		description string
+		input       anyjson.AnyJson
+		expected    bool
+	}{
+		{
+			description: "Message contains payload uuid field",
+			input: anyjson.AnyJson{
+				"payload_uuidv4": "ccb0ca8e-d498-4aa8-bed0-d55d9015f556",
+			},
+			expected: true,
+		},
+		{
+			description: "Message contains expired field",
+			input: anyjson.AnyJson{
+				"expired": "true",
+			},
+			expected: true,
+		},
+		{
+			description: "Message doesn't contain a required field",
+			input: anyjson.AnyJson{
+				"message": "Welcome ccb0ca8e-d498-4aa8-bed0-d55d9015f556",
+			},
+			expected: false,
+		},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.description, func(t *testing.T) {
+			assert.Equal(t, tc.expected, checkMessage(tc.input))
+		})
+	}
 }
 
 // type testServer struct{}

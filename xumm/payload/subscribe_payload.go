@@ -18,43 +18,51 @@ func (e *PayloadExpiredError) Error() string {
 	return fmt.Sprintf("Payload with uuid %v expired", e.UUID)
 }
 
+type PayloadUuidError struct {
+	UUID string
+}
+
+func (e *PayloadUuidError) Error() string {
+	return fmt.Sprintf("Payload with uuid %v does not exist", e.UUID)
+}
+
+// Subscribes to paylaod websocket to recieve messages and returns payload if it is resolved
 func (p *Payload) Subscribe(uuid string) (*models.XummPayload, error) {
 	ws, _, err := websocket.DefaultDialer.Dial(p.WSCfg.url, nil)
 	if err != nil {
 		log.Println("Error connecting to websocket:", err)
 		return nil, err
 	}
-	// defer ws.Close()
 
 	msgsc := make(chan anyjson.AnyJson)
 	done := make(chan string)
-	expired := make(chan bool)
-	// p.WSCfg.done = make(chan string)
-	// p.WSCfg.expired = make(chan bool)
 
-	go recieveMessage(ws, msgsc, done, expired)
+	go recieveMessage(ws, msgsc, done)
 
-	// TO DO: Write a for loop that accepts msgs
 	for {
 		select {
 		case v := <-msgsc:
 			utils.PrettyPrintJson(v)
 			p.WSCfg.msgs = append(p.WSCfg.msgs, v)
-		case <-done:
-			fmt.Println("Payload resolved")
-			return p.GetPayloadByUUID(uuid)
-		case <-expired:
-			fmt.Println("Payload expired")
-			return nil, &PayloadExpiredError{UUID: uuid}
+		case m := <-done:
+			if m == "resolved" {
+				fmt.Println("Payload resolved")
+				return p.GetPayloadByUUID(uuid)
+			}
+			if m == "expired" {
+				fmt.Println("Payload expired")
+				return nil, &PayloadExpiredError{UUID: uuid}
+			}
+			if m == "payloadUuidError" {
+				fmt.Println("Payload does not exist")
+				return nil, &PayloadUuidError{UUID: uuid}
+			}
 		}
 	}
-
-	// return nil, nil
 }
 
 // Recieves messages from an open connection reads them and fires them into a channel
-func recieveMessage(conn *websocket.Conn, msgs chan anyjson.AnyJson, done chan string, expired chan bool) {
-	// defer close(msgs)
+func recieveMessage(conn *websocket.Conn, msgs chan anyjson.AnyJson, done chan string) {
 	defer conn.Close()
 
 	for {
@@ -66,12 +74,18 @@ func recieveMessage(conn *websocket.Conn, msgs chan anyjson.AnyJson, done chan s
 		}
 		msgs <- msg
 		if checkMessage(msg, "payload_uuidv4") {
-			done <- msg["payload_uuidv4"].(string)
+			done <- "resolved"
 			return
 		}
 		if checkMessage(msg, "expired") {
-			expired <- msg["expired"].(bool)
+			done <- "expired"
 			return
+		}
+		if checkMessage(msg, "message") {
+			if msg["message"] == "..." {
+				done <- "payloadUuidError"
+				return
+			}
 		}
 	}
 }

@@ -1,10 +1,6 @@
 package payload
 
 import (
-	"log"
-	"net/http"
-	"net/http/httptest"
-	"net/url"
 	"testing"
 
 	"github.com/gorilla/websocket"
@@ -15,8 +11,6 @@ import (
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
-var upgrader = websocket.Upgrader{}
-
 func TestSubscribe(t *testing.T) {
 
 	tt := []struct {
@@ -26,6 +20,7 @@ func TestSubscribe(t *testing.T) {
 		jsonResponse     string
 		httpResponseCode int
 		expectedOutput   *models.XummPayload
+		expectedError    error
 	}{
 		{
 			description: "Successful subscribe and payload grab",
@@ -88,23 +83,49 @@ func TestSubscribe(t *testing.T) {
 				},
 			},
 			httpResponseCode: 200,
+			expectedError:    nil,
+		},
+		{
+			description:      "Payload UUID does not exist",
+			messages:         []anyjson.AnyJson{{"message": "..."}},
+			uuid:             "f94fc5d2-0dfe-4123-9182-a9f3b5addc8a",
+			jsonResponse:     "",
+			expectedOutput:   nil,
+			httpResponseCode: 200,
+			expectedError:    &PayloadUuidError{UUID: "f94fc5d2-0dfe-4123-9182-a9f3b5addc8a"},
+		},
+		{
+			description: "Payload expired",
+			messages: []anyjson.AnyJson{
+				{"message": "Welcome f94fc5d2-0dfe-4123-9182-a9f3b5addc8a"},
+				{"expires_in_seconds": 10},
+				{"expires_in_seconds": 5},
+				{"expires_in_seconds": 1},
+				{"expired": true},
+			},
+			uuid:             "f94fc5d2-0dfe-4123-9182-a9f3b5addc8a",
+			jsonResponse:     "",
+			expectedOutput:   nil,
+			httpResponseCode: 200,
+			expectedError:    &PayloadExpiredError{UUID: "f94fc5d2-0dfe-4123-9182-a9f3b5addc8a"},
 		},
 	}
 
 	for _, tc := range tt {
 		t.Run(tc.description, func(t *testing.T) {
 
-			s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				upgrader.CheckOrigin = func(r *http.Request) bool { return true }
-				c, err := upgrader.Upgrade(w, r, nil)
-				if err != nil {
-					log.Println("Upgrade:", err)
-				}
+			ms := &testutils.MockWebSocketServer{
+				Msgs: tc.messages,
+			}
 
+			s := ms.TestWebSocketServer(func(c *websocket.Conn) {
 				for _, m := range tc.messages {
-					c.WriteJSON(m)
+					err := c.WriteJSON(m)
+					if err != nil {
+						println("error writing message")
+					}
 				}
-			}))
+			})
 
 			defer s.Close()
 
@@ -112,7 +133,7 @@ func TestSubscribe(t *testing.T) {
 			m.DoFunc = testutils.MockResponse(tc.jsonResponse, tc.httpResponseCode, m)
 			cfg, _ := xumm.NewConfig(xumm.WithHttpClient(m), xumm.WithAuth("testApiKey", "testApiSecret"))
 
-			wsURL, _ := convertHttpToWS(s.URL)
+			wsURL, _ := testutils.ConvertHttpToWS(s.URL)
 			p := &Payload{
 				Cfg: cfg,
 				WSCfg: WSCfg{
@@ -121,10 +142,16 @@ func TestSubscribe(t *testing.T) {
 			}
 
 			actual, err := p.Subscribe(tc.uuid)
-			assert.NoError(t, err)
 
-			assert.Equal(t, tc.messages, p.WSCfg.msgs)
-			assert.Equal(t, tc.expectedOutput, actual)
+			if tc.expectedError != nil {
+				assert.Nil(t, actual)
+				assert.Error(t, err)
+				assert.EqualError(t, err, tc.expectedError.Error())
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tc.messages, p.WSCfg.msgs)
+				assert.Equal(t, tc.expectedOutput, actual)
+			}
 		})
 	}
 }
@@ -167,19 +194,4 @@ func TestCheckMessage(t *testing.T) {
 			assert.Equal(t, tc.expected, checkMessage(tc.input, tc.key))
 		})
 	}
-}
-
-func convertHttpToWS(u string) (string, error) {
-	s, err := url.Parse(u)
-	if err != nil {
-		return "", err
-	}
-	switch s.Scheme {
-	case "http":
-		s.Scheme = "ws"
-	case "https":
-		s.Scheme = "wss"
-	}
-
-	return s.String(), nil
 }

@@ -1,6 +1,7 @@
 package payload
 
 import (
+	"syscall"
 	"testing"
 
 	"github.com/gorilla/websocket"
@@ -21,6 +22,7 @@ func TestSubscribe(t *testing.T) {
 		httpResponseCode int
 		expectedOutput   *models.XummPayload
 		expectedError    error
+		interrupt        bool
 	}{
 		{
 			description: "Successful subscribe and payload grab",
@@ -84,6 +86,7 @@ func TestSubscribe(t *testing.T) {
 			},
 			httpResponseCode: 200,
 			expectedError:    nil,
+			interrupt:        false,
 		},
 		{
 			description:      "Payload UUID does not exist",
@@ -93,6 +96,7 @@ func TestSubscribe(t *testing.T) {
 			expectedOutput:   nil,
 			httpResponseCode: 200,
 			expectedError:    &PayloadUuidError{UUID: "f94fc5d2-0dfe-4123-9182-a9f3b5addc8a"},
+			interrupt:        false,
 		},
 		{
 			description: "Payload expired",
@@ -108,6 +112,20 @@ func TestSubscribe(t *testing.T) {
 			expectedOutput:   nil,
 			httpResponseCode: 200,
 			expectedError:    &PayloadExpiredError{UUID: "f94fc5d2-0dfe-4123-9182-a9f3b5addc8a"},
+			interrupt:        false,
+		},
+		{
+			description: "Connection interrupted",
+			messages: []anyjson.AnyJson{
+				{"message": "Welcome f94fc5d2-0dfe-4123-9182-a9f3b5addc8a"},
+				{"expires_in_seconds": 10},
+			},
+			uuid:             "f94fc5d2-0dfe-4123-9182-a9f3b5addc8a",
+			jsonResponse:     "",
+			expectedOutput:   nil,
+			httpResponseCode: 200,
+			expectedError:    &ConnectionError{UUID: "f94fc5d2-0dfe-4123-9182-a9f3b5addc8a"},
+			interrupt:        true,
 		},
 	}
 
@@ -123,6 +141,12 @@ func TestSubscribe(t *testing.T) {
 					err := c.WriteJSON(m)
 					if err != nil {
 						println("error writing message")
+					}
+				}
+				if tc.interrupt == true {
+					err := syscall.Kill(syscall.Getpid(), syscall.SIGINT)
+					if err != nil {
+						println("interrupt failed")
 					}
 				}
 			})

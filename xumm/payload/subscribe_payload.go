@@ -3,6 +3,8 @@ package payload
 import (
 	"fmt"
 	"log"
+	"os"
+	"os/signal"
 
 	"github.com/gorilla/websocket"
 	"github.com/xyield/xumm-go-client/utils"
@@ -26,6 +28,14 @@ func (e *PayloadUuidError) Error() string {
 	return fmt.Sprintf("Payload with uuid %v does not exist", e.UUID)
 }
 
+type ConnectionError struct {
+	UUID string
+}
+
+func (e *ConnectionError) Error() string {
+	return fmt.Sprintf("Connection dropped for payload websocket with uuid %v", e.UUID)
+}
+
 // Subscribes to paylaod websocket to recieve messages and returns payload if it is resolved
 func (p *Payload) Subscribe(uuid string) (*models.XummPayload, error) {
 	ws, _, err := websocket.DefaultDialer.Dial(p.WSCfg.url, nil)
@@ -36,6 +46,8 @@ func (p *Payload) Subscribe(uuid string) (*models.XummPayload, error) {
 
 	msgsc := make(chan anyjson.AnyJson)
 	done := make(chan string)
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt)
 
 	go recieveMessage(ws, msgsc, done)
 
@@ -57,6 +69,9 @@ func (p *Payload) Subscribe(uuid string) (*models.XummPayload, error) {
 				fmt.Println("Payload does not exist")
 				return nil, &PayloadUuidError{UUID: uuid}
 			}
+		case <-interrupt:
+			fmt.Println("Websocket connection interrupted")
+			return nil, &ConnectionError{UUID: uuid}
 		}
 	}
 }

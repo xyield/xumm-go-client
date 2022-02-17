@@ -120,6 +120,31 @@ func (u *UserDevice) SignRequest(uuid string) error {
 	return nil
 }
 
+func (u *UserDevice) RejectRequest(uuid string) error {
+	ops := []byte(`{
+		"reject": true
+	}`)
+	req, err := http.NewRequest(http.MethodPatch, XUMM_API_PREFIX+"payload/"+uuid, bytes.NewBuffer(ops))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+u.generateBearerToken(strconv.FormatInt(time.Now().UnixNano(), 10)))
+
+	res, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	b, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+	var j anyjson.AnyJson
+	json.Unmarshal(b, &j)
+	utils.PrettyPrintJson(j)
+	return nil
+}
+
 func (u *UserDevice) generateBearerToken(uid string) string {
 	h := sha256.Sum256([]byte(u.AccessToken + u.UniqueDeviceIdentifier + uid))
 	s := hex.EncodeToString(h[:])

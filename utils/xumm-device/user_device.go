@@ -36,6 +36,36 @@ func (e *PayloadNotFoundError) Error() string {
 	return fmt.Sprintf("Payload with UUID %v not found", e.UUID)
 }
 
+type PatchResponse struct {
+	ReferenceCallUuidv4 string      `json:"reference_call_uuidv4"`
+	Signed              bool        `json:"signed"`
+	UserToken           interface{} `json:"user_token"`
+	ReturnURL           ReturnUrl   `json:"return_url"`
+}
+type ReturnUrl struct {
+	App string `json:"app"`
+	Web string `json:"web"`
+}
+
+// type RejectPayload struct {
+// 	Rejected bool `json:"reject"`
+// }
+type SignPayload struct {
+	// SignedBlob string `json:"signed_blob"`
+	// TxID       string `json:"tx_id"`
+	// Multisigned string     `json:"multisigned"`
+	// Dispatched  Dispatched `json:"dispatched"`
+	Permission Permission `json:"permission"`
+}
+type Dispatched struct {
+	To     string `json:"to"`
+	Result string `json:"result"`
+}
+type Permission struct {
+	Push bool `json:"push"`
+	Days int  `json:"days"`
+}
+
 func NewUserDevice(t, udi string) *UserDevice {
 	return &UserDevice{
 		AccessToken:            t,
@@ -61,7 +91,10 @@ func (u *UserDevice) Ping() (*Pong, error) {
 	}
 
 	var p Pong
-	json.Unmarshal(b, &p)
+	err = json.Unmarshal(b, &p)
+	if err != nil {
+		return nil, err
+	}
 
 	return &p, nil
 }
@@ -84,7 +117,10 @@ func (u *UserDevice) OpenPayload(uuid string) error {
 	}
 
 	var p models.XummPayload
-	json.Unmarshal(b, &p)
+	err = json.Unmarshal(b, &p)
+	if err != nil {
+		return err
+	}
 
 	utils.PrettyPrintJson(p)
 
@@ -95,54 +131,81 @@ func (u *UserDevice) OpenPayload(uuid string) error {
 	return nil
 }
 
-func (u *UserDevice) SignRequest(uuid string) error {
-	ops := []byte(`[
-		{"op": "replace","path":"/meta/signed","value": true}
-	]`)
-	req, err := http.NewRequest(http.MethodPatch, XUMM_API_PREFIX+"payload/"+uuid, bytes.NewBuffer(ops))
+func (u *UserDevice) SignRequest(uuid string) (string, error) {
+
+	// conditional here for multisign with those fields
+	s := SignPayload{
+		// SignedBlob: "xxxx",
+		// TxID:       "yyyy",
+		Permission: Permission{
+			Push: true,
+			Days: 365,
+		},
+	}
+
+	body, err := json.Marshal(s)
 	if err != nil {
-		return err
+		return "", err
+	}
+
+	fmt.Println(string(body))
+
+	req, err := http.NewRequest(http.MethodPatch, XUMM_API_PREFIX+"payload/"+uuid, bytes.NewReader(body))
+	if err != nil {
+		return "", err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+u.generateBearerToken(strconv.FormatInt(time.Now().UnixNano(), 10)))
 
 	res, err := client.Do(req)
 	if err != nil {
-		return err
+		return "", err
 	}
 	b, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return err
+		return "", err
 	}
+
 	var j anyjson.AnyJson
-	json.Unmarshal(b, &j)
+	err = json.Unmarshal(b, &j)
+	if err != nil {
+		return "", err
+	}
 	utils.PrettyPrintJson(j)
-	return nil
+
+	json, _ := json.MarshalIndent(j, "", "  ")
+	return string(json), nil
 }
 
-func (u *UserDevice) RejectRequest(uuid string) error {
+func (u *UserDevice) RejectRequest(uuid string) (string, error) {
 	ops := []byte(`{
 		"reject": true
 	}`)
 	req, err := http.NewRequest(http.MethodPatch, XUMM_API_PREFIX+"payload/"+uuid, bytes.NewBuffer(ops))
 	if err != nil {
-		return err
+		return "", err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+u.generateBearerToken(strconv.FormatInt(time.Now().UnixNano(), 10)))
 
 	res, err := client.Do(req)
 	if err != nil {
-		return err
+		return "", err
 	}
 	b, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return err
+		return "", err
 	}
+
 	var j anyjson.AnyJson
-	json.Unmarshal(b, &j)
+	err = json.Unmarshal(b, &j)
+	if err != nil {
+		return "", err
+	}
 	utils.PrettyPrintJson(j)
-	return nil
+
+	json, _ := json.MarshalIndent(j, "", "  ")
+	return string(json), nil
 }
 
 func (u *UserDevice) generateBearerToken(uid string) string {

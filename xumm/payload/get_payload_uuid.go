@@ -25,7 +25,7 @@ func (p *Payload) GetPayloadByUUID(uuid string) (*models.XummPayload, error) {
 		return nil, &EmptyUuidError{}
 	}
 
-	return GetPayload(p, PAYLOADENDPOINT+uuid)
+	return GetPayload(p, PAYLOADENDPOINT+"/"+uuid)
 }
 
 func GetPayload(p *Payload, endpt string) (*models.XummPayload, error) {

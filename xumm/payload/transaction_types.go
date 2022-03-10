@@ -4,10 +4,6 @@ import "encoding/json"
 
 type TransactionType uint32
 
-type transactionType struct {
-	Type TransactionType `json:"TransactionType,omitempty"`
-}
-
 // TransactionTypeError is returned when an invalid transaction type is provided in the TxJson field of the XummPostPayload.
 type TransactionTypeError struct {
 }

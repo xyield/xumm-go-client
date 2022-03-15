@@ -4,8 +4,11 @@
 package payload
 
 import (
+	"fmt"
 	"log"
+	"os"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	anyjson "github.com/xyield/xumm-go-client/utils/json"
@@ -125,8 +128,8 @@ import (
 // 	assert.Equal(t, true, payload.Meta.Expired)
 // }
 
-func TestPostPayloadIntegration_SignRequestNotFound(t *testing.T) {
-	xd := xummdevice.NewUserDevice("548F5765-0FFF-49E5-AFBC-CE37517CA22E", "621928FBA984E")
+func TestSubscribeIntegration(t *testing.T) {
+	xd := xummdevice.NewUserDevice(os.Getenv("XUMM_USER_DEVICE_ACCESS_TOKEN"), os.Getenv("XUMM_USER_DEVICE_UID"))
 	cfg, _ := xumm.NewConfig()
 
 	p := &Payload{
@@ -143,24 +146,57 @@ func TestPostPayloadIntegration_SignRequestNotFound(t *testing.T) {
 			// Sequence: account_data.Sequence
 		},
 	})
-	if err != nil {
-		log.Println("Error creating payload", err)
-	}
-	err = xd.OpenPayload(cp.UUID)
-	if err != nil {
-		log.Println("Error opening payload:", err)
-	}
+
+	assert.NoError(t, err)
+	fmt.Println("UUID:", cp.UUID)
+	fmt.Println("WebsocketStatus:", cp.Refs.WebsocketStatus)
+
+	// _, err = p.Subscribe(cp.UUID)
+
+	// time.Sleep(5 * time.Second)
+
+	// assert.NoError(t, err)
+	go p.Subscribe(cp.UUID)
+
+	// fmt.Println("Before timer...")
+	// time.Sleep(5 * time.Second)
+	// fmt.Println("After timer...")
+
+	time.Sleep(5 * time.Second)
+
+	xd.OpenPayload(cp.UUID)
+
+	time.Sleep(5 * time.Second)
+
+	// xd.RejectRequest(cp.UUID)
+	xd.SignRequest(cp.UUID, transactionTypeToString[Payment])
+	time.Sleep(5 * time.Second)
+
+	// p.GetPayloadByUUID(cp.UUID)
+
+	// time.Sleep(5 * time.Second)
+
+	// xd.SignRequest(cp.UUID, "Payment")
+
+	// time.Sleep(5 * time.Second)
+	// if err != nil {
+	// 	log.Println("Error opening payload:", err)
+	// }
+	// assert.NoError(t, err)
 	payload, err := p.GetPayloadByUUID(cp.UUID)
 	if err != nil {
 		log.Println("Error fetching payload", err)
+	} else {
+		fmt.Println("Payload was fetched successfully")
 	}
-	assert.Equal(t, true, payload.Meta.AppOpened)
-	err = xd.SignRequest(cp.UUID, "Payment")
-	// uuid exists - or endpoint fails (it';s in the url)
-	// BUT there is no request to sign?
-	assert.Nil(t, err)
 
-	// payload, err := p.GetPayloadByUUID(cp.UUID)
-	// assert.Error(t, err)
-	// assert.Nil(t, payload)
+	time.Sleep(5 * time.Second)
+	// err = xd.SignRequest(cp.UUID, "Payment")
+	// assert.NoError(t, err)
+
+	// assert.NoError(t, err)
+	assert.Equal(t, true, payload.Meta.AppOpened)
+	assert.Equal(t, true, payload.Meta.Signed)
+	assert.Equal(t, true, payload.Meta.Resolved)
+	assert.Equal(t, true, payload.Meta.OpenedByDeeplink)
 }

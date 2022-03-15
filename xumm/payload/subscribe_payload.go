@@ -38,7 +38,10 @@ func (e *ConnectionError) Error() string {
 
 // Subscribes to paylaod websocket to recieve messages and returns payload if it is resolved
 func (p *Payload) Subscribe(uuid string) (*models.XummPayload, error) {
-	ws, _, err := websocket.DefaultDialer.Dial(p.WSCfg.url, nil)
+
+	wss := "wss://xumm.app/sign/" + uuid // this breaks unit tests, need to fix
+
+	ws, _, err := websocket.DefaultDialer.Dial(wss, nil)
 	if err != nil {
 		log.Println("Error connecting to websocket:", err)
 		return nil, err

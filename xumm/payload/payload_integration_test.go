@@ -31,7 +31,6 @@ func TestPostPayloadIntegration_SignRequest(t *testing.T) {
 			"Amount":          "1",
 			"Destination":     "rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ",
 			"Fee":             "12",
-			// Sequence: account_data.Sequence
 		},
 	})
 	if err != nil {
@@ -72,13 +71,12 @@ func TestPostPayloadIntegration_RejectRequest(t *testing.T) {
 			"Amount":          "1",
 			"Destination":     "rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ",
 			"Fee":             "12",
-			// Sequence: account_data.Sequence
 		},
 	})
 	if err != nil {
 		log.Println("Error creating payload", err)
 	}
-	// utils.PrettyPrintJson(cp)
+
 	err = xd.OpenPayload(cp.UUID)
 	if err != nil {
 		log.Println("Error opening payload:", err)
@@ -97,42 +95,16 @@ func TestPostPayloadIntegration_RejectRequest(t *testing.T) {
 	assert.Equal(t, true, payload.Meta.Resolved)
 }
 
-// func TestPostPayloadIntegration_CancelRequest(t *testing.T) {
-// 	// xd := xummdevice.NewUserDevice(os.Getenv("XUMM_USER_DEVICE_ACCESS_TOKEN"), os.Getenv("XUMM_USER_DEVICE_UID"))
-// 	cfg, _ := xumm.NewConfig()
-
-// 	p := &Payload{
-// 		Cfg: cfg,
-// 	}
-
-// 	cp, err := p.PostPayload(models.XummPostPayload{
-// 		TxJson: anyjson.AnyJson{
-// 			"TransactionType": "Payment",
-// 			"Account":         "rQNrSWi3t6ojNFof8gE3Wq8Pwz88QUr6Hx",
-// 			"Amount":          "1",
-// 			"Destination":     "rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ",
-// 			"Fee":             "12",
-// 			// Sequence: account_data.Sequence
-// 		},
-// 	})
-// 	if err != nil {
-// 		log.Println("Error creating payload", err)
-// 	}
-// 	payload, err := p.GetPayloadByUUID(cp.UUID)
-// 	assert.NoError(t, err)
-// 	assert.Equal(t, false, payload.Meta.Signed)
-// 	assert.Equal(t, false, payload.Meta.OpenedByDeeplink)
-// 	assert.Equal(t, false, payload.Meta.Resolved)
-// 	assert.Equal(t, true, payload.Meta.Cancelled)
-// 	assert.Equal(t, true, payload.Meta.Expired)
-// }
-
 func TestSubscribeSignRequestIntegration(t *testing.T) {
+
 	xd := xummdevice.NewUserDevice(os.Getenv("XUMM_USER_DEVICE_ACCESS_TOKEN"), os.Getenv("XUMM_USER_DEVICE_UID"))
 	cfg, _ := xumm.NewConfig()
 
 	p := &Payload{
 		Cfg: cfg,
+		WSCfg: WSCfg{
+			baseUrl: WEBSOCKETBASEURL,
+		},
 	}
 
 	cp, err := p.PostPayload(models.XummPostPayload{
@@ -142,7 +114,6 @@ func TestSubscribeSignRequestIntegration(t *testing.T) {
 			"Amount":          "1",
 			"Destination":     "rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ",
 			"Fee":             "12",
-			// Sequence: account_data.Sequence
 		},
 	})
 	assert.NoError(t, err)
@@ -169,6 +140,9 @@ func TestSubscribeRejectRequestIntegration(t *testing.T) {
 
 	p := &Payload{
 		Cfg: cfg,
+		WSCfg: WSCfg{
+			baseUrl: WEBSOCKETBASEURL,
+		},
 	}
 
 	cp, err := p.PostPayload(models.XummPostPayload{
@@ -178,7 +152,6 @@ func TestSubscribeRejectRequestIntegration(t *testing.T) {
 			"Amount":          "1",
 			"Destination":     "rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ",
 			"Fee":             "12",
-			// Sequence: account_data.Sequence
 		},
 	})
 	assert.NoError(t, err)

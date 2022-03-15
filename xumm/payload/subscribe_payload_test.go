@@ -1,3 +1,4 @@
+//go:build unit
 // +build unit
 
 package payload
@@ -163,7 +164,7 @@ func TestSubscribe(t *testing.T) {
 			p := &Payload{
 				Cfg: cfg,
 				WSCfg: WSCfg{
-					url: wsURL,
+					baseUrl: wsURL + "/",
 				},
 			}
 

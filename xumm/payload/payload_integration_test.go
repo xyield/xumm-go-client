@@ -127,7 +127,7 @@ func TestPostPayloadIntegration_RejectRequest(t *testing.T) {
 // 	assert.Equal(t, true, payload.Meta.Expired)
 // }
 
-func TestSubscribeIntegration(t *testing.T) {
+func TestSubscribeSignRequestIntegration(t *testing.T) {
 	xd := xummdevice.NewUserDevice(os.Getenv("XUMM_USER_DEVICE_ACCESS_TOKEN"), os.Getenv("XUMM_USER_DEVICE_UID"))
 	cfg, _ := xumm.NewConfig()
 
@@ -161,4 +161,42 @@ func TestSubscribeIntegration(t *testing.T) {
 	assert.Equal(t, true, payload.Meta.Signed)
 	assert.Equal(t, true, payload.Meta.Resolved)
 	assert.Equal(t, true, payload.Meta.OpenedByDeeplink)
+}
+
+func TestSubscribeRejectRequestIntegration(t *testing.T) {
+	xd := xummdevice.NewUserDevice(os.Getenv("XUMM_USER_DEVICE_ACCESS_TOKEN"), os.Getenv("XUMM_USER_DEVICE_UID"))
+	cfg, _ := xumm.NewConfig()
+
+	p := &Payload{
+		Cfg: cfg,
+	}
+
+	cp, err := p.PostPayload(models.XummPostPayload{
+		TxJson: anyjson.AnyJson{
+			"TransactionType": "Payment",
+			"Account":         "rQNrSWi3t6ojNFof8gE3Wq8Pwz88QUr6Hx",
+			"Amount":          "1",
+			"Destination":     "rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ",
+			"Fee":             "12",
+			// Sequence: account_data.Sequence
+		},
+	})
+	assert.NoError(t, err)
+
+	go p.Subscribe(cp.UUID)
+	time.Sleep(5 * time.Second)
+
+	xd.OpenPayload(cp.UUID)
+	xd.RejectRequest(cp.UUID)
+
+	payload, err := p.GetPayloadByUUID(cp.UUID)
+	if err != nil {
+		log.Println("Error fetching payload", err)
+	}
+
+	assert.Equal(t, true, payload.Meta.AppOpened)
+	assert.Equal(t, true, payload.Meta.OpenedByDeeplink)
+	assert.Equal(t, false, payload.Meta.Signed)
+	assert.Equal(t, true, payload.Meta.Resolved)
+
 }

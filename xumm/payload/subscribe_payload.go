@@ -12,6 +12,10 @@ import (
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
 
+const (
+	WEBSOCKETBASEURL = "wss://xumm.app/sign/"
+)
+
 type PayloadExpiredError struct {
 	UUID string
 }
@@ -36,9 +40,10 @@ func (e *ConnectionError) Error() string {
 	return fmt.Sprintf("Connection dropped for payload websocket with uuid %v", e.UUID)
 }
 
-// Subscribes to paylaod websocket to recieve messages and returns payload if it is resolved
+// Subscribes to payload websocket to receive messages and returns payload if it is resolved
 func (p *Payload) Subscribe(uuid string) (*models.XummPayload, error) {
-	ws, _, err := websocket.DefaultDialer.Dial(p.WSCfg.url, nil)
+
+	ws, _, err := websocket.DefaultDialer.Dial(p.WSCfg.baseUrl+uuid, nil)
 	if err != nil {
 		log.Println("Error connecting to websocket:", err)
 		return nil, err

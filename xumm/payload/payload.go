@@ -14,8 +14,8 @@ type PayloadInterface interface {
 }
 
 type WSCfg struct {
-	url  string
-	msgs []anyjson.AnyJson
+	baseUrl string
+	msgs    []anyjson.AnyJson
 }
 
 type Payload struct {

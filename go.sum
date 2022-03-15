@@ -26,8 +26,6 @@ github.com/ugorji/go/codec v1.2.6/go.mod h1:V6TCNZ4PHqoHGFZuSG1W8nrCzzdgA2DozYxW
 github.com/ugorji/go/codec v1.2.7 h1:YPXUKf7fYbp/y8xloBqZOw2qaVggbfwMlI8WM3wZUJ0=
 github.com/ugorji/go/codec v1.2.7/go.mod h1:WGN1fab3R1fzQlVQTkfxVtIBhWDRqOviHU95kRgeqEY=
 github.com/xyield/xumm-go-client v0.0.0-20220310192812-590915fe9937/go.mod h1:0LoPhdN9OpjWZJaZ86y1sz/oc57PbuAIB5ORwSX5kyc=
-github.com/xyield/xumm-user-device v0.0.0-20220310193811-4ef9d2a69f9d h1:aGoE3FLpII7+rQ9dIwmWP8Zrh+ygPhmvtwvVEnbb40Q=
-github.com/xyield/xumm-user-device v0.0.0-20220310193811-4ef9d2a69f9d/go.mod h1:VwNyuWpcqbDmKq6IvvXTDJAFf+skL6M9/pDgQYNyYRk=
 github.com/xyield/xumm-user-device v0.0.0-20220310195212-97adb7e851c8 h1:3oZkMihn5uRMvRb4r3OYBuXd/uLtWxF5aQqSUmMavhc=
 github.com/xyield/xumm-user-device v0.0.0-20220310195212-97adb7e851c8/go.mod h1:VwNyuWpcqbDmKq6IvvXTDJAFf+skL6M9/pDgQYNyYRk=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=

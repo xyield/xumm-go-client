@@ -158,9 +158,9 @@ func TestSubscribeSignRequestIntegration(t *testing.T) {
 	}
 
 	assert.Equal(t, true, payload.Meta.AppOpened)
+	assert.Equal(t, true, payload.Meta.OpenedByDeeplink)
 	assert.Equal(t, true, payload.Meta.Signed)
 	assert.Equal(t, true, payload.Meta.Resolved)
-	assert.Equal(t, true, payload.Meta.OpenedByDeeplink)
 }
 
 func TestSubscribeRejectRequestIntegration(t *testing.T) {

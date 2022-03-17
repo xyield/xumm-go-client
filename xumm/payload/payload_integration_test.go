@@ -4,6 +4,7 @@
 package payload
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -119,10 +120,23 @@ func TestSubscribeSignRequestIntegration(t *testing.T) {
 	assert.NoError(t, err)
 
 	go p.Subscribe(cp.UUID)
-	time.Sleep(5 * time.Second)
-	xd.OpenPayload(cp.UUID)
-	xd.SignRequest(cp.UUID, transactionTypeToString[Payment])
+	time.Sleep(2 * time.Second)
 
+	msg := fmt.Sprint(p.WSCfg.msgs[0])
+	assert.Contains(t, msg, "message:Welcome")
+
+	xd.OpenPayload(cp.UUID)
+
+	msg = fmt.Sprint(p.WSCfg.msgs[2])
+	assert.Contains(t, msg, "opened:true")
+
+	xd.SignRequest(cp.UUID, transactionTypeToString[Payment])
+	time.Sleep(2 * time.Second)
+
+	msg = fmt.Sprint(p.WSCfg.msgs[3])
+	assert.Contains(t, msg, "opened_by_deeplink:true", "signed:true", "user_token:true")
+
+	time.Sleep(2 * time.Second)
 	payload, err := p.GetPayloadByUUID(cp.UUID)
 	if err != nil {
 		log.Println("Error fetching payload", err)
@@ -132,6 +146,7 @@ func TestSubscribeSignRequestIntegration(t *testing.T) {
 	assert.Equal(t, true, payload.Meta.OpenedByDeeplink)
 	assert.Equal(t, true, payload.Meta.Signed)
 	assert.Equal(t, true, payload.Meta.Resolved)
+
 }
 
 func TestSubscribeRejectRequestIntegration(t *testing.T) {
@@ -157,10 +172,21 @@ func TestSubscribeRejectRequestIntegration(t *testing.T) {
 	assert.NoError(t, err)
 
 	go p.Subscribe(cp.UUID)
-	time.Sleep(5 * time.Second)
+	time.Sleep(2 * time.Second)
+
+	msg := fmt.Sprint(p.WSCfg.msgs[0])
+	assert.Contains(t, msg, "message:Welcome")
 
 	xd.OpenPayload(cp.UUID)
+
+	msg = fmt.Sprint(p.WSCfg.msgs[2])
+	assert.Contains(t, msg, "opened:true")
+
 	xd.RejectRequest(cp.UUID)
+	time.Sleep(2 * time.Second)
+
+	msg = fmt.Sprint(p.WSCfg.msgs[3])
+	assert.Contains(t, msg, "opened_by_deeplink:true", "signed:false", "user_token:true")
 
 	payload, err := p.GetPayloadByUUID(cp.UUID)
 	if err != nil {
@@ -173,3 +199,26 @@ func TestSubscribeRejectRequestIntegration(t *testing.T) {
 	assert.Equal(t, true, payload.Meta.Resolved)
 
 }
+
+// func TestCreateAndSubscribeIntegration(t *testing.T) {
+// xd := xummdevice.NewUserDevice(os.Getenv("XUMM_USER_DEVICE_ACCESS_TOKEN"), os.Getenv("XUMM_USER_DEVICE_UID"))
+// 	cfg, _ := xumm.NewConfig()
+
+// 	p := &Payload{
+// 		Cfg: cfg,
+// 		WSCfg: WSCfg{
+// 			baseUrl: WEBSOCKETBASEURL,
+// 		},
+// 	}
+
+// 	p.CreateAndSubscribe(models.XummPostPayload{
+// 		TxJson: anyjson.AnyJson{
+// 			"TransactionType": "Payment",
+// 			"Account":         "rQNrSWi3t6ojNFof8gE3Wq8Pwz88QUr6Hx",
+// 			"Amount":          "1",
+// 			"Destination":     "rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ",
+// 			"Fee":             "12",
+// 		},
+// 	})
+
+// }

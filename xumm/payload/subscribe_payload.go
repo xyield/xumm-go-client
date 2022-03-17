@@ -81,6 +81,16 @@ func (p *Payload) Subscribe(uuid string) (*models.XummPayload, error) {
 	}
 }
 
+func (p *Payload) CreateAndSubscribe(payloadBody models.XummPostPayload) (*models.XummPayload, error) {
+
+	pb, err := p.PostPayload(payloadBody)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return p.Subscribe(pb.UUID)
+}
+
 // Recieves messages from an open connection reads them and fires them into a channel
 func recieveMessage(conn *websocket.Conn, msgs chan anyjson.AnyJson, done chan string) {
 	defer conn.Close()

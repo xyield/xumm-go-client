@@ -7,7 +7,6 @@ import (
 	"os/signal"
 
 	"github.com/gorilla/websocket"
-	"github.com/xyield/xumm-go-client/utils"
 	anyjson "github.com/xyield/xumm-go-client/utils/json"
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
@@ -59,23 +58,18 @@ func (p *Payload) Subscribe(uuid string) (*models.XummPayload, error) {
 	for {
 		select {
 		case v := <-msgsc:
-			utils.PrettyPrintJson(v)
 			p.WSCfg.msgs = append(p.WSCfg.msgs, v)
 		case m := <-done:
 			if m == "resolved" {
-				fmt.Println("Payload resolved")
 				return p.GetPayloadByUUID(uuid)
 			}
 			if m == "expired" {
-				fmt.Println("Payload expired")
 				return nil, &PayloadExpiredError{UUID: uuid}
 			}
 			if m == "payloadUuidError" {
-				fmt.Println("Payload does not exist")
 				return nil, &PayloadUuidError{UUID: uuid}
 			}
 		case <-interrupt:
-			fmt.Println("Websocket connection interrupted")
 			return nil, &ConnectionError{UUID: uuid}
 		}
 	}

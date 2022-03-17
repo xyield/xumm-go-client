@@ -4,7 +4,6 @@
 package payload
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -120,31 +119,21 @@ func TestSubscribeSignRequestIntegration(t *testing.T) {
 	assert.NoError(t, err)
 
 	go p.Subscribe(cp.UUID)
-	time.Sleep(2 * time.Second)
-
-	msg := fmt.Sprint(p.WSCfg.msgs[0])
-	assert.Contains(t, msg, "message:Welcome")
+	time.Sleep(1 * time.Second)
 
 	xd.OpenPayload(cp.UUID)
-
-	msg = fmt.Sprint(p.WSCfg.msgs[2])
-	assert.Contains(t, msg, "opened:true")
-
 	xd.SignRequest(cp.UUID, transactionTypeToString[Payment])
-	time.Sleep(2 * time.Second)
 
-	msg = fmt.Sprint(p.WSCfg.msgs[3])
-	assert.Contains(t, msg, "opened_by_deeplink:true", "signed:true", "user_token:true")
-
-	time.Sleep(2 * time.Second)
 	payload, err := p.GetPayloadByUUID(cp.UUID)
 	if err != nil {
 		log.Println("Error fetching payload", err)
 	}
 
-	assert.Equal(t, true, payload.Meta.AppOpened)
-	assert.Equal(t, true, payload.Meta.OpenedByDeeplink)
-	assert.Equal(t, true, payload.Meta.Signed)
+	filteredMsgs := filterExpireMessages(p.WSCfg.msgs)
+	assert.Equal(t, filteredMsgs[0], anyjson.AnyJson{"message": "Welcome " + cp.UUID})
+	assert.Equal(t, filteredMsgs[1], anyjson.AnyJson{"opened": true})
+	assert.Equal(t, cp.UUID, filteredMsgs[2]["payload_uuidv4"])
+	assert.Equal(t, true, filteredMsgs[2]["signed"])
 	assert.Equal(t, true, payload.Meta.Resolved)
 
 }
@@ -172,53 +161,33 @@ func TestSubscribeRejectRequestIntegration(t *testing.T) {
 	assert.NoError(t, err)
 
 	go p.Subscribe(cp.UUID)
-	time.Sleep(2 * time.Second)
-
-	msg := fmt.Sprint(p.WSCfg.msgs[0])
-	assert.Contains(t, msg, "message:Welcome")
+	time.Sleep(1 * time.Second)
 
 	xd.OpenPayload(cp.UUID)
-
-	msg = fmt.Sprint(p.WSCfg.msgs[2])
-	assert.Contains(t, msg, "opened:true")
-
 	xd.RejectRequest(cp.UUID)
-	time.Sleep(2 * time.Second)
-
-	msg = fmt.Sprint(p.WSCfg.msgs[3])
-	assert.Contains(t, msg, "opened_by_deeplink:true", "signed:false", "user_token:true")
 
 	payload, err := p.GetPayloadByUUID(cp.UUID)
 	if err != nil {
 		log.Println("Error fetching payload", err)
 	}
 
-	assert.Equal(t, true, payload.Meta.AppOpened)
-	assert.Equal(t, true, payload.Meta.OpenedByDeeplink)
-	assert.Equal(t, false, payload.Meta.Signed)
+	filteredMsgs := filterExpireMessages(p.WSCfg.msgs)
+	assert.Equal(t, filteredMsgs[0], anyjson.AnyJson{"message": "Welcome " + cp.UUID})
+	assert.Equal(t, filteredMsgs[1], anyjson.AnyJson{"opened": true})
+	assert.Equal(t, cp.UUID, filteredMsgs[2]["payload_uuidv4"])
+	assert.Equal(t, false, filteredMsgs[2]["signed"])
 	assert.Equal(t, true, payload.Meta.Resolved)
-
 }
 
-// func TestCreateAndSubscribeIntegration(t *testing.T) {
-// xd := xummdevice.NewUserDevice(os.Getenv("XUMM_USER_DEVICE_ACCESS_TOKEN"), os.Getenv("XUMM_USER_DEVICE_UID"))
-// 	cfg, _ := xumm.NewConfig()
+func filterExpireMessages(msgs []anyjson.AnyJson) []anyjson.AnyJson {
 
-// 	p := &Payload{
-// 		Cfg: cfg,
-// 		WSCfg: WSCfg{
-// 			baseUrl: WEBSOCKETBASEURL,
-// 		},
-// 	}
+	var filteredList []anyjson.AnyJson
 
-// 	p.CreateAndSubscribe(models.XummPostPayload{
-// 		TxJson: anyjson.AnyJson{
-// 			"TransactionType": "Payment",
-// 			"Account":         "rQNrSWi3t6ojNFof8gE3Wq8Pwz88QUr6Hx",
-// 			"Amount":          "1",
-// 			"Destination":     "rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ",
-// 			"Fee":             "12",
-// 		},
-// 	})
-
-// }
+	for _, msg := range msgs {
+		if _, ok := msg["expires_in_seconds"]; ok {
+			continue
+		}
+		filteredList = append(filteredList, msg)
+	}
+	return filteredList
+}

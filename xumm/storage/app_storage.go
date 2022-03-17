@@ -31,6 +31,7 @@ func (s *Storage) GetAppStorage() (*models.AppStorageResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	req.Header = s.Cfg.GetHeaders()
 
 	res, err := s.Cfg.HTTPClient.Do(req)

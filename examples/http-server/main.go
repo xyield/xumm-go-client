@@ -54,6 +54,7 @@ func main() {
 		}
 
 		utils.PrettyPrintJson(xp)
+
 		// Do something with signed/rejected payload
 	})
 

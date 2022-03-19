@@ -27,9 +27,7 @@ func New(cfg *xumm.Config) *Client {
 		Meta: &meta.Meta{
 			Cfg: cfg,
 		},
-		Payload: &payload.Payload{
-			Cfg: cfg,
-		},
+		Payload: payload.NewPayload(cfg),
 		Xapp: &xapp.Xapp{
 			Cfg: cfg,
 		},

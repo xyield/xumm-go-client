@@ -103,7 +103,7 @@ func TestSubscribeSignRequestIntegration(t *testing.T) {
 	p := &Payload{
 		Cfg: cfg,
 		WSCfg: WSCfg{
-			baseUrl: WEBSOCKETBASEURL,
+			BaseURL: WEBSOCKETBASEURL,
 		},
 	}
 
@@ -141,7 +141,7 @@ func TestSubscribeRejectRequestIntegration(t *testing.T) {
 	p := &Payload{
 		Cfg: cfg,
 		WSCfg: WSCfg{
-			baseUrl: WEBSOCKETBASEURL,
+			BaseURL: WEBSOCKETBASEURL,
 		},
 	}
 

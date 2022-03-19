@@ -15,9 +15,28 @@ import (
 
 func TestClientCreation(t *testing.T) {
 	cfg, _ := xumm.NewConfig()
-	t.Run("Default SDK creation", func(t *testing.T) {
-		s := New(cfg)
+	tt := []struct {
+		description string
+		inputOpts   []clientOpt
+		expected    *Client
+	}{
+		{
+			description: "No input opts, base configuration",
+			inputOpts:   nil,
+			expected:    &Client{Config: cfg, Storage: &storage.Storage{Cfg: cfg}, Meta: &meta.Meta{Cfg: cfg}, Payload: &payload.Payload{Cfg: cfg, WSCfg: payload.WSCfg{BaseURL: payload.WEBSOCKETBASEURL}}, Xapp: &xapp.Xapp{Cfg: cfg}},
+		},
+		{
+			description: "Payload input opt",
+			inputOpts:   []clientOpt{WithPayload(payload.NewPayload(cfg, payload.WithWSBaseUrl("testUrl")))},
+			expected:    &Client{Config: cfg, Storage: &storage.Storage{Cfg: cfg}, Meta: &meta.Meta{Cfg: cfg}, Payload: &payload.Payload{Cfg: cfg, WSCfg: payload.WSCfg{BaseURL: "testUrl"}}, Xapp: &xapp.Xapp{Cfg: cfg}},
+		},
+	}
 
-		assert.Equal(t, &Client{Config: cfg, Storage: &storage.Storage{Cfg: cfg}, Meta: &meta.Meta{Cfg: cfg}, Payload: &payload.Payload{Cfg: cfg}, Xapp: &xapp.Xapp{Cfg: cfg}}, s)
-	})
+	for _, tc := range tt {
+		t.Run(tc.description, func(t *testing.T) {
+			s := New(cfg, tc.inputOpts...)
+
+			assert.Equal(t, tc.expected, s)
+		})
+	}
 }

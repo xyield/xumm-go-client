@@ -41,6 +41,11 @@ func main() {
 }
 ```
 
+## Contributing
+Pre-requisites:
+</br>
+Install pre-commit
+</br>
 
 ## Future work
 Continue to develop all endpoints

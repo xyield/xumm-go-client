@@ -47,7 +47,7 @@ jobs:
           args: -exclude-dir pkg/test-utils ./...
   release:
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/master' }}
+    if: ${{ github.ref_name == 'master' }}
     steps:
       - uses: actions/checkout@master
       - uses: go-semantic-release/action@v1

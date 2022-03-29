@@ -53,10 +53,9 @@ jobs:
       - uses: actions/checkout@master
       - uses: cycjimmy/semantic-release-action@v3
         with:
-          semantic_version: 16
+          semantic_version: 19
           branch: master
           extra_plugins: |
             @semantic-release/changelog
         env:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          changelog-file: true

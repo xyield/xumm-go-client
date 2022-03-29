@@ -58,4 +58,4 @@ jobs:
           extra_plugins: |
             @semantic-release/changelog
         env:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

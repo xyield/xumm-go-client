@@ -1,3 +1,4 @@
+//go:build unit
 // +build unit
 
 package payload
@@ -74,7 +75,7 @@ func TestPostPayload(t *testing.T) {
 			httpStatusCode: 200,
 		},
 		{
-			description: "unsucessful POST paylaod request - no transactionType",
+			description: "unsuccessful POST payload request - no transactionType",
 			payloadRequest: &models.XummPostPayload{
 				UserToken: "token",
 				TxJson: anyjson.AnyJson{
@@ -122,7 +123,7 @@ func TestPostPayload(t *testing.T) {
 			httpStatusCode: 0,
 		},
 		{
-			description: "unsucessful POST paylaod request - bad request/duplicate",
+			description: "unsuccessful POST payload request - bad request/duplicate",
 			payloadRequest: &models.XummPostPayload{
 				UserToken: "token",
 				TxJson: anyjson.AnyJson{

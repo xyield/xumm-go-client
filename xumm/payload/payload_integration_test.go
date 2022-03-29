@@ -119,7 +119,8 @@ func TestSubscribeSignRequestIntegration(t *testing.T) {
 	assert.NoError(t, err)
 
 	go p.Subscribe(cp.UUID)
-	time.Sleep(5 * time.Second)
+	time.Sleep(1 * time.Second)
+
 	xd.OpenPayload(cp.UUID)
 	xd.SignRequest(cp.UUID, transactionTypeToString[Payment])
 
@@ -128,10 +129,13 @@ func TestSubscribeSignRequestIntegration(t *testing.T) {
 		log.Println("Error fetching payload", err)
 	}
 
-	assert.Equal(t, true, payload.Meta.AppOpened)
-	assert.Equal(t, true, payload.Meta.OpenedByDeeplink)
-	assert.Equal(t, true, payload.Meta.Signed)
+	filteredMsgs := filterExpireMessages(p.WSCfg.msgs)
+	assert.Equal(t, filteredMsgs[0], anyjson.AnyJson{"message": "Welcome " + cp.UUID})
+	assert.Equal(t, filteredMsgs[1], anyjson.AnyJson{"opened": true})
+	assert.Equal(t, cp.UUID, filteredMsgs[2]["payload_uuidv4"])
+	assert.Equal(t, true, filteredMsgs[2]["signed"])
 	assert.Equal(t, true, payload.Meta.Resolved)
+
 }
 
 func TestSubscribeRejectRequestIntegration(t *testing.T) {
@@ -157,7 +161,7 @@ func TestSubscribeRejectRequestIntegration(t *testing.T) {
 	assert.NoError(t, err)
 
 	go p.Subscribe(cp.UUID)
-	time.Sleep(5 * time.Second)
+	time.Sleep(1 * time.Second)
 
 	xd.OpenPayload(cp.UUID)
 	xd.RejectRequest(cp.UUID)
@@ -167,9 +171,23 @@ func TestSubscribeRejectRequestIntegration(t *testing.T) {
 		log.Println("Error fetching payload", err)
 	}
 
-	assert.Equal(t, true, payload.Meta.AppOpened)
-	assert.Equal(t, true, payload.Meta.OpenedByDeeplink)
-	assert.Equal(t, false, payload.Meta.Signed)
+	filteredMsgs := filterExpireMessages(p.WSCfg.msgs)
+	assert.Equal(t, filteredMsgs[0], anyjson.AnyJson{"message": "Welcome " + cp.UUID})
+	assert.Equal(t, filteredMsgs[1], anyjson.AnyJson{"opened": true})
+	assert.Equal(t, cp.UUID, filteredMsgs[2]["payload_uuidv4"])
+	assert.Equal(t, false, filteredMsgs[2]["signed"])
 	assert.Equal(t, true, payload.Meta.Resolved)
+}
 
+func filterExpireMessages(msgs []anyjson.AnyJson) []anyjson.AnyJson {
+
+	var filteredList []anyjson.AnyJson
+
+	for _, msg := range msgs {
+		if _, ok := msg["expires_in_seconds"]; ok {
+			continue
+		}
+		filteredList = append(filteredList, msg)
+	}
+	return filteredList
 }

@@ -34,10 +34,10 @@ jobs:
   code-quality:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - uses: dominikh/staticcheck-action@v1.1.0
-      with:
-        version: "2021.1.1"
+      - uses: actions/checkout@v1
+      - uses: dominikh/staticcheck-action@v1.1.0
+        with:
+          version: "2021.1.1"
   security-scanning:
     runs-on: ubuntu-latest
     steps:
@@ -46,6 +46,7 @@ jobs:
         with:
           args: -exclude-dir pkg/test-utils ./...
   release:
+    needs: [golang-ci, unit-tests, integration-tests, code-quality, security-scanning]
     runs-on: ubuntu-latest
     if: ${{ github.ref_name == 'master' }}
     steps:
@@ -59,4 +60,3 @@ jobs:
         env:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           changelog-file: true
-        needs: [golang-ci, unit-tests, integration-tests, code-quality, security-scanning]

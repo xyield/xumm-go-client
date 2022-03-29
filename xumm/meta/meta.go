@@ -12,6 +12,8 @@ type MetaInterface interface {
 	GetKycStatusByUserToken(body models.KycStatusByUserTokenRequest) (*models.KycStatusByUserTokenResponse, error)
 	GetRatesForCurrency(cur string) (*models.RatesCurrencyResponse, error)
 	GetXrplTransaction(txid string) (*models.XrpTxResponse, error)
+	VerifyUserToken(t string) (*models.UserTokenResponse, error)
+	VerifyUserTokens(uts ...string) (*models.UserTokenResponse, error)
 }
 
 type Meta struct {

@@ -72,7 +72,6 @@ func NewConfig(opts ...ConfigOpt) (*Config, error) {
 	}
 
 	return cfg, nil
-
 }
 
 func getAuthEnv(key string) (string, error) {

@@ -12,6 +12,7 @@ type PayloadInterface interface {
 	GetPayloadByCustomId(customId string) (*models.XummPayload, error)
 	CancelPayloadByUUID(uuid string) (*models.XummDeletePayloadResponse, error)
 	Subscribe(uuid string) (*models.XummPayload, error)
+	CreateAndSubscribe(payloadBody models.XummPostPayload) (*models.XummPayload, error)
 }
 
 type WSCfg struct {

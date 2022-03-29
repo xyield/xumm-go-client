@@ -4,8 +4,12 @@
 package payload
 
 import (
+	"bytes"
+	"io/ioutil"
+	"net/http"
 	"syscall"
 	"testing"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/assert"
@@ -147,6 +151,7 @@ func TestSubscribe(t *testing.T) {
 					}
 				}
 				if tc.interrupt == true {
+					time.Sleep(time.Microsecond * 20)
 					err := syscall.Kill(syscall.Getpid(), syscall.SIGINT)
 					if err != nil {
 						println("interrupt failed")
@@ -178,6 +183,188 @@ func TestSubscribe(t *testing.T) {
 				assert.NoError(t, err)
 				assert.Equal(t, tc.messages, p.WSCfg.msgs)
 				assert.Equal(t, tc.expectedOutput, actual)
+			}
+		})
+	}
+}
+
+func TestCreateAndSubscribe(t *testing.T) {
+
+	type httpResponse struct {
+		response http.Response
+		error    error
+	}
+
+	tt := []struct {
+		description             string
+		payloadRequest          *models.XummPostPayload
+		responses               []httpResponse
+		jsonPostPayloadRequest  string
+		messages                []anyjson.AnyJson
+		uuid                    string
+		expectedSubscribeOutput *models.XummPayload
+		interrupt               bool
+	}{
+		{
+			description: "successful create and subscribe",
+			payloadRequest: &models.XummPostPayload{
+				UserToken: "token",
+				TxJson: anyjson.AnyJson{
+					"TransactionType": "SignIn",
+				},
+			},
+			responses: []httpResponse{
+				{
+					response: http.Response{
+						StatusCode: 200,
+						Body: ioutil.NopCloser(bytes.NewBufferString(`{
+							"uuid": "f94fc5d2-0dfe-4123-9182-a9f3b5addc8a",
+							"next": {
+							  "always": "https://xumm.app/sign/f94fc5d2-0dfe-4123-9182-a9f3b5addc8a",
+							  "no_push_msg_received": "https://xumm.app/sign/f94fc5d2-0dfe-4123-9182-a9f3b5addc8a/qr"
+							},
+							"refs": {
+							  "qr_png": "https://xumm.app/sign/f94fc5d2-0dfe-4123-9182-a9f3b5addc8a_q.png",
+							  "qr_matrix": "https://xumm.app/sign/f94fc5d2-0dfe-4123-9182-a9f3b5addc8a_q.json",
+							  "qr_uri_quality_opts": [
+								"m",
+								"q",
+								"h"
+							  ],
+							  "websocket_status": "wss://xumm.app/sign/f94fc5d2-0dfe-4123-9182-a9f3b5addc8a"
+							},
+							"pushed": true
+						  }`)),
+					},
+					error: nil,
+				},
+				{
+					response: http.Response{
+						StatusCode: 200,
+						Body:       ioutil.NopCloser(bytes.NewBufferString(testutils.ConvertJsonFileToJsonString("static-test-data/valid_get_payload_response.json"))),
+					},
+					error: nil,
+				},
+			},
+
+			jsonPostPayloadRequest: `{
+				"user_token": "token",
+				"txjson": {
+					"TransactionType": "SignIn"
+				}
+			}`,
+			messages: []anyjson.AnyJson{
+				{"message": "Welcome f94fc5d2-0dfe-4123-9182-a9f3b5addc8a"},
+				{"payload_uuidv4": "f94fc5d2-0dfe-4123-9182-a9f3b5addc8a6"},
+			},
+			uuid: "f94fc5d2-0dfe-4123-9182-a9f3b5addc8a",
+			expectedSubscribeOutput: &models.XummPayload{
+				Meta: models.PayloadMeta{
+					Exists:              true,
+					UUID:                "f94fc5d2-0dfe-4123-9182-a9f3b5addc8a",
+					Multisign:           false,
+					Submit:              false,
+					Destination:         "",
+					ResolvedDestination: "",
+					Resolved:            false,
+					Signed:              false,
+					Cancelled:           false,
+					Expired:             false,
+					Pushed:              false,
+					AppOpened:           false,
+					OpenedByDeeplink:    nil,
+					ReturnURLApp:        "test",
+					ReturnURLWeb:        nil,
+					IsXapp:              false,
+				},
+				Application: models.PayloadApplication{
+					Name:            "test",
+					Description:     "test",
+					Disabled:        0,
+					Uuidv4:          "27AC8810-F458-4386-8ED9-2B9A4D9BE212",
+					IconURL:         "https://test.com",
+					IssuedUserToken: "test",
+				},
+				Payload: models.Payload{
+					TxType:           "SignIn",
+					TxDestination:    "",
+					TxDestinationTag: 0,
+					RequestJSON: anyjson.AnyJson{
+						"TransactionType": "SignIn",
+						"SignIn":          true,
+					},
+					Origintype:       "test",
+					Signmethod:       "test",
+					CreatedAt:        "2021-11-23T21:22:22Z",
+					ExpiresAt:        "2021-11-24T21:22:22Z",
+					ExpiresInSeconds: 86239,
+				},
+				Response: models.PayloadResponse{
+					Hex:                "test",
+					Txid:               "test",
+					ResolvedAt:         "test",
+					DispatchedTo:       "test",
+					DispatchedResult:   "test",
+					DispatchedNodetype: "test",
+					MultisignAccount:   "test",
+					Account:            "test",
+				},
+			},
+			interrupt: false,
+		},
+	}
+
+	for _, tcs := range tt {
+		t.Run(tcs.description, func(t *testing.T) {
+
+			ms := &testutils.MockWebSocketServer{
+				Msgs: tcs.messages,
+			}
+
+			s := ms.TestWebSocketServer(func(c *websocket.Conn) {
+				for _, m := range tcs.messages {
+					err := c.WriteJSON(m)
+					if err != nil {
+						println("error writing message")
+					}
+				}
+				if tcs.interrupt == true {
+					err := syscall.Kill(syscall.Getpid(), syscall.SIGINT)
+					if err != nil {
+						println("interrupt failed")
+					}
+				}
+			})
+
+			defer s.Close()
+
+			m := &testutils.MockClient{}
+
+			responseCounter := 0
+			m.DoFunc = func(req *http.Request) (*http.Response, error) {
+				responseCounter++
+				return &tcs.responses[responseCounter-1].response, tcs.responses[responseCounter-1].error
+			}
+
+			cfg, _ := xumm.NewConfig(xumm.WithHttpClient(m), xumm.WithAuth("testApiKey", "testApiSecret"))
+			wsURL, _ := testutils.ConvertHttpToWS(s.URL)
+			p := &Payload{
+				Cfg: cfg,
+				WSCfg: WSCfg{
+					baseUrl: wsURL + "/",
+				},
+			}
+
+			actual, err := p.CreateAndSubscribe(*tcs.payloadRequest)
+
+			if tcs.responses[1].error != nil {
+				assert.Nil(t, actual)
+				assert.Error(t, err)
+				assert.EqualError(t, err, tcs.responses[1].error.Error())
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tcs.messages, p.WSCfg.msgs)
+				assert.Equal(t, tcs.expectedSubscribeOutput, actual)
 			}
 		})
 	}

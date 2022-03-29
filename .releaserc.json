@@ -1,0 +1,11 @@
+{
+  "branches": ["main"],
+  "plugins" : [
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "CHANGELOG.md"
+      }
+    ]
+    ]
+}

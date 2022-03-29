@@ -16,11 +16,33 @@ type PayloadInterface interface {
 }
 
 type WSCfg struct {
-	baseUrl string
+	BaseURL string
 	msgs    []anyjson.AnyJson
 }
 
 type Payload struct {
 	Cfg   *xumm.Config
 	WSCfg WSCfg
+}
+
+type payloadOpt func(p *Payload)
+
+func NewPayload(cfg *xumm.Config, opts ...payloadOpt) *Payload {
+	p := &Payload{
+		Cfg: cfg,
+	}
+	for _, opt := range opts {
+		opt(p)
+	}
+
+	if p.WSCfg.BaseURL == "" {
+		p.WSCfg.BaseURL = WEBSOCKETBASEURL
+	}
+	return p
+}
+
+func WithWSBaseUrl(url string) func(p *Payload) {
+	return func(p *Payload) {
+		p.WSCfg.BaseURL = url
+	}
 }

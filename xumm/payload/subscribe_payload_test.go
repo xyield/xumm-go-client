@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"syscall"
 	"testing"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/assert"
@@ -150,6 +151,7 @@ func TestSubscribe(t *testing.T) {
 					}
 				}
 				if tc.interrupt == true {
+					time.Sleep(time.Microsecond * 20)
 					err := syscall.Kill(syscall.Getpid(), syscall.SIGINT)
 					if err != nil {
 						println("interrupt failed")

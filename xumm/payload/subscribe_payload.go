@@ -7,7 +7,6 @@ import (
 	"os/signal"
 
 	"github.com/gorilla/websocket"
-	"github.com/xyield/xumm-go-client/utils"
 	anyjson "github.com/xyield/xumm-go-client/utils/json"
 	"github.com/xyield/xumm-go-client/xumm/models"
 )
@@ -43,7 +42,7 @@ func (e *ConnectionError) Error() string {
 // Subscribes to payload websocket to receive messages and returns payload if it is resolved
 func (p *Payload) Subscribe(uuid string) (*models.XummPayload, error) {
 
-	ws, _, err := websocket.DefaultDialer.Dial(p.WSCfg.baseUrl+uuid, nil)
+	ws, _, err := websocket.DefaultDialer.Dial(p.WSCfg.BaseURL+uuid, nil)
 	if err != nil {
 		log.Println("Error connecting to websocket:", err)
 		return nil, err
@@ -59,26 +58,31 @@ func (p *Payload) Subscribe(uuid string) (*models.XummPayload, error) {
 	for {
 		select {
 		case v := <-msgsc:
-			utils.PrettyPrintJson(v)
 			p.WSCfg.msgs = append(p.WSCfg.msgs, v)
 		case m := <-done:
 			if m == "resolved" {
-				fmt.Println("Payload resolved")
 				return p.GetPayloadByUUID(uuid)
 			}
 			if m == "expired" {
-				fmt.Println("Payload expired")
 				return nil, &PayloadExpiredError{UUID: uuid}
 			}
 			if m == "payloadUuidError" {
-				fmt.Println("Payload does not exist")
 				return nil, &PayloadUuidError{UUID: uuid}
 			}
 		case <-interrupt:
-			fmt.Println("Websocket connection interrupted")
 			return nil, &ConnectionError{UUID: uuid}
 		}
 	}
+}
+
+func (p *Payload) CreateAndSubscribe(payloadBody models.XummPostPayload) (*models.XummPayload, error) {
+
+	pb, err := p.PostPayload(payloadBody)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return p.Subscribe(pb.UUID)
 }
 
 // Recieves messages from an open connection reads them and fires them into a channel

@@ -56,7 +56,7 @@ func TestDeserialiseRequest(t *testing.T) {
 		expectedOutput interface{}
 		expectedError  bool
 	}{
-		{testName: "sucessfully deserialise body into interface", inputInterface: &i, inputBody: rc, expectedOutput: o, expectedError: false},
+		{testName: "successfully deserialise body into interface", inputInterface: &i, inputBody: rc, expectedOutput: o, expectedError: false},
 		{testName: "returns error if ioutil.ReadAll fails", inputInterface: &i, inputBody: rcError, expectedOutput: nil, expectedError: true},
 		{testName: "returns error if cannot unmarshal the json into the interface", inputInterface: &iError, inputBody: rc, expectedOutput: nil, expectedError: true},
 	}

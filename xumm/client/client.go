@@ -17,9 +17,12 @@ type Client struct {
 	Xapp    xapp.XappInterface
 }
 
+// Optional arguments to customise XUMM client
+type clientOpt func(c *Client)
+
 // New creates a new Client object for interacting with the XUMM api.
-func New(cfg *xumm.Config) *Client {
-	return &Client{
+func New(cfg *xumm.Config, opts ...clientOpt) *Client {
+	c := &Client{
 		Config: cfg,
 		Storage: &storage.Storage{
 			Cfg: cfg,
@@ -27,11 +30,21 @@ func New(cfg *xumm.Config) *Client {
 		Meta: &meta.Meta{
 			Cfg: cfg,
 		},
-		Payload: &payload.Payload{
-			Cfg: cfg,
-		},
+		Payload: payload.NewPayload(cfg),
 		Xapp: &xapp.Xapp{
 			Cfg: cfg,
 		},
+	}
+
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
+}
+
+// Optional argument to initialise client with custom payload interface.
+func WithPayload(p payload.PayloadInterface) func(c *Client) {
+	return func(c *Client) {
+		c.Payload = p
 	}
 }

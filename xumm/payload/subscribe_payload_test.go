@@ -351,7 +351,7 @@ func TestCreateAndSubscribe(t *testing.T) {
 			p := &Payload{
 				Cfg: cfg,
 				WSCfg: WSCfg{
-					baseUrl: wsURL + "/",
+					BaseURL: wsURL + "/",
 				},
 			}
 

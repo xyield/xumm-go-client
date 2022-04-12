@@ -14,6 +14,7 @@ type XummPostPayloadOptions struct {
 	Submit    bool                             `json:"submit,omitempty"`
 	Multisign bool                             `json:"multisign,omitempty"`
 	Expire    int32                            `json:"expire,omitempty"`
+	Signers   []string                         `json:"signers,omitempty"`
 	ReturnUrl *XummPostPayloadOptionsReturnUrl `json:"return_url,omitempty"`
 }
 

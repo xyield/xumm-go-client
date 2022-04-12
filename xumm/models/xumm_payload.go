@@ -44,6 +44,7 @@ type PayloadMeta struct {
 	CustomBlob          anyjson.AnyJson `json:"custom_blob"`
 	CustomInstruction   string          `json:"custom_instruction"`
 	IsXapp              bool            `json:"is_xapp"`
+	Signers             []string        `json:"signers"`
 }
 
 type PayloadApplication struct {

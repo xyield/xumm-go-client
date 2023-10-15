@@ -1,0 +1,61 @@
+name: main
+on: [push, pull_request]
+jobs:
+  golang-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          # Optional: version of golangci-lint to use in form of v1.2 or v1.2.3 or `latest` to use the latest version
+          version: v1.43
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.16'
+      - run: go test ./... -tags=unit
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.16'
+      - run: go test ./... -tags=integration
+        env:
+          XUMM_API_SECRET: ${{ secrets.XUMM_API_SECRET }}
+          XUMM_API_KEY: ${{ secrets.XUMM_API_KEY }}
+          XUMM_USER_DEVICE_ACCESS_TOKEN: ${{ secrets.XUMM_USER_DEVICE_ACCESS_TOKEN }}
+          XUMM_USER_DEVICE_UID: ${{ secrets.XUMM_USER_DEVICE_UID }}
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: dominikh/staticcheck-action@v1.1.0
+        with:
+          version: "2021.1.1"
+  security-scanning:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: securego/gosec@master
+        with:
+          args: -exclude-dir pkg/test-utils ./...
+  release:
+    needs: [golang-ci, unit-tests, integration-tests, code-quality, security-scanning]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'master' }}
+    steps:
+      - uses: actions/checkout@master
+      - uses: cycjimmy/semantic-release-action@v3
+        with:
+          semantic_version: 19
+          branch: master
+          extra_plugins: |
+            @semantic-release/changelog
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

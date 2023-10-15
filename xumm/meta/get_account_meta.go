@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	ACCOUNTMETAENDPOINT = "/platform/account-meta"
+	ACCOUNTMETAENDPOINT = "/platform/account-meta/"
 )
 
 func (m *Meta) GetAccountMeta(a string) (*models.AccountMetaResponse, error) {

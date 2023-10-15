@@ -2,6 +2,7 @@ package client
 
 import (
 	"github.com/xyield/xumm-go-client/xumm"
+	"github.com/xyield/xumm-go-client/xumm/jwt"
 	"github.com/xyield/xumm-go-client/xumm/meta"
 	"github.com/xyield/xumm-go-client/xumm/payload"
 	"github.com/xyield/xumm-go-client/xumm/storage"
@@ -15,6 +16,7 @@ type Client struct {
 	Meta    meta.MetaInterface
 	Payload payload.PayloadInterface
 	Xapp    xapp.XappInterface
+	Jwt     jwt.JwtInterface
 }
 
 // Optional arguments to customise XUMM client
@@ -32,6 +34,9 @@ func New(cfg *xumm.Config, opts ...clientOpt) *Client {
 		},
 		Payload: payload.NewPayload(cfg),
 		Xapp: &xapp.Xapp{
+			Cfg: cfg,
+		},
+		Jwt: &jwt.Jwt{
 			Cfg: cfg,
 		},
 	}

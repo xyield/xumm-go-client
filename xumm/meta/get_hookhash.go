@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	HOOKHASHENDPOINT = "/platform/hookhash"
+	HOOKHASHENDPOINT = "/platform/hookhash/"
 )
 
 func (m *Meta) GetHookhash(h string) (*models.HookHashResponse, error) {

@@ -13,5 +13,5 @@ type Meta struct {
 type Currency struct {
 	En     string `json:"en"`
 	Code   string `json:"code"`
-	Symbol string `json:"symbol"`
+	Symbol string `json:"symbol,omitempty"`
 }

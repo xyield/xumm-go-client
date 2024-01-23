@@ -33,7 +33,7 @@ func TestCuratedAssetsIntegration(t *testing.T) {
 		Id:     185,
 		Name:   "Bitstamp",
 		Domain: "bitstamp.net",
-		Avatar: "https://xumm.app/assets/icons/currencies/ex-bitstamp.png",
+		Avatar: "https://xumm.app/cdn-cgi/image/width=250,height=250,quality=75,fit=crop/assets/icons/currencies/ex-bitstamp.png",
 		Currencies: map[string]models.CurrencyInfo{
 			"BTC": {
 				Id:       492,
@@ -41,7 +41,23 @@ func TestCuratedAssetsIntegration(t *testing.T) {
 				Issuer:   "rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B",
 				Currency: "BTC",
 				Name:     "Bitcoin",
-				Avatar:   "https://xumm.app/assets/icons/currencies/crypto-btc.png",
+				Avatar:   "https://xumm.app/cdn-cgi/image/width=250,height=250,quality=75,fit=crop/assets/icons/currencies/crypto-btc.png",
+			},
+			"EUR": {
+				Id:       13854758,
+				IssuerId: 185,
+				Issuer:   "rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B",
+				Currency: "EUR",
+				Name:     "Euro",
+				Avatar:   "https://xumm.app/cdn-cgi/image/width=250,height=250,quality=75,fit=crop/assets/icons/currencies/fiat-euro.png",
+			},
+			"GBP": {
+				Id:       13854774,
+				IssuerId: 185,
+				Issuer:   "rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B",
+				Currency: "GBP",
+				Name:     "British Pound",
+				Avatar:   "https://cdn.xumm.pro/cdn-cgi/image/width=250,height=250,quality=75,fit=crop/currencies-tokens/fiat-brpnd.png",
 			},
 			"USD": {
 				Id:       178,
@@ -49,7 +65,7 @@ func TestCuratedAssetsIntegration(t *testing.T) {
 				Issuer:   "rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B",
 				Currency: "USD",
 				Name:     "US Dollar",
-				Avatar:   "https://xumm.app/assets/icons/currencies/fiat-dollar.png",
+				Avatar:   "https://xumm.app/cdn-cgi/image/width=250,height=250,quality=75,fit=crop/assets/icons/currencies/fiat-dollar.png",
 			},
 		},
 	}, bitstamp)

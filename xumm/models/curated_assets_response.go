@@ -11,14 +11,16 @@ type Issuer struct {
 	Name       string                  `json:"name"`
 	Domain     string                  `json:"domain,omitempty"`
 	Avatar     string                  `json:"avatar,omitempty"`
+	Shortlist  int                     `json:"shortlist"`
 	Currencies map[string]CurrencyInfo `json:"currencies"`
 }
 
 type CurrencyInfo struct {
-	Id       int64  `json:"id"`
-	IssuerId int64  `json:"issuer_id"`
-	Issuer   string `json:"issuer"`
-	Currency string `json:"currency"`
-	Name     string `json:"name"`
-	Avatar   string `json:"avatar,omitempty"`
+	Id        int64  `json:"id"`
+	IssuerId  int64  `json:"issuer_id"`
+	Issuer    string `json:"issuer"`
+	Currency  string `json:"currency"`
+	Name      string `json:"name"`
+	Avatar    string `json:"avatar,omitempty"`
+	Shortlist int    `json:"shortlist"`
 }

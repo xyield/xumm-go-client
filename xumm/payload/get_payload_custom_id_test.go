@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	anyjson "github.com/xyield/xumm-go-client/utils/json"
 	testutils "github.com/xyield/xumm-go-client/utils/test-utils"
 	"github.com/xyield/xumm-go-client/xumm"
 	"github.com/xyield/xumm-go-client/xumm/models"
@@ -59,9 +58,8 @@ func TestGetPayloadCustomId(t *testing.T) {
 					TxType:           "SignIn",
 					TxDestination:    "",
 					TxDestinationTag: 0,
-					RequestJSON: anyjson.AnyJson{
-						"TransactionType": "SignIn",
-						"SignIn":          true,
+					RequestJSON: models.PayloadRequestJsonObject{
+						TransactionType: "SignIn",
 					},
 					Origintype:       "test",
 					Signmethod:       "test",

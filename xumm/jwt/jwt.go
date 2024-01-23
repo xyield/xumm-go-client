@@ -13,7 +13,7 @@ type JwtInterface interface {
 	GetPayloadByCustomId(customId string, jwt ...string) (*models.XummPayload, error)
 	GetRatesForCurrency(cur string, jwt ...string) (*models.RatesCurrencyResponse, error)
 	PostPayload(body models.XummPostPayload, jwt ...string) (*models.CreatedPayload, error)
-	Ping(Jwt ...string) (*models.Pong, error)
+	Ping(Jwt ...string) (*models.JwtPong, error)
 }
 
 type Jwt struct {

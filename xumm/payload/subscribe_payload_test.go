@@ -70,9 +70,8 @@ func TestSubscribe(t *testing.T) {
 					TxType:           "SignIn",
 					TxDestination:    "",
 					TxDestinationTag: 0,
-					RequestJSON: anyjson.AnyJson{
-						"TransactionType": "SignIn",
-						"SignIn":          true,
+					RequestJSON: models.PayloadRequestJsonObject{
+						TransactionType: "SignIn",
 					},
 					Origintype:       "test",
 					Signmethod:       "test",
@@ -289,9 +288,8 @@ func TestCreateAndSubscribe(t *testing.T) {
 					TxType:           "SignIn",
 					TxDestination:    "",
 					TxDestinationTag: 0,
-					RequestJSON: anyjson.AnyJson{
-						"TransactionType": "SignIn",
-						"SignIn":          true,
+					RequestJSON: models.PayloadRequestJsonObject{
+						TransactionType: "SignIn",
 					},
 					Origintype:       "test",
 					Signmethod:       "test",

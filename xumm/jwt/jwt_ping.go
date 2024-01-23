@@ -14,7 +14,7 @@ const (
 )
 
 // Ping method tests connectivity to XUMM api.
-func (j *Jwt) Ping(jwt ...string) (*models.Pong, error) {
+func (j *Jwt) Ping(jwt ...string) (*models.JwtPong, error) {
 	req, err := http.NewRequest(http.MethodGet, j.Cfg.BaseURL+JWTPINGENDPOINT, nil)
 
 	if jwt == nil {
@@ -36,7 +36,7 @@ func (j *Jwt) Ping(jwt ...string) (*models.Pong, error) {
 		log.Println(err)
 		return nil, err
 	}
-	var p models.Pong
+	var p models.JwtPong
 	_, err = utils.DeserialiseRequest(&p, res.Body)
 	if err != nil {
 		return nil, err
